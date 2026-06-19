@@ -49,8 +49,8 @@ app.get('/', (req, res) => {
 // ============== RUTAS PÚBLICAS ==============
 app.use('/', authRoutes);
 
-// ============== MIDDLEWARE PARA PENDING COUNT ==============
-app.use('/coach/*', authenticate, async (req: any, res: any, next: any) => {
+// ============== MIDDLEWARE PARA PENDING COUNT (CORREGIDO) ==============
+app.use('/coach', authenticate, async (req: any, res: any, next: any) => {
     try {
         const result = await pool.query(
             'SELECT COUNT(*) as count FROM players WHERE status = $1',

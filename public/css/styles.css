@@ -1,0 +1,408 @@
+/* ============== PALETA DE COLORES ============== */
+:root {
+    --azul-rey: #1E3A8A;
+    --azul-rey-claro: #3B82F6;
+    --azul-rey-oscuro: #172554;
+    --blanco: #FFFFFF;
+    --negro: #111827;
+    --gris-claro: #F3F4F6;
+    --gris-medio: #9CA3AF;
+    --gris-oscuro: #4B5563;
+    --sombra: 0 4px 6px rgba(0,0,0,0.1);
+    --sombra-hover: 0 10px 25px rgba(0,0,0,0.15);
+    --borde: #E5E7EB;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: var(--gris-claro);
+    color: var(--negro);
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ============== NAVBAR ============== */
+.navbar {
+    background: var(--azul-rey);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--sombra);
+    border-bottom: 3px solid var(--blanco);
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar-logo .crest {
+    font-size: 2rem;
+    color: var(--blanco);
+}
+
+.navbar-logo .logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--blanco);
+    letter-spacing: 1px;
+}
+
+.navbar-logo .logo-sub {
+    font-size: 0.6rem;
+    color: var(--azul-rey-claro);
+    letter-spacing: 2px;
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.navbar-menu a {
+    color: var(--blanco);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+    transition: var(--transition);
+    border-bottom: 2px solid transparent;
+}
+
+.navbar-menu a:hover {
+    border-bottom-color: var(--blanco);
+    color: var(--blanco);
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-area .user-name {
+    color: var(--blanco);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.user-area .logout-link {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    color: var(--blanco);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.user-area .logout-link:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* ============== CARD ============== */
+.card {
+    background: var(--blanco);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--sombra);
+    transition: var(--transition);
+    border: 1px solid var(--borde);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-hover);
+}
+
+/* ============== BOTONES ============== */
+.btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--azul-rey);
+    color: var(--blanco);
+}
+
+.btn-primary:hover {
+    background: var(--azul-rey-oscuro);
+    transform: scale(1.02);
+    box-shadow: var(--sombra-hover);
+}
+
+.btn-secondary {
+    background: var(--blanco);
+    color: var(--azul-rey);
+    border: 2px solid var(--azul-rey);
+}
+
+.btn-secondary:hover {
+    background: var(--azul-rey);
+    color: var(--blanco);
+}
+
+.btn-success {
+    background: #22C55E;
+    color: var(--blanco);
+}
+
+.btn-danger {
+    background: #EF4444;
+    color: var(--blanco);
+}
+
+.btn-warning {
+    background: #F59E0B;
+    color: var(--blanco);
+}
+
+.btn-gray {
+    background: var(--gris-oscuro);
+    color: var(--blanco);
+}
+
+.btn-gray:hover {
+    background: var(--negro);
+}
+
+/* ============== FORMULARIOS ============== */
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--borde);
+    border-radius: var(--radius);
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--azul-rey);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--negro);
+    font-size: 0.9rem;
+}
+
+/* ============== TABLAS ============== */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    background: var(--blanco);
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borde);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background: var(--azul-rey);
+    color: var(--blanco);
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--borde);
+    color: var(--negro);
+}
+
+.table tr:hover {
+    background: var(--gris-claro);
+}
+
+/* ============== BADGES ============== */
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.badge-success { background: #22C55E; color: var(--blanco); }
+.badge-danger { background: #EF4444; color: var(--blanco); }
+.badge-warning { background: #F59E0B; color: var(--blanco); }
+.badge-info { background: var(--azul-rey); color: var(--blanco); }
+.badge-gray { background: var(--gris-medio); color: var(--blanco); }
+
+/* ============== MODAL ============== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--blanco);
+    border-radius: var(--radius-lg);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-header {
+    background: var(--azul-rey);
+    color: var(--blanco);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header button {
+    background: none;
+    border: none;
+    color: var(--blanco);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--borde);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* ============== FOOTER ============== */
+.footer {
+    background: var(--azul-rey-oscuro);
+    color: var(--blanco);
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.footer .footer-text {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+}
+
+/* ============== UTILIDADES ============== */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-5 { margin-top: 1.25rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-5 { margin-bottom: 1.25rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1024px) {
+    .navbar-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .navbar-menu {
+        justify-content: center;
+        gap: 1rem;
+    }
+    .navbar-menu a {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.75rem 1rem;
+    }
+    .navbar-menu {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .user-area .user-name {
+        font-size: 0.8rem;
+    }
+    .card {
+        padding: 1rem;
+    }
+    .table th, .table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* ============== ANIMACIONES ============== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

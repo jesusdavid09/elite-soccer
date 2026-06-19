@@ -4,64 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Elite Soccer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
-    
+
     <main class="container mx-auto px-4 py-8 max-w-7xl">
         <!-- Banner -->
-        <div class="relative rounded-2xl overflow-hidden mb-8">
-            <div class="absolute inset-0 bg-gradient-to-r from-dark-blue to-sport-blue opacity-90"></div>
-            <div class="relative z-10 p-8 text-white">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl">⚽</div>
-                    <div>
-                        <h1 class="text-2xl font-bold">¡Bienvenido, <%= user.full_name %>!</h1>
-                        <p class="text-white/80">"La excelencia no es un acto, sino un hábito"</p>
-                    </div>
+        <div class="bg-gradient-to-r from-[#1E3A8A] to-[#172554] rounded-2xl p-8 text-white mb-8 shadow-lg">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl">⚽</div>
+                <div>
+                    <h1 class="text-2xl font-bold">¡Bienvenido, <%= user.full_name %>!</h1>
+                    <p class="text-white/80">"La excelencia no es un acto, sino un hábito"</p>
                 </div>
-                <div class="flex flex-wrap gap-4 mt-4">
-                    <div class="bg-white/10 rounded-full px-4 py-1 text-sm">📅 <%= new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></div>
-                    <div class="bg-white/10 rounded-full px-4 py-1 text-sm">👥 <%= stats.players %> jugadores</div>
-                </div>
+            </div>
+            <div class="flex flex-wrap gap-4 mt-4">
+                <span class="bg-white/10 rounded-full px-4 py-1 text-sm">📅 <%= new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></span>
+                <span class="bg-white/10 rounded-full px-4 py-1 text-sm">👥 <%= stats.players %> jugadores</span>
             </div>
         </div>
 
         <!-- Estadísticas -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white rounded-xl p-4 text-center shadow">
-                <div class="text-3xl font-bold text-sport-blue"><%= stats.players %></div>
+            <div class="bg-white rounded-xl p-4 text-center shadow border border-gray-200">
+                <div class="text-3xl font-bold text-[#1E3A8A]"><%= stats.players %></div>
                 <div class="text-sm text-gray-500">Jugadores</div>
             </div>
-            <div class="bg-white rounded-xl p-4 text-center shadow">
-                <div class="text-3xl font-bold text-sport-blue"><%= stats.trainings %></div>
+            <div class="bg-white rounded-xl p-4 text-center shadow border border-gray-200">
+                <div class="text-3xl font-bold text-[#1E3A8A]"><%= stats.trainings %></div>
                 <div class="text-sm text-gray-500">Entrenamientos</div>
             </div>
-            <div class="bg-white rounded-xl p-4 text-center shadow">
-                <div class="text-3xl font-bold text-sport-blue"><%= stats.matches %></div>
+            <div class="bg-white rounded-xl p-4 text-center shadow border border-gray-200">
+                <div class="text-3xl font-bold text-[#1E3A8A]"><%= stats.matches %></div>
                 <div class="text-sm text-gray-500">Partidos</div>
             </div>
-            <div class="bg-white rounded-xl p-4 text-center shadow">
-                <div class="text-3xl font-bold text-sport-blue"><%= stats.announcements %></div>
+            <div class="bg-white rounded-xl p-4 text-center shadow border border-gray-200">
+                <div class="text-3xl font-bold text-[#1E3A8A]"><%= stats.announcements %></div>
                 <div class="text-sm text-gray-500">Anuncios</div>
             </div>
         </div>
 
-        <!-- Acciones rápidas -->
+        <!-- Botones de acción -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
-            <a href="/coach/players" class="bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-lg">👥 Jugadores</a>
-            <a href="/coach/trainings" class="bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded-lg">🏋️ Entrenamientos</a>
-            <a href="/coach/matches" class="bg-purple-500 hover:bg-purple-600 text-white text-center py-2 rounded-lg">⚽ Partidos</a>
-            <a href="/coach/announcements" class="bg-orange-500 hover:bg-orange-600 text-white text-center py-2 rounded-lg">📢 Anuncios</a>
-            <a href="/coach/attendance" class="bg-indigo-500 hover:bg-indigo-600 text-white text-center py-2 rounded-lg">✅ Asistencia</a>
+            <a href="/coach/players" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">👥 Jugadores</a>
+            <a href="/coach/trainings" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">🏋️ Entrenamientos</a>
+            <a href="/coach/matches" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">⚽ Partidos</a>
+            <a href="/coach/announcements" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">📢 Anuncios</a>
+            <a href="/coach/attendance" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">✅ Asistencia</a>
         </div>
 
         <!-- Próximos eventos -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-xl p-6 shadow">
-                <h3 class="text-lg font-bold mb-4">📅 Próximos Entrenamientos</h3>
+            <div class="bg-white rounded-xl p-6 shadow border border-gray-200">
+                <h3 class="text-lg font-bold mb-4 text-[#1E3A8A]">📅 Próximos Entrenamientos</h3>
                 <% if (upcomingTrainings && upcomingTrainings.length > 0) { %>
                     <% upcomingTrainings.forEach(t => { %>
                         <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg mb-2">
@@ -76,8 +74,8 @@
                     <p class="text-gray-500 text-center py-4">No hay entrenamientos programados</p>
                 <% } %>
             </div>
-            <div class="bg-white rounded-xl p-6 shadow">
-                <h3 class="text-lg font-bold mb-4">🏆 Próximos Partidos</h3>
+            <div class="bg-white rounded-xl p-6 shadow border border-gray-200">
+                <h3 class="text-lg font-bold mb-4 text-[#1E3A8A]">🏆 Próximos Partidos</h3>
                 <% if (upcomingMatches && upcomingMatches.length > 0) { %>
                     <% upcomingMatches.forEach(m => { %>
                         <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg mb-2">
@@ -92,6 +90,13 @@
                     <p class="text-gray-500 text-center py-4">No hay partidos programados</p>
                 <% } %>
             </div>
+        </div>
+
+        <!-- Botón Volver -->
+        <div class="mt-8 text-center">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
+                ← Volver al Dashboard
+            </a>
         </div>
     </main>
 

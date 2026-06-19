@@ -1,16 +1,30 @@
-<nav class="bg-blue-600 text-white shadow-lg p-3">
-    <div class="container mx-auto flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <span class="text-2xl">⚽</span>
-            <span class="text-xl font-bold">Elite Soccer</span>
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-logo">
+            <span class="crest">⚽</span>
+            <div>
+                <div class="logo-text">ELITE SOCCER</div>
+                <div class="logo-sub">ACADEMY</div>
+            </div>
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="navbar-menu">
+            <a href="/coach/dashboard">🏠 Inicio</a>
+            <a href="/coach/players">👥 Jugadores</a>
+            <a href="/coach/trainings">🏋️ Entrenamientos</a>
+            <a href="/coach/matches">⚽ Partidos</a>
+            <a href="/coach/announcements">📢 Anuncios</a>
+            <a href="/coach/attendance">✅ Asistencia</a>
+
             <% if (user) { %>
-                <span><%= user.full_name %></span>
-                <a href="/logout" class="bg-red-500 px-4 py-1 rounded hover:bg-red-600">Salir</a>
+                <div class="user-area">
+                    <span class="user-name"><%= user.full_name %></span>
+                    <a href="/logout" class="logout-link">Salir</a>
+                </div>
             <% } else { %>
-                <a href="/login" class="hover:text-blue-200">Iniciar Sesión</a>
-                <a href="/register" class="hover:text-blue-200">Registrarse</a>
+                <div class="user-area">
+                    <a href="/login" class="logout-link">Iniciar Sesión</a>
+                    <a href="/register" class="logout-link">Registrarse</a>
+                </div>
             <% } %>
         </div>
     </div>

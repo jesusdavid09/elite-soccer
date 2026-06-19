@@ -1,459 +1,256 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aprobar Jugadores | Elite Soccer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f3f4f6;
+<script>
+    // ========== FUNCIONES ==========
+    
+    function filterPlayers(filter) {
+        var cards = document.querySelectorAll('.player-card');
+        var buttons = document.querySelectorAll('.filter-btn');
+        
+        // Actualizar botones
+        buttons.forEach(function(btn) {
+            btn.classList.remove('bg-[#1E3A8A]', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        
+        var activeBtn = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white');
         }
-        h1, h2, h3 {
-            font-family: 'Poppins', sans-serif;
-        }
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        .status-pending {
-            background: #FEF3C7;
-            color: #92400E;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-approved {
-            background: #D1FAE5;
-            color: #065F46;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-rejected {
-            background: #FEE2E2;
-            color: #991B1B;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .btn-approve {
-            background: #22C55E;
-            color: white;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-approve:hover {
-            background: #16A34A;
-            transform: scale(1.05);
-        }
-        .btn-reject {
-            background: #EF4444;
-            color: white;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-reject:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-        }
-        .btn-view {
-            background: #3B82F6;
-            color: white;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-view:hover {
-            background: #2563EB;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1100;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
+        
+        // Filtrar tarjetas
+        cards.forEach(function(card) {
+            var status = card.dataset.status;
+            if (filter === 'all' || status === filter) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
             }
-            to {
-                transform: translateY(0);
-                opacity: 1;
+        });
+    }
+
+    function viewPlayer(id) {
+        console.log('📝 Viendo jugador ID:', id);
+        
+        fetch('/coach/players/api/' + id, {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(function(response) {
+            console.log('📊 Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Error al cargar los datos: ' + response.status);
             }
-        }
-        .modal-header {
-            background: #1E3A8A;
-            color: white;
-            padding: 1.25rem 1.5rem;
-            border-radius: 20px 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-header button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-            line-height: 1;
-        }
-        .modal-header button:hover {
-            transform: rotate(90deg);
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .detail-label {
-            font-weight: 600;
-            color: #4B5563;
-        }
-        .detail-value {
-            color: #111827;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body>
-    <%- include('../partials/navbar', { user: user }) %>
-
-    <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-[#1E3A8A]">📋 Aprobar Jugadores</h1>
-                <p class="text-gray-500 mt-1">Revisa y aprueba las solicitudes de nuevos jugadores</p>
-            </div>
-            <div class="mt-4 md:mt-0 flex gap-3">
-                <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg font-semibold">
-                    Pendientes: <span id="pendingCount"><%= pendingPlayers ? pendingPlayers.length : 0 %></span>
-                </span>
-                <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition">
-                    ← Volver
-                </a>
-            </div>
-        </div>
-
-        <!-- Filtros -->
-        <div class="card p-4 mb-6">
-            <div class="flex flex-wrap gap-4">
-                <button onclick="filterPlayers('all')" class="filter-btn px-4 py-2 rounded-lg bg-[#1E3A8A] text-white transition" data-filter="all">
-                    Todos
-                </button>
-                <button onclick="filterPlayers('pending')" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-filter="pending">
-                    ⏳ Pendientes
-                </button>
-                <button onclick="filterPlayers('approved')" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-filter="approved">
-                    ✅ Aprobados
-                </button>
-                <button onclick="filterPlayers('rejected')" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-filter="rejected">
-                    ❌ Rechazados
-                </button>
-            </div>
-        </div>
-
-        <!-- Lista de Jugadores -->
-        <div id="playersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <% if (pendingPlayers && pendingPlayers.length > 0) { %>
-                <% for (var i = 0; i < pendingPlayers.length; i++) { var player = pendingPlayers[i]; %>
-                    <div class="card p-6 player-card" data-status="<%= player.status || 'pending' %>">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-xl font-bold">
-                                <%= player.full_name ? player.full_name.charAt(0).toUpperCase() : '?' %>
-                            </div>
-                            <span class="status-<%= player.status || 'pending' %>">
-                                <%= player.status === 'approved' ? '✅ Aprobado' : (player.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente') %>
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('📊 Datos del jugador:', data);
+            var html = `
+                <div class="space-y-4">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto">
+                            ${data.full_name ? data.full_name.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <h3 class="text-2xl font-bold mt-2">${data.full_name || 'Sin nombre'}</h3>
+                        <span class="text-sm text-gray-500">#${data.jersey_number || 'N/A'} • ${data.position || 'Sin posición'}</span>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="detail-row">
+                            <span class="detail-label">📧 Email</span>
+                            <span class="detail-value">${data.email || 'No registrado'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📱 Teléfono</span>
+                            <span class="detail-value">${data.phone || 'No registrado'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">🎂 Edad</span>
+                            <span class="detail-value">${data.age || 'No especificada'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📅 Registro</span>
+                            <span class="detail-value">${data.created_at ? new Date(data.created_at).toLocaleDateString() : 'No disponible'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📊 Estado</span>
+                            <span class="detail-value">
+                                <span class="status-${data.status || 'pending'}">
+                                    ${data.status === 'approved' ? '✅ Aprobado' : (data.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente')}
+                                </span>
                             </span>
                         </div>
-                        
-                        <h3 class="text-xl font-bold text-[#1E3A8A]"><%= player.full_name || 'Sin nombre' %></h3>
-                        <p class="text-gray-500 text-sm">#<%= player.jersey_number || 'N/A' %> • <%= player.position || 'Sin posición' %></p>
-                        
-                        <div class="mt-4 space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📧 Email</span>
-                                <span><%= player.email || 'No registrado' %></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📱 Teléfono</span>
-                                <span><%= player.phone || 'No registrado' %></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📅 Solicitud</span>
-                                <span><%= new Date(player.created_at).toLocaleDateString() %></span>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 flex gap-2">
-                            <button onclick="viewPlayer('<%= player.id %>')" class="btn-view flex-1">👁️ Ver</button>
-                            <% if (player.status !== 'approved' && player.status !== 'rejected') { %>
-                                <button onclick="approvePlayer('<%= player.id %>')" class="btn-approve flex-1">✅ Aprobar</button>
-                                <button onclick="rejectPlayer('<%= player.id %>')" class="btn-reject flex-1">❌ Rechazar</button>
-                            <% } else { %>
-                                <button onclick="resetPlayer('<%= player.id %>')" class="btn-approve flex-1" style="background: #6B7280;">↩️ Revertir</button>
-                            <% } %>
-                        </div>
-                    </div>
-                <% } %>
-            <% } else { %>
-                <div class="col-span-full">
-                    <div class="card p-12 empty-state">
-                        <div class="icon">🎉</div>
-                        <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay solicitudes pendientes</h3>
-                        <p class="text-gray-400">Todos los jugadores han sido procesados</p>
-                        <a href="/coach/dashboard" class="inline-block mt-6 bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition">
-                            Volver al Dashboard
-                        </a>
                     </div>
                 </div>
-            <% } %>
-        </div>
-    </main>
+            `;
+            document.getElementById('playerDetails').innerHTML = html;
+            document.getElementById('playerModal').classList.add('active');
+        })
+        .catch(function(error) {
+            console.error('❌ Error:', error);
+            alert('❌ Error al cargar los datos del jugador: ' + error.message);
+        });
+    }
 
-    <!-- Modal de Detalles -->
-    <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-xl font-bold">👤 Detalles del Jugador</h3>
-                <button onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="playerDetails">
-                <!-- Contenido dinámico -->
-            </div>
-        </div>
-    </div>
-
-    <%- include('../partials/footer') %>
-
-    <script>
-        // ========== FUNCIONES ==========
+    function approvePlayer(id) {
+        if (!confirm('¿Estás seguro de aprobar a este jugador?')) return;
         
-        function filterPlayers(filter) {
-            var cards = document.querySelectorAll('.player-card');
-            var buttons = document.querySelectorAll('.filter-btn');
-            
-            // Actualizar botones
-            buttons.forEach(function(btn) {
-                btn.classList.remove('bg-[#1E3A8A]', 'text-white');
-                btn.classList.add('bg-gray-200', 'text-gray-700');
-            });
-            
-            var activeBtn = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
-            if (activeBtn) {
-                activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
-                activeBtn.classList.add('bg-[#1E3A8A]', 'text-white');
-            }
-            
-            // Filtrar tarjetas
-            cards.forEach(function(card) {
-                var status = card.dataset.status;
-                if (filter === 'all' || status === filter) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function viewPlayer(id) {
-            fetch('/coach/players/api/' + id)
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error('Error al cargar los datos');
-                    }
-                    return response.json();
-                })
-                .then(function(data) {
-                    var html = `
-                        <div class="space-y-4">
-                            <div class="text-center">
-                                <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto">
-                                    ${data.full_name ? data.full_name.charAt(0).toUpperCase() : '?'}
-                                </div>
-                                <h3 class="text-2xl font-bold mt-2">${data.full_name || 'Sin nombre'}</h3>
-                                <span class="text-sm text-gray-500">#${data.jersey_number || 'N/A'} • ${data.position || 'Sin posición'}</span>
-                            </div>
-                            
-                            <div class="border-t border-gray-200 pt-4">
-                                <div class="detail-row">
-                                    <span class="detail-label">📧 Email</span>
-                                    <span class="detail-value">${data.email || 'No registrado'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">📱 Teléfono</span>
-                                    <span class="detail-value">${data.phone || 'No registrado'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">🎂 Edad</span>
-                                    <span class="detail-value">${data.age || 'No especificada'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">📅 Registro</span>
-                                    <span class="detail-value">${new Date(data.created_at).toLocaleDateString()}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">📊 Estado</span>
-                                    <span class="detail-value">
-                                        <span class="status-${data.status || 'pending'}">
-                                            ${data.status === 'approved' ? '✅ Aprobado' : (data.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente')}
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('playerDetails').innerHTML = html;
-                    document.getElementById('playerModal').classList.add('active');
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    alert('❌ Error al cargar los datos del jugador');
+        console.log('📝 Aprobando jugador ID:', id);
+        
+        // Deshabilitar botones
+        var buttons = document.querySelectorAll('button');
+        buttons.forEach(function(btn) { btn.disabled = true; });
+        
+        fetch('/coach/players/' + id + '/approve', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(function(response) {
+            console.log('📊 Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(function(data) {
+                    throw new Error(data.message || 'Error en el servidor: ' + response.status);
                 });
-        }
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('📊 Data recibida:', data);
+            if (data.success) {
+                alert('✅ Jugador aprobado correctamente');
+                location.reload();
+            } else {
+                alert('❌ Error: ' + (data.message || 'No se pudo aprobar'));
+            }
+        })
+        .catch(function(error) {
+            console.error('❌ Error:', error);
+            alert('❌ Error: ' + error.message);
+        })
+        .finally(function() {
+            // Rehabilitar botones
+            var buttons = document.querySelectorAll('button');
+            buttons.forEach(function(btn) { btn.disabled = false; });
+        });
+    }
 
-        function approvePlayer(id) {
-            if (!confirm('¿Estás seguro de aprobar a este jugador?')) return;
-            
-            fetch('/coach/players/' + id + '/approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    alert('✅ Jugador aprobado correctamente');
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.message || 'No se pudo aprobar'));
-                }
-            })
-            .catch(function(error) {
-                alert('❌ Error de conexión: ' + error);
-            });
-        }
+    function rejectPlayer(id) {
+        if (!confirm('¿Estás seguro de rechazar a este jugador?')) return;
+        
+        console.log('📝 Rechazando jugador ID:', id);
+        
+        // Deshabilitar botones
+        var buttons = document.querySelectorAll('button');
+        buttons.forEach(function(btn) { btn.disabled = true; });
+        
+        fetch('/coach/players/' + id + '/reject', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(function(response) {
+            console.log('📊 Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(function(data) {
+                    throw new Error(data.message || 'Error en el servidor: ' + response.status);
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('📊 Data recibida:', data);
+            if (data.success) {
+                alert('❌ Jugador rechazado');
+                location.reload();
+            } else {
+                alert('❌ Error: ' + (data.message || 'No se pudo rechazar'));
+            }
+        })
+        .catch(function(error) {
+            console.error('❌ Error:', error);
+            alert('❌ Error: ' + error.message);
+        })
+        .finally(function() {
+            // Rehabilitar botones
+            var buttons = document.querySelectorAll('button');
+            buttons.forEach(function(btn) { btn.disabled = false; });
+        });
+    }
 
-        function rejectPlayer(id) {
-            if (!confirm('¿Estás seguro de rechazar a este jugador?')) return;
-            
-            fetch('/coach/players/' + id + '/reject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    alert('❌ Jugador rechazado');
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.message || 'No se pudo rechazar'));
-                }
-            })
-            .catch(function(error) {
-                alert('❌ Error de conexión: ' + error);
-            });
-        }
+    function resetPlayer(id) {
+        if (!confirm('¿Revertir el estado de este jugador a pendiente?')) return;
+        
+        console.log('📝 Revirtiendo jugador ID:', id);
+        
+        // Deshabilitar botones
+        var buttons = document.querySelectorAll('button');
+        buttons.forEach(function(btn) { btn.disabled = true; });
+        
+        fetch('/coach/players/' + id + '/reset', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(function(response) {
+            console.log('📊 Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(function(data) {
+                    throw new Error(data.message || 'Error en el servidor: ' + response.status);
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('📊 Data recibida:', data);
+            if (data.success) {
+                alert('↩️ Estado revertido');
+                location.reload();
+            } else {
+                alert('❌ Error: ' + (data.message || 'No se pudo revertir'));
+            }
+        })
+        .catch(function(error) {
+            console.error('❌ Error:', error);
+            alert('❌ Error: ' + error.message);
+        })
+        .finally(function() {
+            // Rehabilitar botones
+            var buttons = document.querySelectorAll('button');
+            buttons.forEach(function(btn) { btn.disabled = false; });
+        });
+    }
 
-        function resetPlayer(id) {
-            if (!confirm('¿Revertir el estado de este jugador a pendiente?')) return;
-            
-            fetch('/coach/players/' + id + '/reset', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    alert('↩️ Estado revertido');
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.message || 'No se pudo revertir'));
-                }
-            })
-            .catch(function(error) {
-                alert('❌ Error de conexión: ' + error);
-            });
-        }
+    function closeModal() {
+        document.getElementById('playerModal').classList.remove('active');
+    }
 
-        function closeModal() {
-            document.getElementById('playerModal').classList.remove('active');
+    // Cerrar modal al hacer clic fuera
+    window.onclick = function(event) {
+        var modal = document.getElementById('playerModal');
+        if (event.target === modal) {
+            closeModal();
         }
+    }
 
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
+    // Cerrar con tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
             var modal = document.getElementById('playerModal');
-            if (event.target === modal) {
+            if (modal.classList.contains('active')) {
                 closeModal();
             }
         }
+    });
 
-        // Cerrar con tecla ESC
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                var modal = document.getElementById('playerModal');
-                if (modal.classList.contains('active')) {
-                    closeModal();
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+    // Log para verificar que el script se cargó
+    console.log('✅ Script de aprobar jugadores cargado correctamente');
+</script>

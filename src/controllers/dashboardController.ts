@@ -3,14 +3,15 @@ import pool from '../config/database';
 
 export const getCoachDashboard = async (req: Request, res: Response) => {
     try {
-        const [players, trainings, matches, announcements, upcomingTrainings, upcomingMatches, latestAnnouncements] = await Promise.all([
+        const [players, trainings, matches, announcements, upcomingTrainings, upcomingMatches, latestAnnouncements, pendingCount] = await Promise.all([
             pool.query('SELECT COUNT(*) FROM players'),
             pool.query('SELECT COUNT(*) FROM trainings'),
             pool.query('SELECT COUNT(*) FROM matches'),
             pool.query('SELECT COUNT(*) FROM announcements'),
             pool.query(`SELECT * FROM trainings WHERE date >= CURRENT_DATE ORDER BY date ASC LIMIT 5`),
             pool.query(`SELECT * FROM matches WHERE date >= CURRENT_DATE ORDER BY date ASC LIMIT 5`),
-            pool.query(`SELECT * FROM announcements ORDER BY created_at DESC LIMIT 5`)
+            pool.query(`SELECT * FROM announcements ORDER BY created_at DESC LIMIT 5`),
+            pool.query(`SELECT COUNT(*) FROM players WHERE status = $1`, ['pending'])
         ]);
         
         res.render('coach/dashboard', {
@@ -24,16 +25,18 @@ export const getCoachDashboard = async (req: Request, res: Response) => {
             upcomingTrainings: upcomingTrainings.rows,
             upcomingMatches: upcomingMatches.rows,
             latestAnnouncements: latestAnnouncements.rows,
+            pendingCount: parseInt(pendingCount.rows[0].count || '0'), // 🔥 NUEVO
             user: (req as any).user
         });
     } catch (error) {
-        console.error(error);
+        console.error('❌ Error en coach dashboard:', error);
         res.render('coach/dashboard', { 
             title: 'Dashboard', 
             stats: { players: 0, trainings: 0, matches: 0, announcements: 0 }, 
             upcomingTrainings: [], 
             upcomingMatches: [],
             latestAnnouncements: [],
+            pendingCount: 0, // 🔥 NUEVO
             user: (req as any).user
         });
     }
@@ -64,7 +67,7 @@ export const getPlayerDashboard = async (req: Request, res: Response) => {
             user: (req as any).user
         });
     } catch (error) {
-        console.error(error);
+        console.error('❌ Error en player dashboard:', error);
         res.render('player/dashboard', {
             title: 'Mi Panel',
             player: null,

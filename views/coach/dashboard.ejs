@@ -7,6 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
@@ -24,6 +37,11 @@
             <div class="flex flex-wrap gap-4 mt-4">
                 <span class="bg-white/10 rounded-full px-4 py-1 text-sm">📅 <%= new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></span>
                 <span class="bg-white/10 rounded-full px-4 py-1 text-sm">👥 <%= stats.players %> jugadores</span>
+                <% if (pendingCount && pendingCount > 0) { %>
+                    <span class="bg-red-500/80 rounded-full px-4 py-1 text-sm animate-pulse">
+                        📋 <%= pendingCount %> solicitudes pendientes
+                    </span>
+                <% } %>
             </div>
         </div>
 
@@ -48,8 +66,19 @@
         </div>
 
         <!-- Botones -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
             <a href="/coach/players" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">👥 Jugadores</a>
+            
+            <!-- 🔥 NUEVO: Botón Aprobar Jugadores con badge -->
+            <a href="/coach/approve-players" class="bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 rounded-lg transition flex items-center justify-center gap-2 relative">
+                <span>📋 Aprobar</span>
+                <% if (pendingCount && pendingCount > 0) { %>
+                    <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                        <%= pendingCount %>
+                    </span>
+                <% } %>
+            </a>
+            
             <a href="/coach/trainings" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">🏋️ Entrenamientos</a>
             <a href="/coach/matches" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">⚽ Partidos</a>
             <a href="/coach/announcements" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">📢 Anuncios</a>

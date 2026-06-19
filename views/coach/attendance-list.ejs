@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Asistencia | Elite Soccer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <h1 class="text-3xl font-bold text-dark-blue mb-8">📋 Lista de Asistencia</h1>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-4 items-end">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium mb-1">Seleccionar evento</label>
+                    <select id="eventSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">-- Seleccionar --</option>
+                        <optgroup label="🏋️ Entrenamientos">
+                            <% for (var i = 0; i < trainings.length; i++) { 
+                                var t = trainings[i];
+                            %>
+                                <option value="training_<%= t.id %>">
+                                    <%= t.title %> - <%= new Date(t.date).toLocaleDateString() %>
+                                </option>
+                            <% } %>
+                        </optgroup>
+                        <optgroup label="⚽ Partidos">
+                            <% for (var i = 0; i < matches.length; i++) { 
+                                var m = matches[i];
+                            %>
+                                <option value="match_<%= m.id %>">
+                                    vs <%= m.opponent %> - <%= new Date(m.date).toLocaleDateString() %>
+                                </option>
+                            <% } %>
+                        </optgroup>
+                    </select>
+                </div>
+                <div>
+                    <button id="loadEventBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">Cargar Asistencia</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="attendanceList" class="bg-white rounded-xl shadow-lg p-6">
+            <p class="text-gray-500 text-center py-8">Selecciona un evento para ver las confirmaciones</p>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+                ← Volver al Dashboard
+            </a>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.getElementById('loadEventBtn').addEventListener('click', function() {
+            var select = document.getElementById('eventSelect');
+            var value = select.value;
+            if (!value) { alert('Selecciona un evento'); return; }
+            var parts = value.split('_');
+            var type = parts[0];
+            var id = parts[1];
+            var typeName = type === 'training' ? 'Entrenamiento' : 'Partido';
+            var eventName = select.options[select.selectedIndex].text;
+
+            var attendanceDiv = document.getElementById('attendanceList');
+            attendanceDiv.innerHTML = '<p class="text-center text-gray-500 py-4">Cargando...</p>';
+
+            fetch('/coach/attendance/list?type=' + type + '&id=' + id)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var confirmed = data.filter(function(a) { return a.status === 'yes'; });
+                    var notConfirmed = data.filter(function(a) { return a.status === 'no'; });
+                    var maybe = data.filter(function(a) { return a.status === 'maybe'; });
+
+                    var html = '';
+                    html += '<div class="flex gap-4 mb-6 flex-wrap">';
+                    html += '<span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">✅ Confirmados: ' + confirmed.length + '</span>';
+                    html += '<span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">🟡 Tal vez: ' + maybe.length + '</span>';
+                    html += '<span class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold">❌ Ausentes: ' + notConfirmed.length + '</span>';
+                    html += '<span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold">👥 Total: ' + data.length + '</span>';
+                    html += '</div>';
+                    html += '<h3 class="text-xl font-bold mb-4">📋 ' + typeName + ': ' + eventName + '</h3>';
+
+                    if (confirmed.length > 0) {
+                        html += '<div class="mb-6"><h4 class="font-bold text-green-600 mb-3">✅ Confirmaron (' + confirmed.length + ')</h4>';
+                        for (var i = 0; i < confirmed.length; i++) {
+                            html += '<div class="flex justify-between p-3 bg-green-50 rounded-lg mb-2">';
+                            html += '<span class="font-semibold">' + confirmed[i].player_name + ' <span class="text-gray-500">#' + confirmed[i].jersey_number + '</span></span>';
+                            html += '<span class="text-green-600">✅ Confirmado</span></div>';
+                        }
+                        html += '</div>';
+                    }
+
+                    if (maybe.length > 0) {
+                        html += '<div class="mb-6"><h4 class="font-bold text-yellow-600 mb-3">🟡 No están seguros (' + maybe.length + ')</h4>';
+                        for (var i = 0; i < maybe.length; i++) {
+                            html += '<div class="flex justify-between p-3 bg-yellow-50 rounded-lg mb-2">';
+                            html += '<span class="font-semibold">' + maybe[i].player_name + ' <span class="text-gray-500">#' + maybe[i].jersey_number + '</span></span>';
+                            html += '<span class="text-yellow-600">🟡 Tal vez</span></div>';
+                        }
+                        html += '</div>';
+                    }
+
+                    if (notConfirmed.length > 0) {
+                        html += '<div><h4 class="font-bold text-red-600 mb-3">❌ No asistirán (' + notConfirmed.length + ')</h4>';
+                        for (var i = 0; i < notConfirmed.length; i++) {
+                            html += '<div class="p-3 bg-red-50 rounded-lg mb-2">';
+                            html += '<div class="flex justify-between">';
+                            html += '<span class="font-semibold">' + notConfirmed[i].player_name + ' <span class="text-gray-500">#' + notConfirmed[i].jersey_number + '</span></span>';
+                            html += '<span class="text-red-600">❌ Ausente</span></div>';
+                            if (notConfirmed[i].justification) {
+                                html += '<p class="text-sm text-gray-600 mt-1">📝 Justificación: ' + notConfirmed[i].justification + '</p>';
+                            }
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                    }
+
+                    attendanceDiv.innerHTML = html;
+                });
+        });
+    </script>
+</body>
+</html>

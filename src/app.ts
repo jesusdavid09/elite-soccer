@@ -3,7 +3,6 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import webpush from 'web-push';
-import fs from 'fs';
 import authRoutes from './routes/authRoutes';
 import playerRoutes from './routes/playerRoutes';
 import trainingRoutes from './routes/trainingRoutes';
@@ -16,7 +15,7 @@ import pool from './config/database';
 
 dotenv.config();
 
-// ============== CONFIGURAR VAPID ==============
+// Configurar VAPID
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT) {
     webpush.setVapidDetails(
         process.env.VAPID_SUBJECT,
@@ -25,20 +24,20 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env
     );
     console.log('✅ Notificaciones push configuradas');
 } else {
-    console.log('⚠️ VAPID keys no configuradas - las notificaciones push no estarán disponibles');
+    console.log('⚠️ VAPID keys no configuradas');
 }
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ============== MIDDLEWARES ==============
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-// ============== CONFIGURACIÓN DE VISTAS ==============
+// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
 
@@ -54,11 +53,7 @@ app.use('/', authRoutes);
 app.post('/api/notifications/subscribe', authenticate, async (req: any, res: any) => {
     const subscription = req.body;
     const userId = req.user?.id;
-    
-    if (!userId) {
-        return res.status(401).json({ error: 'No autenticado' });
-    }
-    
+    if (!userId) return res.status(401).json({ error: 'No autenticado' });
     try {
         await pool.query(
             `INSERT INTO push_subscriptions (user_id, subscription) 
@@ -68,7 +63,6 @@ app.post('/api/notifications/subscribe', authenticate, async (req: any, res: any
         );
         res.json({ success: true });
     } catch (error) {
-        console.error('Error al guardar suscripción:', error);
         res.status(500).json({ error: 'Error al guardar suscripción' });
     }
 });
@@ -81,7 +75,7 @@ app.use('/coach/matches', matchRoutes);
 app.use('/coach/announcements', announcementRoutes);
 app.get('/player/dashboard', authenticate, getPlayerDashboard);
 
-// ============== PERFIL DEL JUGADOR ==============
+// ============== PERFIL JUGADOR ==============
 app.get('/player/profile', authenticate, async (req: any, res: any) => {
     try {
         const player = await pool.query(`
@@ -134,7 +128,37 @@ app.post('/player/attendance/confirm', authenticate, async (req: any, res: any) 
     res.json({ success: true });
 });
 
-// ============== ANUNCIOS PARA JUGADORES ==============
+// ============== ASISTENCIA (ENTRENADOR) ==============
+app.get('/coach/attendance', authenticate, async (req: any, res: any) => {
+    try {
+        const trainings = await pool.query(`SELECT id, title, date FROM trainings ORDER BY date DESC LIMIT 10`);
+        const matches = await pool.query(`SELECT id, opponent, date FROM matches ORDER BY date DESC LIMIT 10`);
+        res.render('coach/attendance', {
+            title: 'Asistencia',
+            trainings: trainings.rows,
+            matches: matches.rows,
+            user: req.user
+        });
+    } catch (error) {
+        res.render('coach/attendance', { title: 'Asistencia', trainings: [], matches: [], user: req.user });
+    }
+});
+
+app.get('/coach/attendance/list', authenticate, async (req: any, res: any) => {
+    const { type, id } = req.query;
+    const table = type === 'training' ? 'training_attendance' : 'match_attendance';
+    const idField = type === 'training' ? 'training_id' : 'match_id';
+    const result = await pool.query(
+        `SELECT a.*, p.jersey_number, u.full_name as player_name FROM ${table} a
+         JOIN players p ON a.player_id = p.id
+         JOIN users u ON p.user_id = u.id
+         WHERE a.${idField} = $1`,
+        [id]
+    );
+    res.json(result.rows);
+});
+
+// ============== ANUNCIOS JUGADOR ==============
 app.get('/player/announcements', authenticate, async (req: any, res: any) => {
     try {
         const result = await pool.query(`

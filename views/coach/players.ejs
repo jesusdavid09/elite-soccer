@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jugadores | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
@@ -48,21 +47,19 @@
                 %>
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition hover:-translate-y-1">
                         <div class="p-6">
-                            <div class="flex justify-between items-start">
-                                <div class="flex flex-col items-center text-center flex-1">
-                                    <div class="w-24 h-24 bg-gradient-to-br from-sport-blue to-bright-blue rounded-full flex items-center justify-center text-3xl text-white shadow-lg">
-                                        <%= player.jersey_number || '⚽' %>
-                                    </div>
-                                    <h3 class="text-xl font-bold mt-3"><%= player.full_name %></h3>
-                                    <p class="text-sport-blue font-semibold">#<%= player.jersey_number %></p>
-                                    <div class="flex gap-2 mt-2">
-                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"><%= player.position || 'Sin posición' %></span>
-                                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"><%= player.age || '?' %> años</span>
-                                    </div>
-                                    <span class="mt-2 text-sm <%= player.active !== false ? 'text-green-600' : 'text-red-600' %>">
-                                        <%= player.active !== false ? '✅ Activo' : '❌ Inactivo' %>
-                                    </span>
+                            <div class="flex flex-col items-center text-center">
+                                <div class="w-24 h-24 bg-gradient-to-br from-sport-blue to-bright-blue rounded-full flex items-center justify-center text-3xl text-white shadow-lg">
+                                    <%= player.jersey_number || '⚽' %>
                                 </div>
+                                <h3 class="text-xl font-bold mt-3"><%= player.full_name %></h3>
+                                <p class="text-sport-blue font-semibold">#<%= player.jersey_number %></p>
+                                <div class="flex gap-2 mt-2">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"><%= player.position || 'Sin posición' %></span>
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"><%= player.age || '?' %> años</span>
+                                </div>
+                                <span class="mt-2 text-sm <%= player.active !== false ? 'text-green-600' : 'text-red-600' %>">
+                                    <%= player.active !== false ? '✅ Activo' : '❌ Inactivo' %>
+                                </span>
                             </div>
                             <div class="mt-4 pt-4 border-t border-gray-200 space-y-1 text-sm">
                                 <div class="flex justify-between"><span class="text-gray-500">📧 Email</span><span><%= player.email %></span></div>
@@ -85,11 +82,18 @@
                 </div>
             <% } %>
         </div>
+
+        <!-- Botón Volver -->
+        <div class="mt-8 text-center">
+            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+                ← Volver al Dashboard
+            </a>
+        </div>
     </main>
 
     <%- include('../partials/footer') %>
 
-    <!-- Modal para agregar/editar jugador -->
+    <!-- Modal -->
     <div id="playerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
@@ -101,7 +105,6 @@
                 <div class="mb-3">
                     <label class="block text-sm font-medium mb-1">ID del Usuario</label>
                     <input type="text" name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
-                    <p class="text-xs text-gray-500 mt-1">El ID del usuario registrado en la tabla users</p>
                 </div>
                 <div class="mb-3">
                     <label class="block text-sm font-medium mb-1">Número de Camiseta</label>
@@ -133,13 +136,6 @@
         </div>
     </div>
 
-    <style>
-        .bg-dark-blue { background-color: #0A2540; }
-        .text-sport-blue { color: #1E40AF; }
-        .from-sport-blue { --tw-gradient-from: #1E40AF; }
-        .to-bright-blue { --tw-gradient-to: #00AEEF; }
-    </style>
-
     <script>
         function openModal() {
             document.getElementById('playerModal').classList.remove('hidden');
@@ -157,9 +153,7 @@
 
         function editPlayer(id) {
             fetch('/coach/players/api/' + id)
-                .then(function(response) {
-                    return response.json();
-                })
+                .then(function(response) { return response.json(); })
                 .then(function(data) {
                     document.getElementById('modalTitle').textContent = 'Editar Jugador';
                     document.getElementById('playerId').value = data.id;
@@ -173,16 +167,14 @@
                     document.getElementById('playerModal').classList.add('flex');
                 })
                 .catch(function(error) {
-                    console.error('Error al cargar jugador:', error);
-                    alert('Error al cargar los datos del jugador');
+                    console.error('Error:', error);
+                    alert('Error al cargar los datos');
                 });
         }
 
         window.onclick = function(event) {
             var modal = document.getElementById('playerModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+            if (event.target === modal) { closeModal(); }
         }
     </script>
 </body>

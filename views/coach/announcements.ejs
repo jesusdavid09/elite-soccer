@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anuncios | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
@@ -12,24 +13,24 @@
     <main class="container mx-auto px-4 py-8 max-w-7xl">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-dark-blue">📢 Anuncios</h1>
+                <h1 class="text-3xl font-bold text-[#1E3A8A]">📢 Anuncios</h1>
                 <p class="text-gray-500 mt-1">Mantén informado a todo el equipo</p>
             </div>
-            <button onclick="openModal()" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
-                ➕ Crear Anuncio
+            <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                ➕ Crear
             </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <% if (announcements && announcements.length > 0) { %>
                 <% announcements.forEach(a => { %>
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition border border-gray-200">
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-gray-800"><%= a.title %></h3>
                             <p class="text-gray-600 mt-2"><%= a.content %></p>
                             <div class="mt-4 flex justify-between items-center">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-sport-blue to-bright-blue rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    <div class="w-8 h-8 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white font-bold text-sm">
                                         <%= a.author_name ? a.author_name.charAt(0).toUpperCase() : 'A' %>
                                     </div>
                                     <div>
@@ -43,18 +44,17 @@
                     </div>
                 <% }); %>
             <% } else { %>
-                <div class="col-span-full text-center py-12 bg-white rounded-xl shadow">
+                <div class="col-span-full text-center py-12 bg-white rounded-xl shadow border border-gray-200">
                     <div class="text-6xl mb-4">📢</div>
                     <h3 class="text-xl font-bold mb-2">No hay anuncios</h3>
                     <p class="text-gray-500">Comienza creando tu primer anuncio</p>
-                    <button onclick="openModal()" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg mt-4 transition">➕ Crear</button>
+                    <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg mt-4 transition">➕ Crear</button>
                 </div>
             <% } %>
         </div>
 
-        <!-- Botón Volver -->
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -63,41 +63,36 @@
     <%- include('../partials/footer') %>
 
     <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md">
-            <div class="flex justify-between items-center mb-4">
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h3 class="text-xl font-bold">Crear Anuncio</h3>
-                <button onclick="closeModal()" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                <button onclick="closeModal()">&times;</button>
             </div>
-            <form method="POST" action="/coach/announcements">
+            <form method="POST" action="/coach/announcements" class="modal-body">
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Título</label>
-                    <input type="text" name="title" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                    <label class="form-label">Título</label>
+                    <input type="text" name="title" class="form-input" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Contenido</label>
-                    <textarea name="content" class="w-full border border-gray-300 rounded-lg px-3 py-2" rows="5" required></textarea>
+                    <label class="form-label">Contenido</label>
+                    <textarea name="content" class="form-textarea" rows="5" required></textarea>
                 </div>
-                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg transition">Publicar</button>
-                <button type="button" onclick="closeModal()" class="w-full mt-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg transition">Cancelar</button>
+                <button type="submit" class="btn btn-primary w-full">Publicar</button>
+                <button type="button" onclick="closeModal()" class="btn btn-gray w-full mt-2">Cancelar</button>
             </form>
         </div>
     </div>
 
     <script>
         function openModal() {
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
+            document.getElementById('modal').classList.add('active');
         }
-
         function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('modal').classList.remove('flex');
+            document.getElementById('modal').classList.remove('active');
         }
-
         window.onclick = function(event) {
-            var modal = document.getElementById('modal');
-            if (event.target === modal) { closeModal(); }
+            if (event.target === document.getElementById('modal')) closeModal();
         }
     </script>
 </body>

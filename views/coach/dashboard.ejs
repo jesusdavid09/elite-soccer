@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <!-- Botones de acción -->
+        <!-- Botones -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
             <a href="/coach/players" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">👥 Jugadores</a>
             <a href="/coach/trainings" class="bg-[#1E3A8A] hover:bg-[#172554] text-white text-center py-2 rounded-lg transition">🏋️ Entrenamientos</a>
@@ -71,7 +71,7 @@
                         </div>
                     <% }); %>
                 <% } else { %>
-                    <p class="text-gray-500 text-center py-4">No hay entrenamientos programados</p>
+                    <p class="text-gray-500 text-center py-4">No hay entrenamientos</p>
                 <% } %>
             </div>
             <div class="bg-white rounded-xl p-6 shadow border border-gray-200">
@@ -87,16 +87,9 @@
                         </div>
                     <% }); %>
                 <% } else { %>
-                    <p class="text-gray-500 text-center py-4">No hay partidos programados</p>
+                    <p class="text-gray-500 text-center py-4">No hay partidos</p>
                 <% } %>
             </div>
-        </div>
-
-        <!-- Botón Volver -->
-        <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
-                ← Volver al Dashboard
-            </a>
         </div>
     </main>
 

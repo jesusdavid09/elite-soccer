@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrenamientos | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
@@ -12,75 +13,70 @@
     <main class="container mx-auto px-4 py-8 max-w-7xl">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-dark-blue">🏋️ Gestión de Entrenamientos</h1>
-                <p class="text-gray-500 mt-1">Organiza y planifica los entrenamientos del equipo</p>
+                <h1 class="text-3xl font-bold text-[#1E3A8A]">🏋️ Gestión de Entrenamientos</h1>
+                <p class="text-gray-500 mt-1">Organiza y planifica los entrenamientos</p>
             </div>
-            <button onclick="openModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
-                ➕ Agregar Entrenamiento
+            <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                ➕ Agregar
             </button>
         </div>
 
         <!-- Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow p-6 text-center">
+            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
                 <div class="text-3xl mb-2">🏋️</div>
-                <div class="text-2xl font-bold text-sport-blue"><%= trainings.length %></div>
-                <div class="text-gray-500">Total Entrenamientos</div>
+                <div class="text-2xl font-bold text-[#1E3A8A]"><%= trainings.length %></div>
+                <div class="text-gray-500">Total</div>
             </div>
-            <div class="bg-white rounded-xl shadow p-6 text-center">
+            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
                 <div class="text-3xl mb-2">📅</div>
-                <div class="text-2xl font-bold text-sport-blue"><%= trainings.filter(function(t) { return new Date(t.date) >= new Date(); }).length %></div>
-                <div class="text-gray-500">Próximos Entrenamientos</div>
+                <div class="text-2xl font-bold text-[#1E3A8A]"><%= trainings.filter(function(t) { return new Date(t.date) >= new Date(); }).length %></div>
+                <div class="text-gray-500">Próximos</div>
             </div>
-            <div class="bg-white rounded-xl shadow p-6 text-center">
+            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
                 <div class="text-3xl mb-2">✅</div>
                 <div class="text-2xl font-bold text-green-600">Asistencia</div>
-                <div class="text-gray-500">Control de asistencia</div>
+                <div class="text-gray-500">Control</div>
             </div>
         </div>
 
         <!-- Tabla -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Título</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lugar</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (trainings && trainings.length > 0) { %>
-                            <% for (var i = 0; i < trainings.length; i++) { 
-                                var t = trainings[i];
-                            %>
-                                <tr class="border-t border-gray-200 hover:bg-gray-50 transition">
-                                    <td class="px-6 py-4 font-semibold"><%= t.title %></td>
-                                    <td class="px-6 py-4"><%= t.description ? t.description.substring(0, 50) + (t.description.length > 50 ? '...' : '') : '-' %></td>
-                                    <td class="px-6 py-4"><%= new Date(t.date).toLocaleDateString() %></td>
-                                    <td class="px-6 py-4"><%= t.time %></td>
-                                    <td class="px-6 py-4"><%= t.location %></td>
-                                    <td class="px-6 py-4 flex gap-2">
-                                        <button onclick="editTraining('<%= t.id %>')" class="text-yellow-500 hover:text-yellow-700">✏️</button>
-                                        <a href="/coach/trainings/<%= t.id %>/delete" class="text-red-500 hover:text-red-700" onclick="return confirm('¿Eliminar?')">🗑️</a>
-                                    </td>
-                                </tr>
-                            <% } %>
-                        <% } else { %>
-                            <tr><td colspan="6" class="text-center py-8 text-gray-500">No hay entrenamientos</td></tr>
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Lugar</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (trainings && trainings.length > 0) { %>
+                        <% for (var i = 0; i < trainings.length; i++) { var t = trainings[i]; %>
+                            <tr>
+                                <td class="font-semibold"><%= t.title %></td>
+                                <td><%= t.description ? t.description.substring(0, 50) + (t.description.length > 50 ? '...' : '') : '-' %></td>
+                                <td><%= new Date(t.date).toLocaleDateString() %></td>
+                                <td><%= t.time %></td>
+                                <td><%= t.location %></td>
+                                <td class="flex gap-2">
+                                    <button onclick="editTraining('<%= t.id %>')" class="text-yellow-500 hover:text-yellow-700">✏️</button>
+                                    <a href="/coach/trainings/<%= t.id %>/delete" class="text-red-500 hover:text-red-700" onclick="return confirm('¿Eliminar?')">🗑️</a>
+                                </td>
+                            </tr>
                         <% } %>
-                    </tbody>
-                </table>
-            </div>
+                    <% } else { %>
+                        <tr><td colspan="6" class="text-center py-8 text-gray-500">No hay entrenamientos</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Botón Volver -->
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -89,62 +85,58 @@
     <%- include('../partials/footer') %>
 
     <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md">
-            <div class="flex justify-between items-center mb-4">
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h3 id="modalTitle" class="text-xl font-bold">Agregar Entrenamiento</h3>
-                <button onclick="closeModal()" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                <button onclick="closeModal()">&times;</button>
             </div>
-            <form id="trainingForm" method="POST" action="/coach/trainings">
+            <form id="trainingForm" method="POST" action="/coach/trainings" class="modal-body">
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Título</label>
-                    <input type="text" name="title" id="title" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                    <label class="form-label">Título</label>
+                    <input type="text" name="title" id="title" class="form-input" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Descripción</label>
-                    <textarea name="description" id="description" class="w-full border border-gray-300 rounded-lg px-3 py-2" rows="3"></textarea>
+                    <label class="form-label">Descripción</label>
+                    <textarea name="description" id="description" class="form-textarea" rows="3"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-1">Fecha</label>
-                        <input type="date" name="date" id="date" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                        <label class="form-label">Fecha</label>
+                        <input type="date" name="date" id="date" class="form-input" required>
                     </div>
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-1">Hora</label>
-                        <input type="time" name="time" id="time" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                        <label class="form-label">Hora</label>
+                        <input type="time" name="time" id="time" class="form-input" required>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Lugar</label>
-                    <input type="text" name="location" id="location" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                    <label class="form-label">Lugar</label>
+                    <input type="text" name="location" id="location" class="form-input" required>
                 </div>
                 <div class="mb-3">
-                    <label class="block text-sm font-medium mb-1">Duración (minutos)</label>
-                    <input type="number" name="duration" id="duration" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Ej: 90">
+                    <label class="form-label">Duración (minutos)</label>
+                    <input type="number" name="duration" id="duration" class="form-input" placeholder="Ej: 90">
                 </div>
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition">Guardar</button>
-                <button type="button" onclick="closeModal()" class="w-full mt-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg transition">Cancelar</button>
+                <button type="submit" class="btn btn-primary w-full">Guardar</button>
+                <button type="button" onclick="closeModal()" class="btn btn-gray w-full mt-2">Cancelar</button>
             </form>
         </div>
     </div>
 
     <script>
         function openModal() {
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
+            document.getElementById('modal').classList.add('active');
             document.getElementById('modalTitle').textContent = 'Agregar Entrenamiento';
             document.getElementById('trainingForm').action = '/coach/trainings';
             document.getElementById('trainingForm').reset();
         }
-
         function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('modal').classList.remove('flex');
+            document.getElementById('modal').classList.remove('active');
         }
-
         function editTraining(id) {
             fetch('/coach/trainings/api/' + id)
-                .then(function(response) { return response.json(); })
+                .then(function(r) { return r.json(); })
                 .then(function(data) {
                     document.getElementById('modalTitle').textContent = 'Editar Entrenamiento';
                     document.getElementById('trainingForm').action = '/coach/trainings/' + id;
@@ -154,18 +146,11 @@
                     document.getElementById('time').value = data.time;
                     document.getElementById('location').value = data.location;
                     document.getElementById('duration').value = data.duration || '';
-                    document.getElementById('modal').classList.remove('hidden');
-                    document.getElementById('modal').classList.add('flex');
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    alert('Error al cargar los datos');
+                    document.getElementById('modal').classList.add('active');
                 });
         }
-
         window.onclick = function(event) {
-            var modal = document.getElementById('modal');
-            if (event.target === modal) { closeModal(); }
+            if (event.target === document.getElementById('modal')) closeModal();
         }
     </script>
 </body>

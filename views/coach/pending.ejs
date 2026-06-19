@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aprobaciones Pendientes | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
@@ -12,8 +13,8 @@
     <main class="container mx-auto px-4 py-8 max-w-7xl">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-dark-blue">⏳ Solicitudes Pendientes</h1>
-                <p class="text-gray-500 mt-1">Revisa y aprueba las solicitudes de nuevos jugadores</p>
+                <h1 class="text-3xl font-bold text-[#1E3A8A]">⏳ Solicitudes Pendientes</h1>
+                <p class="text-gray-500 mt-1">Revisa y aprueba las solicitudes</p>
             </div>
             <div class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">
                 <%= users ? users.length : 0 %> pendientes
@@ -21,23 +22,23 @@
         </div>
 
         <% if (users && users.length > 0) { %>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                            <th>Email</th>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% users.forEach(u => { %>
-                            <tr class="border-t border-gray-200 hover:bg-gray-50 transition">
-                                <td class="px-6 py-4"><%= u.email %></td>
-                                <td class="px-6 py-4 font-semibold"><%= u.full_name %></td>
-                                <td class="px-6 py-4"><%= new Date(u.created_at).toLocaleDateString() %></td>
-                                <td class="px-6 py-4 flex gap-2">
+                            <tr>
+                                <td><%= u.email %></td>
+                                <td class="font-semibold"><%= u.full_name %></td>
+                                <td><%= new Date(u.created_at).toLocaleDateString() %></td>
+                                <td class="flex gap-2">
                                     <a href="/coach/players/pending/<%= u.id %>/approve" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition" onclick="return confirm('¿Aprobar?')">✅ Aprobar</a>
                                     <a href="/coach/players/pending/<%= u.id %>/reject" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition" onclick="return confirm('¿Rechazar?')">❌ Rechazar</a>
                                 </td>
@@ -52,16 +53,15 @@
                 <button onclick="rejectAll()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition" onclick="return confirm('¿Rechazar TODAS?')">❌ Rechazar todos</button>
             </div>
         <% } else { %>
-            <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+            <div class="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
                 <div class="text-6xl mb-4">✅</div>
                 <h3 class="text-xl font-bold text-green-600 mb-2">No hay solicitudes pendientes</h3>
                 <p class="text-gray-500">Todas las solicitudes han sido procesadas</p>
             </div>
         <% } %>
 
-        <!-- Botón Volver -->
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -73,20 +73,13 @@
         function approveAll() {
             if (confirm('¿Aprobar TODAS las solicitudes?')) {
                 fetch('/coach/players/pending/approve-all', { method: 'POST' })
-                    .then(function(response) {
-                        if (response.ok) { location.reload(); }
-                        else { alert('Error'); }
-                    });
+                    .then(function(r) { if (r.ok) location.reload(); });
             }
         }
-
         function rejectAll() {
             if (confirm('¿Rechazar TODAS las solicitudes?')) {
                 fetch('/coach/players/pending/reject-all', { method: 'POST' })
-                    .then(function(response) {
-                        if (response.ok) { location.reload(); }
-                        else { alert('Error'); }
-                    });
+                    .then(function(r) { if (r.ok) location.reload(); });
             }
         }
     </script>

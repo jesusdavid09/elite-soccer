@@ -1,5 +1,6 @@
 <nav class="navbar">
     <div class="navbar-container">
+        <!-- Logo -->
         <div class="navbar-logo">
             <span class="crest">⚽</span>
             <div>
@@ -7,25 +8,167 @@
                 <div class="logo-sub">ACADEMY</div>
             </div>
         </div>
-        <div class="navbar-menu">
-            <a href="/coach/dashboard">🏠 Inicio</a>
-            <a href="/coach/players">👥 Jugadores</a>
-            <a href="/coach/trainings">🏋️ Entrenamientos</a>
-            <a href="/coach/matches">⚽ Partidos</a>
-            <a href="/coach/announcements">📢 Anuncios</a>
-            <a href="/coach/attendance">✅ Asistencia</a>
 
-            <% if (user) { %>
-                <div class="user-area">
-                    <span class="user-name"><%= user.full_name %></span>
-                    <a href="/logout" class="logout-link">Salir</a>
-                </div>
+        <!-- Menú -->
+        <div class="navbar-menu">
+            <% if (user && user.role === 'coach') { %>
+                <!-- Menú para ENTRENADOR -->
+                <a href="/coach/dashboard">🏠 Inicio</a>
+                <a href="/coach/players">👥 Jugadores</a>
+                <a href="/coach/trainings">🏋️ Entrenamientos</a>
+                <a href="/coach/matches">⚽ Partidos</a>
+                <a href="/coach/announcements">📢 Anuncios</a>
+                <a href="/coach/attendance">✅ Asistencia</a>
+            <% } else if (user && user.role === 'player') { %>
+                <!-- Menú para JUGADOR -->
+                <a href="/player/dashboard">🏠 Inicio</a>
+                <a href="/player/attendance">✅ Asistencia</a>
+                <a href="/player/announcements">📢 Anuncios</a>
+                <a href="/player/profile">👤 Mi Perfil</a>
             <% } else { %>
-                <div class="user-area">
-                    <a href="/login" class="logout-link">Iniciar Sesión</a>
-                    <a href="/register" class="logout-link">Registrarse</a>
-                </div>
+                <!-- Menú para usuarios NO autenticados -->
+                <a href="/">🏠 Inicio</a>
+                <a href="/login">🔑 Iniciar Sesión</a>
+                <a href="/register">📝 Registrarse</a>
+            <% } %>
+        </div>
+
+        <!-- Usuario -->
+        <div class="user-area">
+            <% if (user) { %>
+                <span class="user-name">
+                    <%= user.full_name %>
+                    <span class="text-xs text-white/60 ml-1">
+                        (<%= user.role === 'coach' ? 'Entrenador' : 'Jugador' %>)
+                    </span>
+                </span>
+                <a href="/logout" class="logout-link">🚪 Salir</a>
+            <% } else { %>
+                <a href="/login" class="logout-link">🔑 Iniciar Sesión</a>
             <% } %>
         </div>
     </div>
 </nav>
+
+<style>
+    .navbar {
+        background: #1E3A8A;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-bottom: 3px solid #FFFFFF;
+    }
+
+    .navbar-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .navbar-logo .crest {
+        font-size: 2rem;
+        color: #FFFFFF;
+    }
+
+    .navbar-logo .logo-text {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        font-size: 1.3rem;
+        color: #FFFFFF;
+        letter-spacing: 1px;
+    }
+
+    .navbar-logo .logo-sub {
+        font-size: 0.6rem;
+        color: #3B82F6;
+        letter-spacing: 2px;
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .navbar-menu a {
+        color: #FFFFFF;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+    }
+
+    .navbar-menu a:hover {
+        border-bottom-color: #FFFFFF;
+    }
+
+    .user-area {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-area .user-name {
+        color: #FFFFFF;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .user-area .logout-link {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        color: #FFFFFF;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .user-area .logout-link:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ============== RESPONSIVE ============== */
+    @media (max-width: 1024px) {
+        .navbar-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .navbar-menu {
+            justify-content: center;
+            gap: 1rem;
+        }
+        .navbar-menu a {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 0.75rem 1rem;
+        }
+        .navbar-menu {
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .user-area .user-name {
+            font-size: 0.8rem;
+        }
+    }
+</style>

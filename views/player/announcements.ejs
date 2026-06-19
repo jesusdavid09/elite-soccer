@@ -5,32 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anuncios | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
-    
+
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8">📢 Anuncios del Equipo</h1>
+        <h1 class="text-3xl font-bold text-[#1E3A8A] mb-8">📢 Anuncios del Equipo</h1>
 
         <% if (announcements && announcements.length > 0) { %>
             <% announcements.forEach(a => { %>
-                <div class="bg-white rounded-xl shadow p-6 mb-4">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-4 border border-gray-200 hover:shadow-xl transition">
                     <h3 class="text-xl font-bold text-gray-800"><%= a.title %></h3>
                     <p class="text-gray-600 mt-2"><%= a.content %></p>
-                    <p class="text-sm text-gray-400 mt-3">Publicado por <%= a.author_name %> - <%= new Date(a.created_at).toLocaleString() %></p>
+                    <div class="flex items-center gap-3 mt-4 pt-4 border-t border-gray-200">
+                        <div class="w-8 h-8 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            <%= a.author_name ? a.author_name.charAt(0).toUpperCase() : 'A' %>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold"><%= a.author_name || 'Administrador' %></p>
+                            <p class="text-xs text-gray-400"><%= new Date(a.created_at).toLocaleString() %></p>
+                        </div>
+                    </div>
                 </div>
             <% }); %>
         <% } else { %>
-            <div class="bg-white rounded-xl shadow p-8 text-center text-gray-500">
-                No hay anuncios publicados
+            <div class="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
+                <div class="text-6xl mb-4">📢</div>
+                <h3 class="text-xl font-bold mb-2">No hay anuncios publicados</h3>
+                <p class="text-gray-500">Aún no hay novedades del club</p>
             </div>
         <% } %>
-        
+
         <div class="mt-8 text-center">
-            <a href="/player/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">← Volver</a>
+            <a href="/player/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
+                ← Volver al Dashboard
+            </a>
         </div>
     </main>
-    
+
     <%- include('../partials/footer') %>
 </body>
 </html>

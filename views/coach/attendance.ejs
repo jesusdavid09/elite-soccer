@@ -5,62 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asistencia | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <h1 class="text-3xl font-bold text-dark-blue mb-2">✅ Control de Asistencia</h1>
+        <h1 class="text-3xl font-bold text-[#1E3A8A] mb-2">✅ Control de Asistencia</h1>
         <p class="text-gray-500 mb-8">Gestiona la asistencia de los jugadores</p>
 
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
             <div class="flex flex-col md:flex-row gap-4 items-end">
                 <div class="flex-1">
-                    <label class="block text-sm font-medium mb-1">Seleccionar Evento</label>
-                    <select id="eventSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <label class="form-label">Seleccionar Evento</label>
+                    <select id="eventSelect" class="form-select">
                         <option value="">-- Seleccionar --</option>
                         <optgroup label="🏋️ Entrenamientos">
-                            <% for (var i = 0; i < trainings.length; i++) { 
-                                var t = trainings[i];
-                            %>
-                                <option value="training_<%= t.id %>">
-                                    <%= t.title %> - <%= new Date(t.date).toLocaleDateString() %>
-                                </option>
+                            <% for (var i = 0; i < trainings.length; i++) { var t = trainings[i]; %>
+                                <option value="training_<%= t.id %>"><%= t.title %> - <%= new Date(t.date).toLocaleDateString() %></option>
                             <% } %>
                         </optgroup>
                         <optgroup label="⚽ Partidos">
-                            <% for (var i = 0; i < matches.length; i++) { 
-                                var m = matches[i];
-                            %>
-                                <option value="match_<%= m.id %>">
-                                    vs <%= m.opponent %> - <%= new Date(m.date).toLocaleDateString() %>
-                                </option>
+                            <% for (var i = 0; i < matches.length; i++) { var m = matches[i]; %>
+                                <option value="match_<%= m.id %>">vs <%= m.opponent %> - <%= new Date(m.date).toLocaleDateString() %></option>
                             <% } %>
                         </optgroup>
                     </select>
                 </div>
                 <div>
-                    <button id="loadEventBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">Cargar</button>
+                    <button id="loadEventBtn" class="btn btn-primary">Cargar</button>
                 </div>
             </div>
         </div>
 
-        <div id="preEventSection" class="bg-white rounded-xl shadow-lg p-6 mb-8" style="display: none;">
+        <div id="preEventSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200" style="display: none;">
             <h2 class="text-xl font-bold mb-4">📋 Confirmación</h2>
             <div id="preEventList" class="space-y-3"></div>
         </div>
 
-        <div id="postEventSection" class="bg-white rounded-xl shadow-lg p-6" style="display: none;">
+        <div id="postEventSection" class="bg-white rounded-xl shadow-lg p-6 border border-gray-200" style="display: none;">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold">✅ Asistencia Real</h2>
-                <button id="saveAttendanceBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">💾 Guardar</button>
+                <button id="saveAttendanceBtn" class="btn btn-success">💾 Guardar</button>
             </div>
             <div id="postEventList" class="space-y-3"></div>
         </div>
 
-        <!-- Botón Volver -->
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -68,17 +60,17 @@
 
     <%- include('../partials/footer') %>
 
-    <!-- Modal -->
-    <div id="justificationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md">
-            <div class="flex justify-between items-center mb-4">
+    <!-- Modal Justificación -->
+    <div id="justificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h3 class="text-xl font-bold">Justificación</h3>
-                <button onclick="closeJustificationModal()" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                <button onclick="closeJustificationModal()">&times;</button>
             </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-sm font-medium mb-1">Motivo</label>
-                    <select id="reasonSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Motivo</label>
+                    <select id="reasonSelect" class="form-select">
                         <option value="">Seleccionar</option>
                         <option value="Estudio">📚 Estudio</option>
                         <option value="Trabajo">💼 Trabajo</option>
@@ -88,13 +80,13 @@
                         <option value="Otro">📝 Otro</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-1">Explicación</label>
-                    <textarea id="justificationText" class="w-full border border-gray-300 rounded-lg px-3 py-2" rows="3" placeholder="Explicación..."></textarea>
+                <div class="mb-3">
+                    <label class="form-label">Explicación</label>
+                    <textarea id="justificationText" class="form-textarea" rows="3" placeholder="Explicación..."></textarea>
                 </div>
-                <div class="flex gap-3 mt-4">
-                    <button onclick="closeJustificationModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg transition">Cancelar</button>
-                    <button onclick="submitJustification()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">Enviar</button>
+                <div class="flex gap-3">
+                    <button onclick="closeJustificationModal()" class="btn btn-gray flex-1">Cancelar</button>
+                    <button onclick="submitJustification()" class="btn btn-primary flex-1">Enviar</button>
                 </div>
             </div>
         </div>
@@ -185,8 +177,7 @@
 
         function askJustification(playerId, status) {
             pendingJustification = { playerId: playerId, status: status };
-            document.getElementById('justificationModal').classList.remove('hidden');
-            document.getElementById('justificationModal').classList.add('flex');
+            document.getElementById('justificationModal').classList.add('active');
         }
 
         function submitJustification() {
@@ -213,8 +204,7 @@
         }
 
         function closeJustificationModal() {
-            document.getElementById('justificationModal').classList.add('hidden');
-            document.getElementById('justificationModal').classList.remove('flex');
+            document.getElementById('justificationModal').classList.remove('active');
             document.getElementById('reasonSelect').value = '';
             document.getElementById('justificationText').value = '';
             pendingJustification = { playerId: null, status: null };
@@ -239,8 +229,7 @@
         });
 
         window.onclick = function(event) {
-            var modal = document.getElementById('justificationModal');
-            if (event.target === modal) { closeJustificationModal(); }
+            if (event.target === document.getElementById('justificationModal')) closeJustificationModal();
         }
     </script>
 </body>

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elite Soccer Academy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -24,15 +25,44 @@
         .hero-content {
             animation: fadeInUp 0.8s ease;
         }
-        .bg-dark-blue { background-color: #0A2540; }
-        .text-sport-blue { color: #1E40AF; }
-        .from-dark-blue { --tw-gradient-from: #0A2540; }
-        .to-sport-blue { --tw-gradient-to: #1E40AF; }
+        .feature-card {
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #1E3A8A;
+        }
+        .btn-hero {
+            background: #1E3A8A;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-hero:hover {
+            background: #172554;
+            transform: scale(1.05);
+        }
+        .btn-hero-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            transition: all 0.3s ease;
+        }
+        .btn-hero-outline:hover {
+            background: white;
+            color: #1E3A8A;
+            transform: scale(1.05);
+        }
+        .bg-dark-blue { background-color: #1E3A8A; }
+        .text-sport-blue { color: #1E3A8A; }
+        .from-dark-blue { --tw-gradient-from: #1E3A8A; }
+        .to-sport-blue { --tw-gradient-to: #172554; }
     </style>
 </head>
 <body>
     <!-- Hero Section -->
-    <div class="relative min-h-screen bg-gradient-to-br from-dark-blue via-sport-blue to-bright-blue overflow-hidden">
+    <div class="relative min-h-screen bg-gradient-to-br from-[#1E3A8A] to-[#172554] overflow-hidden">
         <div class="absolute inset-0 bg-black/30 z-0"></div>
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522778119026-d364fcece646?w=1600')] bg-cover bg-center opacity-20 z-0"></div>
         
@@ -59,10 +89,10 @@
                 
                 <!-- Botones -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/login" class="bg-white text-sport-blue px-8 py-3 rounded-full font-semibold hover:scale-105 transition transform shadow-lg">
+                    <a href="/login" class="btn-hero px-8 py-3 rounded-full font-semibold shadow-lg">
                         Iniciar Sesión
                     </a>
-                    <a href="/register" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-sport-blue transition transform hover:scale-105">
+                    <a href="/register" class="btn-hero-outline px-8 py-3 rounded-full font-semibold">
                         Registrarse
                     </a>
                 </div>
@@ -80,25 +110,25 @@
     <!-- Sección de características -->
     <div class="py-20 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-dark-blue mb-4 title-font">¿POR QUÉ ELEGIRNOS?</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#1E3A8A] mb-4 title-font">¿POR QUÉ ELEGIRNOS?</h2>
             <p class="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
                 Somos una academia comprometida con la formación integral de futbolistas
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-6 bg-gray-50 rounded-2xl shadow-lg hover:transform hover:-translate-y-2 transition-all duration-300">
+                <div class="feature-card text-center p-6 bg-gray-50 rounded-2xl shadow-lg">
                     <div class="text-5xl mb-4">🏆</div>
-                    <h3 class="text-xl font-bold mb-2">Metodología Profesional</h3>
+                    <h3 class="text-xl font-bold mb-2 text-[#1E3A8A]">Metodología Profesional</h3>
                     <p class="text-gray-500">Entrenamientos basados en las mejores academias del mundo</p>
                 </div>
-                <div class="text-center p-6 bg-gray-50 rounded-2xl shadow-lg hover:transform hover:-translate-y-2 transition-all duration-300">
+                <div class="feature-card text-center p-6 bg-gray-50 rounded-2xl shadow-lg">
                     <div class="text-5xl mb-4">👥</div>
-                    <h3 class="text-xl font-bold mb-2">Cuerpo Técnico Calificado</h3>
+                    <h3 class="text-xl font-bold mb-2 text-[#1E3A8A]">Cuerpo Técnico Calificado</h3>
                     <p class="text-gray-500">Profesionales con experiencia y pasión por el fútbol</p>
                 </div>
-                <div class="text-center p-6 bg-gray-50 rounded-2xl shadow-lg hover:transform hover:-translate-y-2 transition-all duration-300">
+                <div class="feature-card text-center p-6 bg-gray-50 rounded-2xl shadow-lg">
                     <div class="text-5xl mb-4">⚽</div>
-                    <h3 class="text-xl font-bold mb-2">Instalaciones de Primera</h3>
+                    <h3 class="text-xl font-bold mb-2 text-[#1E3A8A]">Instalaciones de Primera</h3>
                     <p class="text-gray-500">Canchas y equipamiento de alta calidad</p>
                 </div>
             </div>
@@ -106,18 +136,18 @@
     </div>
 
     <!-- Llamada a la acción -->
-    <div class="py-20 bg-gradient-to-r from-dark-blue to-sport-blue">
+    <div class="py-20 bg-gradient-to-r from-[#1E3A8A] to-[#172554]">
         <div class="container mx-auto px-4 text-center text-white">
             <h2 class="text-3xl md:text-4xl font-bold mb-4 title-font">¿LISTO PARA COMENZAR?</h2>
             <p class="text-lg mb-8 opacity-90">Únete a Elite Soccer Academy y lleva tu talento al siguiente nivel</p>
-            <a href="/register" class="inline-block bg-white text-sport-blue px-8 py-3 rounded-full font-semibold hover:scale-105 transition transform shadow-lg">
+            <a href="/register" class="inline-block bg-white text-[#1E3A8A] px-8 py-3 rounded-full font-semibold hover:scale-105 transition transform shadow-lg">
                 Comienza ahora
             </a>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark-blue text-white py-8">
+    <footer class="bg-[#172554] text-white py-8">
         <div class="container mx-auto px-4 text-center">
             <div class="flex justify-center space-x-6 mb-4">
                 <span class="text-2xl">⚽</span>
@@ -125,7 +155,7 @@
                 <span class="text-2xl">🎯</span>
             </div>
             <p class="text-sm text-gray-300">
-                &copy; 2024 Elite Soccer Academy - Disciplina • Compromiso • Excelencia
+                &copy; 2025 Elite Soccer Academy - Disciplina • Compromiso • Excelencia
             </p>
             <p class="text-xs text-gray-400 mt-2">
                 Todos los derechos reservados

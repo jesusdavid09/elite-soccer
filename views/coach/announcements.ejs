@@ -16,8 +16,8 @@
                 <h1 class="text-3xl font-bold text-[#1E3A8A]">📢 Anuncios</h1>
                 <p class="text-gray-500 mt-1">Mantén informado a todo el equipo</p>
             </div>
-            <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
-                ➕ Crear
+            <button onclick="openAnnouncementModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                ➕ Crear Anuncio
             </button>
         </div>
 
@@ -48,7 +48,7 @@
                     <div class="text-6xl mb-4">📢</div>
                     <h3 class="text-xl font-bold mb-2">No hay anuncios</h3>
                     <p class="text-gray-500">Comienza creando tu primer anuncio</p>
-                    <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg mt-4 transition">➕ Crear</button>
+                    <button onclick="openAnnouncementModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg mt-4 transition">➕ Crear</button>
                 </div>
             <% } %>
         </div>
@@ -60,14 +60,12 @@
         </div>
     </main>
 
-    <%- include('../partials/footer') %>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
+    <!-- ===== MODAL ANUNCIOS ===== -->
+    <div id="announcementModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="text-xl font-bold">Crear Anuncio</h3>
-                <button onclick="closeModal()">&times;</button>
+                <button onclick="closeAnnouncementModal()">&times;</button>
             </div>
             <form method="POST" action="/coach/announcements" class="modal-body">
                 <div class="mb-3">
@@ -79,20 +77,39 @@
                     <textarea name="content" class="form-textarea" rows="5" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary w-full">Publicar</button>
-                <button type="button" onclick="closeModal()" class="btn btn-gray w-full mt-2">Cancelar</button>
+                <button type="button" onclick="closeAnnouncementModal()" class="btn btn-gray w-full mt-2">Cancelar</button>
             </form>
         </div>
     </div>
 
+    <%- include('../partials/footer') %>
+
+    <style>
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1100; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 20px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { background: #1E3A8A; color: white; padding: 1.25rem 1.5rem; border-radius: 20px 20px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header button { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .modal-body { padding: 1.5rem; }
+        .btn-primary { background: #1E3A8A; color: white; padding: 0.6rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; font-weight: 600; }
+        .btn-primary:hover { background: #172554; }
+        .btn-gray { background: #4B5563; color: white; padding: 0.6rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; font-weight: 600; }
+        .btn-gray:hover { background: #374151; }
+        .form-input, .form-textarea { width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E7EB; border-radius: 12px; transition: all 0.3s; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: #1E3A8A; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #111827; font-size: 0.9rem; }
+    </style>
+
     <script>
-        function openModal() {
-            document.getElementById('modal').classList.add('active');
+        function openAnnouncementModal() {
+            document.getElementById('announcementModal').classList.add('active');
         }
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.remove('active');
         }
         window.onclick = function(event) {
-            if (event.target === document.getElementById('modal')) closeModal();
+            var modal = document.getElementById('announcementModal');
+            if (event.target === modal) closeAnnouncementModal();
         }
     </script>
 </body>

@@ -21,7 +21,6 @@
             </button>
         </div>
 
-        <!-- Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
                 <div class="text-3xl mb-2">👥</div>
@@ -40,7 +39,6 @@
             </div>
         </div>
 
-        <!-- Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <% if (players && players.length > 0) { %>
                 <% for (var i = 0; i < players.length; i++) { var player = players[i]; %>
@@ -89,9 +87,7 @@
         </div>
     </main>
 
-    <%- include('../partials/footer') %>
-
-    <!-- Modal -->
+    <!-- ===== MODAL ===== -->
     <div id="playerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -133,20 +129,120 @@
         </div>
     </div>
 
+    <%- include('../partials/footer') %>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            background: #1E3A8A;
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .btn-primary {
+            background: #1E3A8A;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: #172554;
+        }
+        .btn-gray {
+            background: #4B5563;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-gray:hover {
+            background: #374151;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.9rem;
+        }
+    </style>
+
     <script>
+        // ========== FUNCIONES DEL MODAL ==========
         function openModal() {
-            document.getElementById('playerModal').classList.add('active');
+            var modal = document.getElementById('playerModal');
+            modal.classList.add('active');
             document.getElementById('modalTitle').textContent = 'Agregar Jugador';
             document.getElementById('playerForm').action = '/coach/players';
             document.getElementById('playerId').value = '';
             document.getElementById('playerForm').reset();
         }
+
         function closeModal() {
-            document.getElementById('playerModal').classList.remove('active');
+            var modal = document.getElementById('playerModal');
+            modal.classList.remove('active');
         }
+
         function editPlayer(id) {
             fetch('/coach/players/api/' + id)
-                .then(function(r) { return r.json(); })
+                .then(function(response) { return response.json(); })
                 .then(function(data) {
                     document.getElementById('modalTitle').textContent = 'Editar Jugador';
                     document.getElementById('playerId').value = data.id;
@@ -156,11 +252,20 @@
                     document.querySelector('[name="age"]').value = data.age;
                     document.querySelector('[name="phone"]').value = data.phone || '';
                     document.getElementById('playerForm').action = '/coach/players/' + data.id;
-                    document.getElementById('playerModal').classList.add('active');
+                    openModal();
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    alert('Error al cargar los datos del jugador');
                 });
         }
+
+        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
-            if (event.target === document.getElementById('playerModal')) closeModal();
+            var modal = document.getElementById('playerModal');
+            if (event.target === modal) {
+                closeModal();
+            }
         }
     </script>
 </body>

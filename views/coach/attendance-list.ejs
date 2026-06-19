@@ -3,127 +3,549 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Asistencia | Elite Soccer</title>
+    <title>Asistencia | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <h1 class="text-3xl font-bold text-dark-blue mb-8">📋 Lista de Asistencia</h1>
+        <!-- Contenido -->
+        <h1 class="text-3xl font-bold text-[#1E3A8A] mb-2">✅ Control de Asistencia</h1>
+        <p class="text-gray-500 mb-8">Gestiona la asistencia de los jugadores</p>
 
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <!-- 🔥 BOTÓN AGREGAR JUGADOR -->
+        <div class="mb-6">
+            <button onclick="openAddPlayerModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold transition flex items-center gap-2 shadow-md">
+                <span class="text-xl">➕</span> Agregar Jugador
+            </button>
+        </div>
+
+        <!-- Selector -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
             <div class="flex flex-col md:flex-row gap-4 items-end">
                 <div class="flex-1">
-                    <label class="block text-sm font-medium mb-1">Seleccionar evento</label>
-                    <select id="eventSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <label class="form-label">Seleccionar Evento</label>
+                    <select id="eventSelect" class="form-select w-full border rounded-lg p-2">
                         <option value="">-- Seleccionar --</option>
                         <optgroup label="🏋️ Entrenamientos">
-                            <% for (var i = 0; i < trainings.length; i++) { 
-                                var t = trainings[i];
-                            %>
-                                <option value="training_<%= t.id %>">
-                                    <%= t.title %> - <%= new Date(t.date).toLocaleDateString() %>
-                                </option>
+                            <% for (var i = 0; i < trainings.length; i++) { var t = trainings[i]; %>
+                                <option value="training_<%= t.id %>"><%= t.title %> - <%= new Date(t.date).toLocaleDateString() %></option>
                             <% } %>
                         </optgroup>
                         <optgroup label="⚽ Partidos">
-                            <% for (var i = 0; i < matches.length; i++) { 
-                                var m = matches[i];
-                            %>
-                                <option value="match_<%= m.id %>">
-                                    vs <%= m.opponent %> - <%= new Date(m.date).toLocaleDateString() %>
-                                </option>
+                            <% for (var i = 0; i < matches.length; i++) { var m = matches[i]; %>
+                                <option value="match_<%= m.id %>">vs <%= m.opponent %> - <%= new Date(m.date).toLocaleDateString() %></option>
                             <% } %>
                         </optgroup>
                     </select>
                 </div>
                 <div>
-                    <button id="loadEventBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">Cargar Asistencia</button>
+                    <button id="loadEventBtn" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition">Cargar</button>
                 </div>
             </div>
         </div>
 
-        <div id="attendanceList" class="bg-white rounded-xl shadow-lg p-6">
-            <p class="text-gray-500 text-center py-8">Selecciona un evento para ver las confirmaciones</p>
+        <div id="preEventSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200" style="display: none;">
+            <h2 class="text-xl font-bold mb-4">📋 Confirmación</h2>
+            <div id="preEventList" class="space-y-3"></div>
+        </div>
+
+        <div id="postEventSection" class="bg-white rounded-xl shadow-lg p-6 border border-gray-200" style="display: none;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">✅ Asistencia Real</h2>
+                <button id="saveAttendanceBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">💾 Guardar</button>
+            </div>
+            <div id="postEventList" class="space-y-3"></div>
         </div>
 
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
                 ← Volver al Dashboard
             </a>
         </div>
     </main>
 
+    <!-- 🔥 MODAL AGREGAR JUGADOR -->
+    <div id="addPlayerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">➕ Agregar Nuevo Jugador</h3>
+                <button onclick="closeAddPlayerModal()" class="text-2xl hover:text-gray-700">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="form-label font-semibold">Nombre Completo *</label>
+                    <input type="text" id="playerFullName" class="form-input w-full border rounded-lg p-2 mt-1" placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label font-semibold">Posición *</label>
+                    <select id="playerPosition" class="form-select w-full border rounded-lg p-2 mt-1">
+                        <option value="Portero">🧤 Portero</option>
+                        <option value="Defensa">🛡️ Defensa</option>
+                        <option value="Mediocampista">⚡ Mediocampista</option>
+                        <option value="Delantero">🎯 Delantero</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label font-semibold">Número de Camiseta *</label>
+                    <input type="number" id="playerJersey" class="form-input w-full border rounded-lg p-2 mt-1" placeholder="Ej: 10" min="1" max="99">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label font-semibold">Email (opcional)</label>
+                    <input type="email" id="playerEmail" class="form-input w-full border rounded-lg p-2 mt-1" placeholder="Ej: juan@email.com">
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button onclick="closeAddPlayerModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1 transition">Cancelar</button>
+                    <button onclick="submitAddPlayer()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex-1 transition">✅ Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL JUSTIFICACIÓN -->
+    <div id="justificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Justificación</h3>
+                <button onclick="closeJustificationModal()" class="text-2xl hover:text-gray-700">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label font-semibold">Motivo</label>
+                    <select id="reasonSelect" class="form-select w-full border rounded-lg p-2 mt-1">
+                        <option value="">Seleccionar</option>
+                        <option value="Estudio">📚 Estudio</option>
+                        <option value="Trabajo">💼 Trabajo</option>
+                        <option value="Enfermedad">🤒 Enfermedad</option>
+                        <option value="Viaje">✈️ Viaje</option>
+                        <option value="Compromiso familiar">👨‍👩‍👧 Compromiso</option>
+                        <option value="Otro">📝 Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label font-semibold">Explicación</label>
+                    <textarea id="justificationText" class="form-textarea w-full border rounded-lg p-2 mt-1" rows="3" placeholder="Explicación..."></textarea>
+                </div>
+                <div class="flex gap-3 mt-4">
+                    <button onclick="closeJustificationModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1 transition">Cancelar</button>
+                    <button onclick="submitJustification()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg flex-1 transition">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%- include('../partials/footer') %>
 
+    <style>
+        /* Estilos para modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        /* Estilos para filas de jugadores */
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .player-row:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+        .attendance-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .attendance-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .attendance-yes {
+            background: #22C55E;
+            color: white;
+        }
+        .attendance-yes:hover {
+            background: #16a34a;
+            transform: scale(1.05);
+        }
+        .attendance-maybe {
+            background: #F59E0B;
+            color: white;
+        }
+        .attendance-maybe:hover {
+            background: #d97706;
+            transform: scale(1.05);
+        }
+        .attendance-no {
+            background: #EF4444;
+            color: white;
+        }
+        .attendance-no:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-confirmed {
+            background: #22C55E;
+            color: white;
+        }
+        .status-maybe {
+            background: #F59E0B;
+            color: white;
+        }
+        .status-absent {
+            background: #EF4444;
+            color: white;
+        }
+    </style>
+
     <script>
+        var currentEventType = null;
+        var currentEventId = null;
+        var currentPlayers = [];
+        var pendingJustification = { playerId: null, status: null };
+
+        // 🔥 FUNCIONES PARA AGREGAR JUGADOR
+        function openAddPlayerModal() {
+            document.getElementById('addPlayerModal').classList.add('active');
+            // Limpiar campos
+            document.getElementById('playerFullName').value = '';
+            document.getElementById('playerJersey').value = '';
+            document.getElementById('playerEmail').value = '';
+            document.getElementById('playerPosition').value = 'Portero';
+        }
+
+        function closeAddPlayerModal() {
+            document.getElementById('addPlayerModal').classList.remove('active');
+        }
+
+        function submitAddPlayer() {
+            var fullName = document.getElementById('playerFullName').value.trim();
+            var position = document.getElementById('playerPosition').value;
+            var jersey = document.getElementById('playerJersey').value;
+            var email = document.getElementById('playerEmail').value.trim();
+
+            // Validaciones
+            if (!fullName) {
+                alert('⚠️ El nombre completo es obligatorio');
+                document.getElementById('playerFullName').focus();
+                return;
+            }
+            if (!jersey || jersey < 1 || jersey > 99) {
+                alert('⚠️ Ingresa un número de camiseta válido (1-99)');
+                document.getElementById('playerJersey').focus();
+                return;
+            }
+
+            // Deshabilitar botón para evitar doble clic
+            var submitBtn = event.target;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Guardando...';
+
+            // Enviar datos al servidor
+            fetch('/api/players/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    full_name: fullName,
+                    position: position,
+                    jersey_number: parseInt(jersey),
+                    email: email || null
+                })
+            })
+            .then(function(response) { 
+                if (!response.ok) {
+                    throw new Error('Error en el servidor');
+                }
+                return response.json(); 
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Jugador agregado correctamente');
+                    closeAddPlayerModal();
+                    // Recargar la lista de jugadores si hay un evento cargado
+                    if (currentEventType && currentEventId) {
+                        document.getElementById('loadEventBtn').click();
+                    }
+                } else {
+                    alert('❌ Error: ' + (data.message || 'No se pudo agregar el jugador'));
+                }
+            })
+            .catch(function(error) {
+                alert('❌ Error de conexión: ' + error.message);
+            })
+            .finally(function() {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Agregar';
+            });
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('addPlayerModal')) {
+                closeAddPlayerModal();
+            }
+            if (event.target === document.getElementById('justificationModal')) {
+                closeJustificationModal();
+            }
+        }
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (document.getElementById('addPlayerModal').classList.contains('active')) {
+                    closeAddPlayerModal();
+                }
+                if (document.getElementById('justificationModal').classList.contains('active')) {
+                    closeJustificationModal();
+                }
+            }
+        });
+
+        // 🔥 FUNCIONES EXISTENTES (Cargar evento, asistencia, etc.)
         document.getElementById('loadEventBtn').addEventListener('click', function() {
             var select = document.getElementById('eventSelect');
             var value = select.value;
-            if (!value) { alert('Selecciona un evento'); return; }
+            if (!value) { 
+                alert('⚠️ Selecciona un evento primero'); 
+                return; 
+            }
             var parts = value.split('_');
             var type = parts[0];
             var id = parts[1];
-            var typeName = type === 'training' ? 'Entrenamiento' : 'Partido';
-            var eventName = select.options[select.selectedIndex].text;
+            currentEventType = type;
+            currentEventId = id;
 
-            var attendanceDiv = document.getElementById('attendanceList');
-            attendanceDiv.innerHTML = '<p class="text-center text-gray-500 py-4">Cargando...</p>';
+            var preEventDiv = document.getElementById('preEventSection');
+            var preEventList = document.getElementById('preEventList');
+            preEventDiv.style.display = 'block';
+            preEventList.innerHTML = '<p class="text-center text-gray-500 py-4">⏳ Cargando...</p>';
 
-            fetch('/coach/attendance/list?type=' + type + '&id=' + id)
+            fetch('/api/players/list')
                 .then(function(response) { return response.json(); })
-                .then(function(data) {
-                    var confirmed = data.filter(function(a) { return a.status === 'yes'; });
-                    var notConfirmed = data.filter(function(a) { return a.status === 'no'; });
-                    var maybe = data.filter(function(a) { return a.status === 'maybe'; });
-
+                .then(function(players) {
+                    currentPlayers = players;
+                    return fetch('/api/attendance/confirmations?type=' + type + '&id=' + id);
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(confirmations) {
+                    var confirmMap = new Map();
+                    confirmations.forEach(function(c) { confirmMap.set(c.player_id, c); });
                     var html = '';
-                    html += '<div class="flex gap-4 mb-6 flex-wrap">';
-                    html += '<span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">✅ Confirmados: ' + confirmed.length + '</span>';
-                    html += '<span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">🟡 Tal vez: ' + maybe.length + '</span>';
-                    html += '<span class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold">❌ Ausentes: ' + notConfirmed.length + '</span>';
-                    html += '<span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold">👥 Total: ' + data.length + '</span>';
-                    html += '</div>';
-                    html += '<h3 class="text-xl font-bold mb-4">📋 ' + typeName + ': ' + eventName + '</h3>';
-
-                    if (confirmed.length > 0) {
-                        html += '<div class="mb-6"><h4 class="font-bold text-green-600 mb-3">✅ Confirmaron (' + confirmed.length + ')</h4>';
-                        for (var i = 0; i < confirmed.length; i++) {
-                            html += '<div class="flex justify-between p-3 bg-green-50 rounded-lg mb-2">';
-                            html += '<span class="font-semibold">' + confirmed[i].player_name + ' <span class="text-gray-500">#' + confirmed[i].jersey_number + '</span></span>';
-                            html += '<span class="text-green-600">✅ Confirmado</span></div>';
-                        }
-                        html += '</div>';
-                    }
-
-                    if (maybe.length > 0) {
-                        html += '<div class="mb-6"><h4 class="font-bold text-yellow-600 mb-3">🟡 No están seguros (' + maybe.length + ')</h4>';
-                        for (var i = 0; i < maybe.length; i++) {
-                            html += '<div class="flex justify-between p-3 bg-yellow-50 rounded-lg mb-2">';
-                            html += '<span class="font-semibold">' + maybe[i].player_name + ' <span class="text-gray-500">#' + maybe[i].jersey_number + '</span></span>';
-                            html += '<span class="text-yellow-600">🟡 Tal vez</span></div>';
-                        }
-                        html += '</div>';
-                    }
-
-                    if (notConfirmed.length > 0) {
-                        html += '<div><h4 class="font-bold text-red-600 mb-3">❌ No asistirán (' + notConfirmed.length + ')</h4>';
-                        for (var i = 0; i < notConfirmed.length; i++) {
-                            html += '<div class="p-3 bg-red-50 rounded-lg mb-2">';
-                            html += '<div class="flex justify-between">';
-                            html += '<span class="font-semibold">' + notConfirmed[i].player_name + ' <span class="text-gray-500">#' + notConfirmed[i].jersey_number + '</span></span>';
-                            html += '<span class="text-red-600">❌ Ausente</span></div>';
-                            if (notConfirmed[i].justification) {
-                                html += '<p class="text-sm text-gray-600 mt-1">📝 Justificación: ' + notConfirmed[i].justification + '</p>';
+                    if (currentPlayers.length === 0) {
+                        html = '<p class="text-center text-gray-500 py-4">📭 No hay jugadores registrados</p>';
+                    } else {
+                        for (var i = 0; i < currentPlayers.length; i++) {
+                            var player = currentPlayers[i];
+                            var conf = confirmMap.get(player.id);
+                            html += '<div class="player-row">';
+                            html += '<div><div class="font-bold">' + player.full_name + ' <span class="text-gray-500">#' + player.jersey_number + '</span></div>';
+                            html += '<div class="text-sm text-gray-500">' + player.position + '</div></div>';
+                            html += '<div>';
+                            if (conf) {
+                                var statusClass = conf.status === 'yes' ? 'status-confirmed' : (conf.status === 'maybe' ? 'status-maybe' : 'status-absent');
+                                var statusText = conf.status === 'yes' ? '✅ Confirmado' : (conf.status === 'maybe' ? '🟡 Tal vez' : '❌ No asistirá');
+                                html += '<div class="flex items-center gap-3 flex-wrap">';
+                                html += '<span class="status-badge ' + statusClass + '">' + statusText + '</span>';
+                                if (conf.justification) {
+                                    html += '<span class="text-xs text-gray-500">📝 ' + conf.justification + '</span>';
+                                }
+                                html += '</div>';
+                            } else {
+                                html += '<div class="attendance-buttons">';
+                                html += '<button onclick="confirmAttendance(' + player.id + ', \'yes\')" class="attendance-yes attendance-btn">✅ Sí</button>';
+                                html += '<button onclick="confirmAttendance(' + player.id + ', \'maybe\')" class="attendance-maybe attendance-btn">🟡 Tal vez</button>';
+                                html += '<button onclick="askJustification(' + player.id + ', \'no\')" class="attendance-no attendance-btn">❌ No</button>';
+                                html += '</div>';
                             }
-                            html += '</div>';
+                            html += '</div></div>';
                         }
-                        html += '</div>';
                     }
-
-                    attendanceDiv.innerHTML = html;
+                    preEventList.innerHTML = html;
+                })
+                .catch(function(error) {
+                    preEventList.innerHTML = '<p class="text-center text-red-500 py-4">❌ Error al cargar los datos</p>';
+                    console.error(error);
                 });
+        });
+
+        function confirmAttendance(playerId, status) {
+            saveConfirmation(playerId, status, '');
+            setTimeout(function() {
+                document.getElementById('loadEventBtn').click();
+            }, 300);
+        }
+
+        function askJustification(playerId, status) {
+            pendingJustification = { playerId: playerId, status: status };
+            document.getElementById('justificationModal').classList.add('active');
+            document.getElementById('reasonSelect').value = '';
+            document.getElementById('justificationText').value = '';
+        }
+
+        function submitJustification() {
+            var reason = document.getElementById('reasonSelect').value;
+            var explanation = document.getElementById('justificationText').value;
+            
+            if (!reason) {
+                alert('⚠️ Por favor selecciona un motivo');
+                return;
+            }
+            
+            var justification = reason + (explanation ? ' - ' + explanation : '');
+            saveConfirmation(pendingJustification.playerId, 'no', justification);
+            closeJustificationModal();
+            setTimeout(function() {
+                document.getElementById('loadEventBtn').click();
+            }, 300);
+        }
+
+        function saveConfirmation(playerId, status, justification) {
+            fetch('/api/attendance/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: currentEventType,
+                    id: currentEventId,
+                    playerId: playerId,
+                    status: status,
+                    justification: justification
+                })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Error al guardar');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+            });
+        }
+
+        function closeJustificationModal() {
+            document.getElementById('justificationModal').classList.remove('active');
+            document.getElementById('reasonSelect').value = '';
+            document.getElementById('justificationText').value = '';
+            pendingJustification = { playerId: null, status: null };
+        }
+
+        document.getElementById('saveAttendanceBtn').addEventListener('click', function() {
+            var attendanceData = {};
+            var selects = document.querySelectorAll('.real-attendance-select');
+            for (var i = 0; i < selects.length; i++) {
+                var select = selects[i];
+                attendanceData[select.dataset.playerId] = select.value;
+            }
+            
+            if (Object.keys(attendanceData).length === 0) {
+                alert('⚠️ No hay asistencias para guardar');
+                return;
+            }
+            
+            fetch('/api/attendance/real', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: currentEventType,
+                    id: currentEventId,
+                    attendance: attendanceData
+                })
+            })
+            .then(function(response) { 
+                if (!response.ok) {
+                    throw new Error('Error al guardar');
+                }
+                return response.json(); 
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Asistencia guardada correctamente');
+                } else {
+                    alert('❌ Error: ' + (data.message || 'No se pudo guardar'));
+                }
+            })
+            .catch(function(error) {
+                alert('❌ Error: ' + error.message);
+            });
         });
     </script>
 </body>

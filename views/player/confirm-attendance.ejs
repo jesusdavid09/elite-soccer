@@ -6,75 +6,22 @@
     <title>Confirmar Asistencia | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <%- include('../partials/navbar', { user: user }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Contenido -->
         <h1 class="text-3xl font-bold text-[#1E3A8A] mb-8">✅ Confirmar Asistencia</h1>
 
         <!-- Entrenamientos -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8 border border-gray-200">
-            <div class="bg-[#1E3A8A] px-6 py-4">
-                <h2 class="text-xl font-bold text-white">🏋️ Próximos Entrenamientos</h2>
-            </div>
-            <div class="p-6 space-y-4">
-                <% if (upcomingTrainings && upcomingTrainings.length > 0) { %>
-                    <% for (var i = 0; i < upcomingTrainings.length; i++) { 
-                        var t = upcomingTrainings[i];
-                    %>
-                        <div class="border-b border-gray-200 pb-4 last:border-0">
-                            <p class="font-bold text-lg"><%= t.title %></p>
-                            <p class="text-gray-600"><%= new Date(t.date).toLocaleDateString() %> - <%= t.time %></p>
-                            <p class="text-gray-500">📍 <%= t.location %></p>
-                            <div class="mt-3 flex flex-wrap gap-3">
-                                <button onclick="confirmar('training', '<%= t.id %>', 'yes')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">✅ Voy a ir</button>
-                                <button onclick="mostrarJustificacion('training', '<%= t.id %>')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">❌ No puedo ir</button>
-                            </div>
-                            <div id="justi-training-<%= t.id %>" style="display: none;" class="mt-3">
-                                <textarea id="texto-training-<%= t.id %>" rows="2" class="w-full border border-gray-300 rounded-lg p-2" placeholder="Escribe tu justificación..."></textarea>
-                                <button onclick="enviarJustificacion('training', '<%= t.id %>')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg mt-2 transition">Enviar</button>
-                            </div>
-                            <div id="status-training-<%= t.id %>" class="mt-2"></div>
-                        </div>
-                    <% } %>
-                <% } else { %>
-                    <p class="text-gray-500 text-center py-4">No hay entrenamientos próximos</p>
-                <% } %>
-            </div>
+            <!-- ... contenido ... -->
         </div>
 
         <!-- Partidos -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-            <div class="bg-[#1E3A8A] px-6 py-4">
-                <h2 class="text-xl font-bold text-white">⚽ Próximos Partidos</h2>
-            </div>
-            <div class="p-6 space-y-4">
-                <% if (upcomingMatches && upcomingMatches.length > 0) { %>
-                    <% for (var i = 0; i < upcomingMatches.length; i++) { 
-                        var m = upcomingMatches[i];
-                    %>
-                        <div class="border-b border-gray-200 pb-4 last:border-0">
-                            <p class="font-bold text-lg">vs <%= m.opponent %></p>
-                            <p class="text-gray-600"><%= new Date(m.date).toLocaleDateString() %> - <%= m.time %></p>
-                            <p class="text-gray-500">📍 <%= m.location %></p>
-                            <p class="text-gray-500">🏆 <%= m.competition %></p>
-                            <div class="mt-3 flex flex-wrap gap-3">
-                                <button onclick="confirmar('match', '<%= m.id %>', 'yes')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">✅ Voy a jugar</button>
-                                <button onclick="mostrarJustificacion('match', '<%= m.id %>')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">❌ No puedo jugar</button>
-                            </div>
-                            <div id="justi-match-<%= m.id %>" style="display: none;" class="mt-3">
-                                <textarea id="texto-match-<%= m.id %>" rows="2" class="w-full border border-gray-300 rounded-lg p-2" placeholder="Escribe tu justificación..."></textarea>
-                                <button onclick="enviarJustificacion('match', '<%= m.id %>')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg mt-2 transition">Enviar</button>
-                            </div>
-                            <div id="status-match-<%= m.id %>" class="mt-2"></div>
-                        </div>
-                    <% } %>
-                <% } else { %>
-                    <p class="text-gray-500 text-center py-4">No hay partidos próximos</p>
-                <% } %>
-            </div>
+            <!-- ... contenido ... -->
         </div>
 
         <div class="mt-8 text-center">
@@ -84,49 +31,43 @@
         </div>
     </main>
 
+    <!-- MODAL JUSTIFICACIÓN - ANTES DEL FOOTER -->
+    <div id="justificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Justificación</h3>
+                <button onclick="closeJustificationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Motivo</label>
+                    <select id="reasonSelect" class="form-select">
+                        <option value="">Seleccionar</option>
+                        <option value="Estudio">📚 Estudio</option>
+                        <option value="Trabajo">💼 Trabajo</option>
+                        <option value="Enfermedad">🤒 Enfermedad</option>
+                        <option value="Viaje">✈️ Viaje</option>
+                        <option value="Compromiso familiar">👨‍👩‍👧 Compromiso</option>
+                        <option value="Otro">📝 Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Explicación</label>
+                    <textarea id="justificationText" class="form-textarea" rows="3" placeholder="Explicación..."></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeJustificationModal()" class="btn btn-gray flex-1">Cancelar</button>
+                    <button onclick="submitJustification()" class="btn btn-primary flex-1">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%- include('../partials/footer') %>
 
     <script>
-        async function confirmar(tipo, id, estado) {
-            const respuesta = await fetch('/player/attendance/confirm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: tipo, id: parseInt(id), status: estado, justification: '' })
-            });
-            if (respuesta.ok) {
-                const div = document.getElementById('status-' + tipo + '-' + id);
-                if (div) {
-                    div.innerHTML = '<span class="text-green-600 font-bold">✅ Confirmado</span>';
-                }
-            }
-        }
-
-        function mostrarJustificacion(tipo, id) {
-            const div = document.getElementById('justi-' + tipo + '-' + id);
-            if (div) {
-                div.style.display = div.style.display === 'none' ? 'block' : 'none';
-            }
-        }
-
-        async function enviarJustificacion(tipo, id) {
-            const textarea = document.getElementById('texto-' + tipo + '-' + id);
-            const texto = textarea ? textarea.value : '';
-            const respuesta = await fetch('/player/attendance/confirm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: tipo, id: parseInt(id), status: 'no', justification: texto })
-            });
-            if (respuesta.ok) {
-                const divEstado = document.getElementById('status-' + tipo + '-' + id);
-                if (divEstado) {
-                    divEstado.innerHTML = '<span class="text-red-600 font-bold">❌ Justificación enviada</span>';
-                }
-                const divJusti = document.getElementById('justi-' + tipo + '-' + id);
-                if (divJusti) {
-                    divJusti.style.display = 'none';
-                }
-            }
-        }
+        // Funciones de confirmación y justificación
+        // ... (mantén tu código JavaScript existente)
     </script>
 </body>
 </html>

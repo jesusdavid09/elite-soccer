@@ -67,43 +67,6 @@
         </div>
     </main>
 
-    <!-- 🔥 MODAL AGREGAR JUGADOR -->
-    <div id="addPlayerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-xl font-bold">➕ Agregar Nuevo Jugador</h3>
-                <button onclick="closeAddPlayerModal()" class="text-2xl hover:text-gray-700">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-4">
-                    <label class="form-label font-semibold">Nombre Completo *</label>
-                    <input type="text" id="playerFullName" class="form-input w-full border rounded-lg p-2 mt-1" placeholder="Ej: Juan Pérez">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label font-semibold">Posición *</label>
-                    <select id="playerPosition" class="form-select w-full border rounded-lg p-2 mt-1">
-                        <option value="Portero">🧤 Portero</option>
-                        <option value="Defensa">🛡️ Defensa</option>
-                        <option value="Mediocampista">⚡ Mediocampista</option>
-                        <option value="Delantero">🎯 Delantero</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label font-semibold">Número de Camiseta *</label>
-                    <input type="number" id="playerJersey" class="form-input w-full border rounded-lg p-2 mt-1" placeholder="Ej: 10" min="1" max="99">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label font-semibold">Email (opcional)</label>
-                    <input type="email" id="playerEmail" class="form-input w-full border rounded-lg p-2 mt-1" placeholder="Ej: juan@email.com">
-                </div>
-                <div class="flex gap-3 mt-6">
-                    <button onclick="closeAddPlayerModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1 transition">Cancelar</button>
-                    <button onclick="submitAddPlayer()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex-1 transition">✅ Agregar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL JUSTIFICACIÓN -->
     <div id="justificationModal" class="modal">
         <div class="modal-content">

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprobaciones Pendientes | Elite Soccer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-dark-blue">⏳ Solicitudes Pendientes</h1>
+                <p class="text-gray-500 mt-1">Revisa y aprueba las solicitudes de nuevos jugadores</p>
+            </div>
+            <div class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">
+                <%= users ? users.length : 0 %> pendientes
+            </div>
+        </div>
+
+        <% if (users && users.length > 0) { %>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(u => { %>
+                            <tr class="border-t border-gray-200 hover:bg-gray-50 transition">
+                                <td class="px-6 py-4"><%= u.email %></td>
+                                <td class="px-6 py-4 font-semibold"><%= u.full_name %></td>
+                                <td class="px-6 py-4"><%= new Date(u.created_at).toLocaleDateString() %></td>
+                                <td class="px-6 py-4 flex gap-2">
+                                    <a href="/coach/players/pending/<%= u.id %>/approve" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition" onclick="return confirm('¿Aprobar a <%= u.full_name %>?')">✅ Aprobar</a>
+                                    <a href="/coach/players/pending/<%= u.id %>/reject" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition" onclick="return confirm('¿Rechazar a <%= u.full_name %>?')">❌ Rechazar</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="approveAll()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition">✅ Aprobar todos</button>
+                <button onclick="rejectAll()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition" onclick="return confirm('¿Rechazar TODAS las solicitudes?')">❌ Rechazar todos</button>
+            </div>
+        <% } else { %>
+            <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+                <div class="text-6xl mb-4">✅</div>
+                <h3 class="text-xl font-bold text-green-600 mb-2">No hay solicitudes pendientes</h3>
+                <p class="text-gray-500">Todas las solicitudes han sido procesadas</p>
+            </div>
+        <% } %>
+
+        <div class="mt-8 text-center">
+            <a href="/coach/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition inline-block">← Volver al Dashboard</a>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        async function approveAll() {
+            if (confirm('¿Estás seguro de aprobar TODAS las solicitudes pendientes?')) {
+                const response = await fetch('/coach/players/pending/approve-all', { method: 'POST' });
+                if (response.ok) location.reload();
+                else alert('Error al aprobar todas las solicitudes');
+            }
+        }
+
+        async function rejectAll() {
+            if (confirm('¿Estás seguro de rechazar TODAS las solicitudes pendientes? Esta acción no se puede deshacer.')) {
+                const response = await fetch('/coach/players/pending/reject-all', { method: 'POST' });
+                if (response.ok) location.reload();
+                else alert('Error al rechazar las solicitudes');
+            }
+        }
+    </script>
+</body>
+</html>

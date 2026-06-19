@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import webpush from 'web-push';
 import authRoutes from './routes/authRoutes';
 import playerRoutes from './routes/playerRoutes';
 import trainingRoutes from './routes/trainingRoutes';
@@ -14,24 +15,64 @@ import pool from './config/database';
 
 dotenv.config();
 
+// ============== CONFIGURAR VAPID ==============
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT) {
+    webpush.setVapidDetails(
+        process.env.VAPID_SUBJECT,
+        process.env.VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+    );
+    console.log('✅ Notificaciones push configuradas');
+} else {
+    console.log('⚠️ VAPID keys no configuradas - las notificaciones push no estarán disponibles');
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ============== MIDDLEWARES ==============
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
+// ============== CONFIGURACIÓN DE VISTAS ==============
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(process.cwd(), 'views'));
 
+// ============== RUTA RAÍZ ==============
 app.get('/', (req, res) => {
     res.render('index', { title: 'Elite Soccer Academy' });
 });
 
+// ============== RUTAS PÚBLICAS ==============
 app.use('/', authRoutes);
 
+// ============== NOTIFICACIONES PUSH ==============
+app.post('/api/notifications/subscribe', authenticate, async (req: any, res: any) => {
+    const subscription = req.body;
+    const userId = req.user?.id;
+    
+    if (!userId) {
+        return res.status(401).json({ error: 'No autenticado' });
+    }
+    
+    try {
+        await pool.query(
+            `INSERT INTO push_subscriptions (user_id, subscription) 
+             VALUES ($1, $2) 
+             ON CONFLICT (user_id) DO UPDATE SET subscription = $2`,
+            [userId, JSON.stringify(subscription)]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error al guardar suscripción:', error);
+        res.status(500).json({ error: 'Error al guardar suscripción' });
+    }
+});
+
+// ============== RUTAS PROTEGIDAS ==============
 app.get('/coach/dashboard', authenticate, getCoachDashboard);
 app.use('/coach/players', playerRoutes);
 app.use('/coach/trainings', trainingRoutes);
@@ -39,6 +80,7 @@ app.use('/coach/matches', matchRoutes);
 app.use('/coach/announcements', announcementRoutes);
 app.get('/player/dashboard', authenticate, getPlayerDashboard);
 
+// ============== PERFIL DEL JUGADOR ==============
 app.get('/player/profile', authenticate, async (req: any, res: any) => {
     try {
         const player = await pool.query(`
@@ -59,6 +101,7 @@ app.post('/player/profile/upload-photo', authenticate, upload.single('photo'), a
     res.redirect('/player/profile');
 });
 
+// ============== CONFIRMAR ASISTENCIA ==============
 app.get('/player/attendance', authenticate, async (req: any, res: any) => {
     try {
         const trainings = await pool.query(`SELECT * FROM trainings WHERE date >= CURRENT_DATE ORDER BY date ASC`);
@@ -90,6 +133,7 @@ app.post('/player/attendance/confirm', authenticate, async (req: any, res: any) 
     res.json({ success: true });
 });
 
+// ============== ANUNCIOS PARA JUGADORES ==============
 app.get('/player/announcements', authenticate, async (req: any, res: any) => {
     try {
         const result = await pool.query(`
@@ -102,12 +146,20 @@ app.get('/player/announcements', authenticate, async (req: any, res: any) => {
     }
 });
 
+// ============== ERROR 404 ==============
 app.use((req: any, res: any) => {
-    res.status(404).render('error', { title: 'Error 404', message: 'Página no encontrada', user: req.user });
+    res.status(404).render('error', { 
+        title: 'Error 404', 
+        message: 'Página no encontrada',
+        user: req.user 
+    });
 });
 
+// ============== INICIAR SERVIDOR ==============
 app.listen(PORT, () => {
     console.log(`🚀 Servidor en http://localhost:${PORT}`);
     console.log(`📝 Login: http://localhost:${PORT}/login`);
     console.log(`📝 Registro: http://localhost:${PORT}/register`);
+    console.log(`📱 Página de bienvenida: http://localhost:${PORT}`);
+    console.log(`✅ Elite Soccer App lista para usar`);
 });

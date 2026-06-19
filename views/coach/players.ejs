@@ -16,9 +16,7 @@
                 <h1 class="text-3xl font-bold text-[#1E3A8A]">👥 Plantilla de Jugadores</h1>
                 <p class="text-gray-500 mt-1">Gestiona toda la información de tus jugadores</p>
             </div>
-            <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
-                ➕ Agregar Jugador
-            </button>
+            <!-- 🔥 BOTÓN ELIMINADO -->
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -74,8 +72,7 @@
                 <div class="col-span-full text-center py-12 bg-white rounded-xl shadow border border-gray-200">
                     <div class="text-6xl mb-4">👥</div>
                     <h3 class="text-xl font-bold mb-2">No hay jugadores registrados</h3>
-                    <p class="text-gray-500">Comienza agregando tu primer jugador</p>
-                    <button onclick="openModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg mt-4 transition">➕ Agregar</button>
+                    <!-- 🔥 BOTÓN ELIMINADO TAMBIÉN AQUÍ -->
                 </div>
             <% } %>
         </div>
@@ -97,16 +94,21 @@
             <form id="playerForm" method="POST" action="/coach/players" class="modal-body">
                 <input type="hidden" id="playerId" name="id">
                 <div class="mb-3">
-                    <label class="form-label">ID del Usuario</label>
-                    <input type="text" name="user_id" class="form-input" required>
+                    <label class="form-label">Nombre Completo *</label>
+                    <input type="text" name="full_name" class="form-input" required placeholder="Ej: Juan Pérez">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Número de Camiseta</label>
-                    <input type="number" name="jersey_number" class="form-input" required>
+                    <label class="form-label">ID del Usuario *</label>
+                    <input type="text" name="user_id" class="form-input" required placeholder="ID del usuario">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Número de Camiseta *</label>
+                    <input type="number" name="jersey_number" class="form-input" required placeholder="Ej: 10" min="1" max="99">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Posición</label>
                     <select name="position" class="form-select">
+                        <option value="">Seleccionar posición</option>
                         <option value="Portero">🧤 Portero</option>
                         <option value="Defensa Central">🛡️ Defensa Central</option>
                         <option value="Lateral Derecho">➡️ Lateral Derecho</option>
@@ -117,14 +119,18 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Edad</label>
-                    <input type="number" name="age" class="form-input" required>
+                    <input type="number" name="age" class="form-input" placeholder="Ej: 25" min="1" max="99">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Teléfono</label>
-                    <input type="text" name="phone" class="form-input">
+                    <input type="text" name="phone" class="form-input" placeholder="Ej: 555-1234">
                 </div>
-                <button type="submit" class="btn btn-primary w-full">Guardar</button>
-                <button type="button" onclick="closeModal()" class="btn btn-gray w-full mt-2">Cancelar</button>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-input" placeholder="Ej: jugador@email.com">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">💾 Guardar</button>
+                <button type="button" onclick="closeModal()" class="btn btn-gray w-full mt-2">❌ Cancelar</button>
             </form>
         </div>
     </div>
@@ -155,6 +161,17 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         .modal-header {
             background: #1E3A8A;
@@ -169,8 +186,13 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
+        .modal-header button:hover {
+            transform: rotate(90deg);
         }
         .modal-body {
             padding: 1.5rem;
@@ -178,7 +200,7 @@
         .btn-primary {
             background: #1E3A8A;
             color: white;
-            padding: 0.6rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 12px;
             border: none;
             cursor: pointer;
@@ -187,11 +209,13 @@
         }
         .btn-primary:hover {
             background: #172554;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
         }
         .btn-gray {
             background: #4B5563;
             color: white;
-            padding: 0.6rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 12px;
             border: none;
             cursor: pointer;
@@ -200,6 +224,7 @@
         }
         .btn-gray:hover {
             background: #374151;
+            transform: translateY(-2px);
         }
         .form-input, .form-select {
             width: 100%;
@@ -207,7 +232,6 @@
             border: 2px solid #E5E7EB;
             border-radius: 12px;
             transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
         }
         .form-input:focus, .form-select:focus {
@@ -229,10 +253,11 @@
         function openModal() {
             var modal = document.getElementById('playerModal');
             modal.classList.add('active');
-            document.getElementById('modalTitle').textContent = 'Agregar Jugador';
+            document.getElementById('modalTitle').textContent = '➕ Agregar Jugador';
             document.getElementById('playerForm').action = '/coach/players';
             document.getElementById('playerId').value = '';
             document.getElementById('playerForm').reset();
+            document.querySelector('[name="user_id"]').value = '';
         }
 
         function closeModal() {
@@ -242,21 +267,28 @@
 
         function editPlayer(id) {
             fetch('/coach/players/api/' + id)
-                .then(function(response) { return response.json(); })
+                .then(function(response) { 
+                    if (!response.ok) {
+                        throw new Error('Error al cargar los datos');
+                    }
+                    return response.json(); 
+                })
                 .then(function(data) {
-                    document.getElementById('modalTitle').textContent = 'Editar Jugador';
+                    document.getElementById('modalTitle').textContent = '✏️ Editar Jugador';
                     document.getElementById('playerId').value = data.id;
-                    document.querySelector('[name="user_id"]').value = data.user_id;
-                    document.querySelector('[name="jersey_number"]').value = data.jersey_number;
-                    document.querySelector('[name="position"]').value = data.position;
-                    document.querySelector('[name="age"]').value = data.age;
+                    document.querySelector('[name="user_id"]').value = data.user_id || '';
+                    document.querySelector('[name="jersey_number"]').value = data.jersey_number || '';
+                    document.querySelector('[name="position"]').value = data.position || '';
+                    document.querySelector('[name="age"]').value = data.age || '';
                     document.querySelector('[name="phone"]').value = data.phone || '';
+                    document.querySelector('[name="email"]').value = data.email || '';
+                    document.querySelector('[name="full_name"]').value = data.full_name || '';
                     document.getElementById('playerForm').action = '/coach/players/' + data.id;
                     openModal();
                 })
                 .catch(function(error) {
                     console.error('Error:', error);
-                    alert('Error al cargar los datos del jugador');
+                    alert('❌ Error al cargar los datos del jugador');
                 });
         }
 
@@ -267,6 +299,16 @@
                 closeModal();
             }
         }
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                var modal = document.getElementById('playerModal');
+                if (modal.classList.contains('active')) {
+                    closeModal();
+                }
+            }
+        });
     </script>
 </body>
 </html>

@@ -10,21 +10,21 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #f3f4f6;
+            background: #F3F4F6;
         }
         h1, h2, h3 {
             font-family: 'Poppins', sans-serif;
         }
         .card {
-            background: white;
+            background: #FFFFFF;
             border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #E5E7EB;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
         }
         .status-pending {
             background: #FEF3C7;
@@ -52,7 +52,7 @@
         }
         .btn-approve {
             background: #22C55E;
-            color: white;
+            color: #FFFFFF;
             transition: all 0.3s ease;
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
@@ -66,7 +66,7 @@
         }
         .btn-reject {
             background: #EF4444;
-            color: white;
+            color: #FFFFFF;
             transition: all 0.3s ease;
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
@@ -80,7 +80,7 @@
         }
         .btn-view {
             background: #3B82F6;
-            color: white;
+            color: #FFFFFF;
             transition: all 0.3s ease;
             padding: 0.5rem 1rem;
             border-radius: 8px;
@@ -90,6 +90,20 @@
         }
         .btn-view:hover {
             background: #2563EB;
+        }
+        .btn-reset {
+            background: #6B7280;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-reset:hover {
+            background: #4B5563;
+            transform: scale(1.05);
         }
         .modal {
             display: none;
@@ -108,7 +122,7 @@
             display: flex;
         }
         .modal-content {
-            background: white;
+            background: #FFFFFF;
             border-radius: 20px;
             max-width: 600px;
             width: 90%;
@@ -117,18 +131,12 @@
             animation: slideIn 0.3s ease;
         }
         @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .modal-header {
             background: #1E3A8A;
-            color: white;
+            color: #FFFFFF;
             padding: 1.25rem 1.5rem;
             border-radius: 20px 20px 0 0;
             display: flex;
@@ -138,7 +146,7 @@
         .modal-header button {
             background: none;
             border: none;
-            color: white;
+            color: #FFFFFF;
             font-size: 2rem;
             cursor: pointer;
             transition: transform 0.3s;
@@ -154,7 +162,7 @@
             display: flex;
             justify-content: space-between;
             padding: 0.75rem 0;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #E5E7EB;
         }
         .detail-label {
             font-weight: 600;
@@ -171,21 +179,35 @@
             font-size: 4rem;
             margin-bottom: 1rem;
         }
-        /* Estilo para botón deshabilitado */
         .btn-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+        .azul-rey {
+            color: #1E3A8A;
+        }
+        .bg-azul-rey {
+            background: #1E3A8A;
+        }
+        .bg-azul-rey:hover {
+            background: #172554;
+        }
+        .text-blanco {
+            color: #FFFFFF;
+        }
+        .border-azul-rey {
+            border-color: #1E3A8A;
+        }
     </style>
 </head>
 <body>
-    <%- include('../partials/navbar', { user: user }) %>
+    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-[#1E3A8A]">📋 Aprobar Jugadores</h1>
+                <h1 class="text-3xl font-bold" style="color: #1E3A8A;">📋 Aprobar Jugadores</h1>
                 <p class="text-gray-500 mt-1">Revisa y aprueba las solicitudes de nuevos jugadores</p>
             </div>
             <div class="mt-4 md:mt-0 flex gap-3">
@@ -230,7 +252,7 @@
                             </span>
                         </div>
                         
-                        <h3 class="text-xl font-bold text-[#1E3A8A]"><%= player.full_name || 'Sin nombre' %></h3>
+                        <h3 class="text-xl font-bold" style="color: #1E3A8A;"><%= player.full_name || 'Sin nombre' %></h3>
                         <p class="text-gray-500 text-sm">#<%= player.jersey_number || 'N/A' %> • <%= player.position || 'Sin posición' %></p>
                         
                         <div class="mt-4 space-y-2 text-sm">
@@ -254,7 +276,7 @@
                                 <button onclick="approvePlayer('<%= player.id %>')" class="btn-approve flex-1">✅ Aprobar</button>
                                 <button onclick="rejectPlayer('<%= player.id %>')" class="btn-reject flex-1">❌ Rechazar</button>
                             <% } else { %>
-                                <button onclick="resetPlayer('<%= player.id %>')" class="btn-approve flex-1" style="background: #6B7280;">↩️ Revertir</button>
+                                <button onclick="resetPlayer('<%= player.id %>')" class="btn-reset flex-1">↩️ Revertir</button>
                             <% } %>
                         </div>
                     </div>
@@ -290,8 +312,6 @@
     <%- include('../partials/footer') %>
 
     <script>
-        // ========== FUNCIONES MEJORADAS ==========
-        
         console.log('✅ Script de aprobar jugadores cargado');
 
         function filterPlayers(filter) {
@@ -341,7 +361,7 @@
                             <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto">
                                 ${data.full_name ? data.full_name.charAt(0).toUpperCase() : '?'}
                             </div>
-                            <h3 class="text-2xl font-bold mt-2">${data.full_name || 'Sin nombre'}</h3>
+                            <h3 class="text-2xl font-bold mt-2" style="color: #1E3A8A;">${data.full_name || 'Sin nombre'}</h3>
                             <span class="text-sm text-gray-500">#${data.jersey_number || 'N/A'} • ${data.position || 'Sin posición'}</span>
                         </div>
                         

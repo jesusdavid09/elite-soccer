@@ -8,156 +8,482 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
+            background: #FFFFFF;
+            color: #111827;
         }
+
         h1, h2, h3 {
             font-family: 'Poppins', sans-serif;
         }
+
         .title-font {
             font-family: 'Bebas Neue', cursive;
             letter-spacing: 2px;
         }
+
+        /* ========== ANIMACIONES ========== */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .hero-content {
             animation: fadeInUp 0.8s ease;
         }
-        .feature-card {
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
         }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border-color: #1E3A8A;
+
+        /* ========== HERO SECTION ========== */
+        .hero-section {
+            background: linear-gradient(135deg, #1E3A8A 0%, #172554 60%, #0F172A 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
         }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+        }
+
+        .hero-bg-image {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1522778119026-d364fcece646?w=1600');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .hero-content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .hero-shield {
+            display: inline-block;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-shield span {
+            font-size: 4rem;
+            display: block;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: 4px;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #93C5FD;
+            letter-spacing: 8px;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .hero-motto {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .hero-quote {
+            font-size: 1rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
         .btn-hero {
             background: #1E3A8A;
-            color: white;
+            color: #FFFFFF;
             transition: all 0.3s ease;
+            padding: 0.75rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
         }
+
         .btn-hero:hover {
             background: #172554;
             transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5);
         }
+
         .btn-hero-outline {
             background: transparent;
-            color: white;
-            border: 2px solid white;
+            color: #FFFFFF;
+            border: 2px solid rgba(255, 255, 255, 0.6);
             transition: all 0.3s ease;
+            padding: 0.75rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
+
         .btn-hero-outline:hover {
-            background: white;
+            background: #FFFFFF;
             color: #1E3A8A;
+            border-color: #FFFFFF;
             transform: scale(1.05);
         }
-        .bg-dark-blue { background-color: #1E3A8A; }
-        .text-sport-blue { color: #1E3A8A; }
-        .from-dark-blue { --tw-gradient-from: #1E3A8A; }
-        .to-sport-blue { --tw-gradient-to: #172554; }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator .scroll-box {
+            width: 28px;
+            height: 44px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 9999px;
+            display: flex;
+            justify-content: center;
+            padding-top: 0.5rem;
+        }
+
+        .scroll-indicator .scroll-dot {
+            width: 4px;
+            height: 10px;
+            background: #FFFFFF;
+            border-radius: 9999px;
+            animation: scrollPulse 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0.5; transform: translateY(8px); }
+        }
+
+        /* ========== FEATURES SECTION ========== */
+        .features-section {
+            padding: 5rem 1rem;
+            background: #FFFFFF;
+        }
+
+        .features-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: #1E3A8A;
+            margin-bottom: 0.5rem;
+        }
+
+        .features-subtitle {
+            text-align: center;
+            color: #6B7280;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        .feature-card {
+            background: #F8FAFC;
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.15);
+            border-color: #1E3A8A;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1E3A8A;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: #6B7280;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ========== CTA SECTION ========== */
+        .cta-section {
+            padding: 5rem 1rem;
+            background: linear-gradient(135deg, #1E3A8A 0%, #172554 100%);
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-cta {
+            background: #FFFFFF;
+            color: #1E3A8A;
+            padding: 0.75rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: #0F172A;
+            color: #FFFFFF;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-icons span {
+            font-size: 1.5rem;
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: #94A3B8;
+        }
+
+        .footer-copy {
+            font-size: 0.75rem;
+            color: #64748B;
+            margin-top: 0.5rem;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+            .hero-subtitle {
+                font-size: 1.125rem;
+                letter-spacing: 4px;
+            }
+            .hero-shield span {
+                font-size: 3rem;
+            }
+            .features-title {
+                font-size: 2rem;
+            }
+            .cta-title {
+                font-size: 2rem;
+            }
+            .feature-card {
+                padding: 1.5rem 1rem;
+            }
+            .btn-hero, .btn-hero-outline {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            .hero-shield {
+                padding: 1rem;
+            }
+            .hero-shield span {
+                font-size: 2.5rem;
+            }
+            .features-title {
+                font-size: 1.75rem;
+            }
+            .cta-title {
+                font-size: 1.75rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <div class="relative min-h-screen bg-gradient-to-br from-[#1E3A8A] to-[#172554] overflow-hidden">
-        <div class="absolute inset-0 bg-black/30 z-0"></div>
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522778119026-d364fcece646?w=1600')] bg-cover bg-center opacity-20 z-0"></div>
-        
-        <div class="relative z-10 container mx-auto px-4 py-16 min-h-screen flex flex-col justify-center">
-            <div class="hero-content text-center text-white max-w-4xl mx-auto">
-                <!-- Escudo -->
-                <div class="inline-block p-4 bg-white/10 backdrop-blur-lg rounded-full mb-6">
-                    <span class="text-7xl">⚽</span>
-                </div>
-                
-                <!-- Título -->
-                <h1 class="text-5xl md:text-7xl font-bold mb-4 title-font tracking-wider">ELITE SOCCER</h1>
-                <p class="text-xl md:text-2xl mb-2 tracking-widest font-light">ACADEMY</p>
-                
-                <!-- Lema -->
-                <p class="text-base md:text-lg text-white/80 max-w-2xl mx-auto mb-8">
-                    Disciplina • Compromiso • Excelencia
-                </p>
-                
-                <!-- Frase motivacional -->
-                <p class="text-md italic text-white/70 max-w-xl mx-auto mb-12">
-                    "La excelencia no es un acto, sino un hábito"
-                </p>
-                
-                <!-- Botones -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/login" class="btn-hero px-8 py-3 rounded-full font-semibold shadow-lg">
-                        Iniciar Sesión
-                    </a>
-                    <a href="/register" class="btn-hero-outline px-8 py-3 rounded-full font-semibold">
-                        Registrarse
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Scroll indicator -->
-            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <div class="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-                    <div class="w-1 h-3 bg-white rounded-full mt-2"></div>
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-bg-image"></div>
+
+        <div class="hero-content-wrapper">
+            <div class="container mx-auto px-4 text-center">
+                <div class="hero-content max-w-4xl mx-auto">
+                    <!-- Shield -->
+                    <div class="hero-shield float-animation">
+                        <span>⚽</span>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="hero-title">ELITE SOCCER</h1>
+                    <p class="hero-subtitle">ACADEMY</p>
+
+                    <!-- Motto -->
+                    <p class="hero-motto">
+                        Disciplina • Compromiso • Excelencia
+                    </p>
+
+                    <!-- Quote -->
+                    <p class="hero-quote">
+                        "La excelencia no es un acto, sino un hábito"
+                    </p>
+
+                    <!-- Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/login" class="btn-hero">
+                            Iniciar Sesión
+                        </a>
+                        <a href="/register" class="btn-hero-outline">
+                            Registrarse
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Sección de características -->
-    <div class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#1E3A8A] mb-4 title-font">¿POR QUÉ ELEGIRNOS?</h2>
-            <p class="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-box">
+                <div class="scroll-dot"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES SECTION ========== -->
+    <section class="features-section">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="features-title title-font">¿POR QUÉ ELEGIRNOS?</h2>
+            <p class="features-subtitle">
                 Somos una academia comprometida con la formación integral de futbolistas
             </p>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="feature-card text-center p-6 bg-gray-50 rounded-2xl shadow-lg">
-                    <div class="text-5xl mb-4">🏆</div>
-                    <h3 class="text-xl font-bold mb-2 text-[#1E3A8A]">Metodología Profesional</h3>
-                    <p class="text-gray-500">Entrenamientos basados en las mejores academias del mundo</p>
+                <div class="feature-card">
+                    <span class="feature-icon">🏆</span>
+                    <h3 class="feature-title">Metodología Profesional</h3>
+                    <p class="feature-desc">Entrenamientos basados en las mejores academias del mundo</p>
                 </div>
-                <div class="feature-card text-center p-6 bg-gray-50 rounded-2xl shadow-lg">
-                    <div class="text-5xl mb-4">👥</div>
-                    <h3 class="text-xl font-bold mb-2 text-[#1E3A8A]">Cuerpo Técnico Calificado</h3>
-                    <p class="text-gray-500">Profesionales con experiencia y pasión por el fútbol</p>
+                <div class="feature-card">
+                    <span class="feature-icon">👥</span>
+                    <h3 class="feature-title">Cuerpo Técnico Calificado</h3>
+                    <p class="feature-desc">Profesionales con experiencia y pasión por el fútbol</p>
                 </div>
-                <div class="feature-card text-center p-6 bg-gray-50 rounded-2xl shadow-lg">
-                    <div class="text-5xl mb-4">⚽</div>
-                    <h3 class="text-xl font-bold mb-2 text-[#1E3A8A]">Instalaciones de Primera</h3>
-                    <p class="text-gray-500">Canchas y equipamiento de alta calidad</p>
+                <div class="feature-card">
+                    <span class="feature-icon">⚽</span>
+                    <h3 class="feature-title">Instalaciones de Primera</h3>
+                    <p class="feature-desc">Canchas y equipamiento de alta calidad</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Llamada a la acción -->
-    <div class="py-20 bg-gradient-to-r from-[#1E3A8A] to-[#172554]">
-        <div class="container mx-auto px-4 text-center text-white">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4 title-font">¿LISTO PARA COMENZAR?</h2>
-            <p class="text-lg mb-8 opacity-90">Únete a Elite Soccer Academy y lleva tu talento al siguiente nivel</p>
-            <a href="/register" class="inline-block bg-white text-[#1E3A8A] px-8 py-3 rounded-full font-semibold hover:scale-105 transition transform shadow-lg">
+    <!-- ========== CTA SECTION ========== -->
+    <section class="cta-section">
+        <div class="container mx-auto px-4">
+            <h2 class="cta-title title-font">¿LISTO PARA COMENZAR?</h2>
+            <p class="cta-subtitle">Únete a Elite Soccer Academy y lleva tu talento al siguiente nivel</p>
+            <a href="/register" class="btn-cta">
                 Comienza ahora
             </a>
         </div>
-    </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="bg-[#172554] text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex justify-center space-x-6 mb-4">
-                <span class="text-2xl">⚽</span>
-                <span class="text-2xl">🏆</span>
-                <span class="text-2xl">🎯</span>
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container mx-auto px-4">
+            <div class="footer-icons">
+                <span>⚽</span>
+                <span>🏆</span>
+                <span>🎯</span>
             </div>
-            <p class="text-sm text-gray-300">
+            <p class="footer-text">
                 &copy; 2025 Elite Soccer Academy - Disciplina • Compromiso • Excelencia
             </p>
-            <p class="text-xs text-gray-400 mt-2">
+            <p class="footer-copy">
                 Todos los derechos reservados
             </p>
         </div>

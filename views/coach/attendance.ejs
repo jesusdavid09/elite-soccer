@@ -6,21 +6,238 @@
     <title>Asistencia | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F3F4F6;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-attendance {
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+        }
+        .btn-primary-custom {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary-custom:hover {
+            background: #172554;
+            transform: scale(1.05);
+        }
+        .btn-success-custom {
+            background: #22C55E;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-success-custom:hover {
+            background: #16A34A;
+            transform: scale(1.05);
+        }
+        .btn-gray-custom {
+            background: #6B7280;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-gray-custom:hover {
+            background: #4B5563;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #FFFFFF;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            padding: 1.25rem 1.5rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header button {
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
+        .modal-header button:hover {
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #F9FAFB;
+            border-radius: 12px;
+            transition: all 0.3s;
+            border: 1px solid #E5E7EB;
+        }
+        .player-row:hover {
+            background: #F3F4F6;
+            transform: translateX(5px);
+        }
+        .attendance-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .attendance-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .attendance-yes {
+            background: #22C55E;
+            color: #FFFFFF;
+        }
+        .attendance-yes:hover {
+            background: #16A34A;
+            transform: scale(1.05);
+        }
+        .attendance-maybe {
+            background: #F59E0B;
+            color: #FFFFFF;
+        }
+        .attendance-maybe:hover {
+            background: #D97706;
+            transform: scale(1.05);
+        }
+        .attendance-no {
+            background: #EF4444;
+            color: #FFFFFF;
+        }
+        .attendance-no:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-confirmed {
+            background: #22C55E;
+            color: #FFFFFF;
+        }
+        .status-maybe {
+            background: #F59E0B;
+            color: #FFFFFF;
+        }
+        .status-absent {
+            background: #EF4444;
+            color: #FFFFFF;
+        }
+        .btn-volver {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+        .btn-volver:hover {
+            background: #172554;
+        }
+        .text-azul-rey {
+            color: #1E3A8A;
+        }
+        .bg-azul-rey {
+            background: #1E3A8A;
+        }
+        .bg-azul-rey:hover {
+            background: #172554;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <%- include('../partials/navbar', { user: user }) %>
+<body>
+    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Contenido -->
-        <h1 class="text-3xl font-bold text-[#1E3A8A] mb-2">✅ Control de Asistencia</h1>
+        <!-- Header -->
+        <h1 class="text-3xl font-bold" style="color: #1E3A8A;">✅ Control de Asistencia</h1>
         <p class="text-gray-500 mb-8">Gestiona la asistencia de los jugadores</p>
 
-        <!-- Selector -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
+        <!-- Selector de Evento -->
+        <div class="card-attendance rounded-xl shadow-lg p-6 mb-8">
             <div class="flex flex-col md:flex-row gap-4 items-end">
                 <div class="flex-1">
-                    <label class="form-label">Seleccionar Evento</label>
-                    <select id="eventSelect" class="form-select w-full border rounded-lg p-2">
+                    <label class="form-label">📌 Seleccionar Evento</label>
+                    <select id="eventSelect" class="form-select w-full">
                         <option value="">-- Seleccionar --</option>
                         <optgroup label="🏋️ Entrenamientos">
                             <% for (var i = 0; i < trainings.length; i++) { var t = trainings[i]; %>
@@ -35,26 +252,29 @@
                     </select>
                 </div>
                 <div>
-                    <button id="loadEventBtn" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition">Cargar</button>
+                    <button id="loadEventBtn" class="btn-primary-custom">📂 Cargar Evento</button>
                 </div>
             </div>
         </div>
 
-        <div id="preEventSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200" style="display: none;">
-            <h2 class="text-xl font-bold mb-4">📋 Confirmación</h2>
+        <!-- Pre-Evento (Confirmación) -->
+        <div id="preEventSection" class="card-attendance rounded-xl shadow-lg p-6 mb-8" style="display: none;">
+            <h2 class="text-xl font-bold mb-4" style="color: #1E3A8A;">📋 Confirmación de Asistencia</h2>
             <div id="preEventList" class="space-y-3"></div>
         </div>
 
-        <div id="postEventSection" class="bg-white rounded-xl shadow-lg p-6 border border-gray-200" style="display: none;">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">✅ Asistencia Real</h2>
-                <button id="saveAttendanceBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">💾 Guardar</button>
+        <!-- Post-Evento (Asistencia Real) -->
+        <div id="postEventSection" class="card-attendance rounded-xl shadow-lg p-6" style="display: none;">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                <h2 class="text-xl font-bold" style="color: #1E3A8A;">✅ Asistencia Real</h2>
+                <button id="saveAttendanceBtn" class="btn-success-custom">💾 Guardar Asistencia</button>
             </div>
             <div id="postEventList" class="space-y-3"></div>
         </div>
 
+        <!-- Volver -->
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -64,29 +284,29 @@
     <div id="justificationModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="text-xl font-bold">Justificación</h3>
-                <button onclick="closeJustificationModal()" class="text-2xl hover:text-gray-700">&times;</button>
+                <h3 class="text-xl font-bold">📝 Justificación de Ausencia</h3>
+                <button onclick="closeJustificationModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label font-semibold">Motivo</label>
-                    <select id="reasonSelect" class="form-select w-full border rounded-lg p-2 mt-1">
-                        <option value="">Seleccionar</option>
+                <div class="mb-4">
+                    <label class="form-label">Motivo</label>
+                    <select id="reasonSelect" class="form-select w-full">
+                        <option value="">Seleccionar motivo</option>
                         <option value="Estudio">📚 Estudio</option>
                         <option value="Trabajo">💼 Trabajo</option>
                         <option value="Enfermedad">🤒 Enfermedad</option>
                         <option value="Viaje">✈️ Viaje</option>
-                        <option value="Compromiso familiar">👨‍👩‍👧 Compromiso</option>
+                        <option value="Compromiso familiar">👨‍👩‍👧 Compromiso familiar</option>
                         <option value="Otro">📝 Otro</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label font-semibold">Explicación</label>
-                    <textarea id="justificationText" class="form-textarea w-full border rounded-lg p-2 mt-1" rows="3" placeholder="Explicación..."></textarea>
+                <div class="mb-4">
+                    <label class="form-label">Explicación</label>
+                    <textarea id="justificationText" class="form-textarea w-full" rows="3" placeholder="Escribe una explicación..."></textarea>
                 </div>
                 <div class="flex gap-3 mt-4">
-                    <button onclick="closeJustificationModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1 transition">Cancelar</button>
-                    <button onclick="submitJustification()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg flex-1 transition">Enviar</button>
+                    <button onclick="closeJustificationModal()" class="btn-gray-custom flex-1">❌ Cancelar</button>
+                    <button onclick="submitJustification()" class="btn-primary-custom flex-1">📤 Enviar</button>
                 </div>
             </div>
         </div>
@@ -94,147 +314,13 @@
 
     <%- include('../partials/footer') %>
 
-    <style>
-        /* Estilos para modales */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
-        }
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-        }
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #1E3A8A;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-        }
-
-        /* Estilos para filas de jugadores */
-        .player-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: #f9f9f9;
-            border-radius: 12px;
-            transition: all 0.3s;
-        }
-        .player-row:hover {
-            background: #f0f0f0;
-            transform: translateX(5px);
-        }
-        .attendance-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .attendance-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .attendance-yes {
-            background: #22C55E;
-            color: white;
-        }
-        .attendance-yes:hover {
-            background: #16a34a;
-            transform: scale(1.05);
-        }
-        .attendance-maybe {
-            background: #F59E0B;
-            color: white;
-        }
-        .attendance-maybe:hover {
-            background: #d97706;
-            transform: scale(1.05);
-        }
-        .attendance-no {
-            background: #EF4444;
-            color: white;
-        }
-        .attendance-no:hover {
-            background: #dc2626;
-            transform: scale(1.05);
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-confirmed {
-            background: #22C55E;
-            color: white;
-        }
-        .status-maybe {
-            background: #F59E0B;
-            color: white;
-        }
-        .status-absent {
-            background: #EF4444;
-            color: white;
-        }
-    </style>
-
     <script>
         var currentEventType = null;
         var currentEventId = null;
         var currentPlayers = [];
         var pendingJustification = { playerId: null, status: null };
 
-        // Cerrar modal al hacer clic fuera
+        // Cerrar modales al hacer clic fuera
         window.onclick = function(event) {
             if (event.target === document.getElementById('justificationModal')) {
                 closeJustificationModal();
@@ -250,7 +336,7 @@
             }
         });
 
-        // Cargar evento
+        // Cargar Evento
         document.getElementById('loadEventBtn').addEventListener('click', function() {
             var select = document.getElementById('eventSelect');
             var value = select.value;
@@ -267,7 +353,7 @@
             var preEventDiv = document.getElementById('preEventSection');
             var preEventList = document.getElementById('preEventList');
             preEventDiv.style.display = 'block';
-            preEventList.innerHTML = '<p class="text-center text-gray-500 py-4">⏳ Cargando...</p>';
+            preEventList.innerHTML = '<p class="text-center text-gray-500 py-4">⏳ Cargando jugadores...</p>';
 
             fetch('/api/players/list')
                 .then(function(response) { return response.json(); })
@@ -287,7 +373,7 @@
                             var player = currentPlayers[i];
                             var conf = confirmMap.get(player.id);
                             html += '<div class="player-row">';
-                            html += '<div><div class="font-bold">' + player.full_name + ' <span class="text-gray-500">#' + player.jersey_number + '</span></div>';
+                            html += '<div><div class="font-bold" style="color: #111827;">' + player.full_name + ' <span class="text-gray-500">#' + player.jersey_number + '</span></div>';
                             html += '<div class="text-sm text-gray-500">' + player.position + '</div></div>';
                             html += '<div>';
                             if (conf) {

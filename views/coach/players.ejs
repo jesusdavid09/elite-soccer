@@ -6,138 +6,78 @@
     <title>Jugadores | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="bg-gray-100">
-    <%- include('../partials/navbar', { user: user }) %>
-
-    <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-[#1E3A8A]">👥 Plantilla de Jugadores</h1>
-                <p class="text-gray-500 mt-1">Gestiona toda la información de tus jugadores</p>
-            </div>
-            <!-- 🔥 BOTÓN ELIMINADO -->
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
-                <div class="text-3xl mb-2">👥</div>
-                <div class="text-2xl font-bold text-[#1E3A8A]"><%= players.length %></div>
-                <div class="text-gray-500">Total Jugadores</div>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
-                <div class="text-3xl mb-2">⚡</div>
-                <div class="text-2xl font-bold text-green-600">Activos</div>
-                <div class="text-gray-500">En el club</div>
-            </div>
-            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
-                <div class="text-3xl mb-2">📊</div>
-                <div class="text-2xl font-bold text-orange-500">Posiciones</div>
-                <div class="text-gray-500">Por definir</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <% if (players && players.length > 0) { %>
-                <% for (var i = 0; i < players.length; i++) { var player = players[i]; %>
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition hover:-translate-y-1 border border-gray-200">
-                        <div class="p-6">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-24 h-24 bg-[#1E3A8A] rounded-full flex items-center justify-center text-3xl text-white shadow-lg">
-                                    <%= player.jersey_number || '⚽' %>
-                                </div>
-                                <h3 class="text-xl font-bold mt-3"><%= player.full_name %></h3>
-                                <p class="text-[#1E3A8A] font-semibold">#<%= player.jersey_number %></p>
-                                <div class="flex gap-2 mt-2">
-                                    <span class="bg-[#1E3A8A] text-white px-2 py-1 rounded-full text-xs"><%= player.position || 'Sin posición' %></span>
-                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"><%= player.age || '?' %> años</span>
-                                </div>
-                                <span class="mt-2 text-sm <%= player.active !== false ? 'text-green-600' : 'text-red-600' %>">
-                                    <%= player.active !== false ? '✅ Activo' : '❌ Inactivo' %>
-                                </span>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-200 space-y-1 text-sm">
-                                <div class="flex justify-between"><span class="text-gray-500">📧 Email</span><span><%= player.email %></span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">📱 Teléfono</span><span><%= player.phone || 'No registrado' %></span></div>
-                                <div class="flex justify-between"><span class="text-gray-500">📅 Registro</span><span><%= new Date(player.created_at).toLocaleDateString() %></span></div>
-                            </div>
-                            <div class="mt-4 flex gap-2">
-                                <button onclick="editPlayer('<%= player.id %>')" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg text-sm transition">✏️ Editar</button>
-                                <a href="/coach/players/<%= player.id %>/delete" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-sm text-center transition" onclick="return confirm('¿Eliminar?')">🗑️ Eliminar</a>
-                            </div>
-                        </div>
-                    </div>
-                <% } %>
-            <% } else { %>
-                <div class="col-span-full text-center py-12 bg-white rounded-xl shadow border border-gray-200">
-                    <div class="text-6xl mb-4">👥</div>
-                    <h3 class="text-xl font-bold mb-2">No hay jugadores registrados</h3>
-                    <!-- 🔥 BOTÓN ELIMINADO TAMBIÉN AQUÍ -->
-                </div>
-            <% } %>
-        </div>
-
-        <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
-                ← Volver al Dashboard
-            </a>
-        </div>
-    </main>
-
-    <!-- ===== MODAL ===== -->
-    <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle" class="text-xl font-bold">Agregar Jugador</h3>
-                <button onclick="closeModal()">&times;</button>
-            </div>
-            <form id="playerForm" method="POST" action="/coach/players" class="modal-body">
-                <input type="hidden" id="playerId" name="id">
-                <div class="mb-3">
-                    <label class="form-label">Nombre Completo *</label>
-                    <input type="text" name="full_name" class="form-input" required placeholder="Ej: Juan Pérez">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">ID del Usuario *</label>
-                    <input type="text" name="user_id" class="form-input" required placeholder="ID del usuario">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Número de Camiseta *</label>
-                    <input type="number" name="jersey_number" class="form-input" required placeholder="Ej: 10" min="1" max="99">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Posición</label>
-                    <select name="position" class="form-select">
-                        <option value="">Seleccionar posición</option>
-                        <option value="Portero">🧤 Portero</option>
-                        <option value="Defensa Central">🛡️ Defensa Central</option>
-                        <option value="Lateral Derecho">➡️ Lateral Derecho</option>
-                        <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
-                        <option value="Mediocampista">🎯 Mediocampista</option>
-                        <option value="Delantero">⚽ Delantero</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Edad</label>
-                    <input type="number" name="age" class="form-input" placeholder="Ej: 25" min="1" max="99">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Teléfono</label>
-                    <input type="text" name="phone" class="form-input" placeholder="Ej: 555-1234">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-input" placeholder="Ej: jugador@email.com">
-                </div>
-                <button type="submit" class="btn btn-primary w-full">💾 Guardar</button>
-                <button type="button" onclick="closeModal()" class="btn btn-gray w-full mt-2">❌ Cancelar</button>
-            </form>
-        </div>
-    </div>
-
-    <%- include('../partials/footer') %>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F3F4F6;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-player {
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+        }
+        .card-player:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+        }
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+        }
+        .btn-edit {
+            background: #F59E0B;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-edit:hover {
+            background: #D97706;
+            transform: scale(1.05);
+        }
+        .btn-delete {
+            background: #EF4444;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-delete:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+        }
+        .btn-volver {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+        .btn-volver:hover {
+            background: #172554;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -155,7 +95,7 @@
             display: flex;
         }
         .modal-content {
-            background: white;
+            background: #FFFFFF;
             border-radius: 20px;
             max-width: 500px;
             width: 90%;
@@ -164,18 +104,12 @@
             animation: slideIn 0.3s ease;
         }
         @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .modal-header {
             background: #1E3A8A;
-            color: white;
+            color: #FFFFFF;
             padding: 1.25rem 1.5rem;
             border-radius: 20px 20px 0 0;
             display: flex;
@@ -185,7 +119,7 @@
         .modal-header button {
             background: none;
             border: none;
-            color: white;
+            color: #FFFFFF;
             font-size: 2rem;
             cursor: pointer;
             transition: transform 0.3s;
@@ -197,32 +131,35 @@
         .modal-body {
             padding: 1.5rem;
         }
-        .btn-primary {
+        .btn-primary-custom {
             background: #1E3A8A;
-            color: white;
+            color: #FFFFFF;
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
             border: none;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
+            width: 100%;
         }
-        .btn-primary:hover {
+        .btn-primary-custom:hover {
             background: #172554;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
         }
-        .btn-gray {
+        .btn-gray-custom {
             background: #4B5563;
-            color: white;
+            color: #FFFFFF;
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
             border: none;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
+            width: 100%;
+            margin-top: 0.5rem;
         }
-        .btn-gray:hover {
+        .btn-gray-custom:hover {
             background: #374151;
             transform: translateY(-2px);
         }
@@ -233,6 +170,8 @@
             border-radius: 12px;
             transition: all 0.3s;
             font-size: 0.9rem;
+            color: #111827;
+            font-family: 'Inter', sans-serif;
         }
         .form-input:focus, .form-select:focus {
             outline: none;
@@ -246,7 +185,189 @@
             color: #111827;
             font-size: 0.9rem;
         }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1E3A8A;
+        }
+        .stat-label {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        .text-azul-rey {
+            color: #1E3A8A;
+        }
+        .bg-azul-rey {
+            background: #1E3A8A;
+        }
+        .bg-azul-rey:hover {
+            background: #172554;
+        }
+        .player-avatar {
+            width: 96px;
+            height: 96px;
+            background: #1E3A8A;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
     </style>
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
+
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold" style="color: #1E3A8A;">👥 Plantilla de Jugadores</h1>
+                <p class="text-gray-500 mt-1">Gestiona toda la información de tus jugadores</p>
+            </div>
+            <!-- Botón de Agregar Jugador eliminado según solicitud -->
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="stat-card p-6 text-center">
+                <div class="text-3xl mb-2">👥</div>
+                <div class="stat-number"><%= players.length %></div>
+                <div class="stat-label">Total Jugadores</div>
+            </div>
+            <div class="stat-card p-6 text-center">
+                <div class="text-3xl mb-2">⚡</div>
+                <div class="stat-number" style="color: #22C55E;">Activos</div>
+                <div class="stat-label">En el club</div>
+            </div>
+            <div class="stat-card p-6 text-center">
+                <div class="text-3xl mb-2">📊</div>
+                <div class="stat-number" style="color: #F59E0B;">Posiciones</div>
+                <div class="stat-label">Por definir</div>
+            </div>
+        </div>
+
+        <!-- Lista de Jugadores -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% if (players && players.length > 0) { %>
+                <% for (var i = 0; i < players.length; i++) { var player = players[i]; %>
+                    <div class="card-player p-6">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="player-avatar">
+                                <%= player.jersey_number || '⚽' %>
+                            </div>
+                            <h3 class="text-xl font-bold mt-3" style="color: #111827;"><%= player.full_name %></h3>
+                            <p class="text-[#1E3A8A] font-semibold">#<%= player.jersey_number %></p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="bg-[#1E3A8A] text-white px-2 py-1 rounded-full text-xs"><%= player.position || 'Sin posición' %></span>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"><%= player.age || '?' %> años</span>
+                            </div>
+                            <span class="mt-2 text-sm <%= player.active !== false ? 'text-green-600' : 'text-red-600' %>">
+                                <%= player.active !== false ? '✅ Activo' : '❌ Inactivo' %>
+                            </span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 space-y-1 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">📧 Email</span>
+                                <span style="color: #111827;"><%= player.email %></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">📱 Teléfono</span>
+                                <span style="color: #111827;"><%= player.phone || 'No registrado' %></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">📅 Registro</span>
+                                <span style="color: #111827;"><%= new Date(player.created_at).toLocaleDateString() %></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="editPlayer('<%= player.id %>')" class="btn-edit flex-1">✏️ Editar</button>
+                            <a href="/coach/players/<%= player.id %>/delete" class="btn-delete flex-1" onclick="return confirm('¿Eliminar a <%= player.full_name %>?')">🗑️ Eliminar</a>
+                        </div>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="col-span-full">
+                    <div class="card-player p-12 empty-state">
+                        <div class="icon">👥</div>
+                        <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay jugadores registrados</h3>
+                        <p class="text-gray-400">Comienza agregando jugadores a tu plantilla</p>
+                        <!-- Botón de Agregar Jugador eliminado según solicitud -->
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Volver -->
+        <div class="mt-8 text-center">
+            <a href="/coach/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
+                ← Volver al Dashboard
+            </a>
+        </div>
+    </main>
+
+    <!-- ===== MODAL JUGADOR ===== -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle" class="text-xl font-bold">✏️ Editar Jugador</h3>
+                <button onclick="closeModal()">&times;</button>
+            </div>
+            <form id="playerForm" method="POST" action="/coach/players" class="modal-body">
+                <input type="hidden" id="playerId" name="id">
+                <div class="mb-4">
+                    <label class="form-label">👤 Nombre Completo *</label>
+                    <input type="text" name="full_name" class="form-input" required placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">🆔 ID del Usuario *</label>
+                    <input type="text" name="user_id" class="form-input" required placeholder="ID del usuario">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">🔢 Número de Camiseta *</label>
+                    <input type="number" name="jersey_number" class="form-input" required placeholder="Ej: 10" min="1" max="99">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">📌 Posición</label>
+                    <select name="position" class="form-select">
+                        <option value="">Seleccionar posición</option>
+                        <option value="Portero">🧤 Portero</option>
+                        <option value="Defensa Central">🛡️ Defensa Central</option>
+                        <option value="Lateral Derecho">➡️ Lateral Derecho</option>
+                        <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+                        <option value="Mediocampista">🎯 Mediocampista</option>
+                        <option value="Delantero">⚽ Delantero</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">🎂 Edad</label>
+                    <input type="number" name="age" class="form-input" placeholder="Ej: 25" min="1" max="99">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">📱 Teléfono</label>
+                    <input type="text" name="phone" class="form-input" placeholder="Ej: 555-1234">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">📧 Email</label>
+                    <input type="email" name="email" class="form-input" placeholder="Ej: jugador@email.com">
+                </div>
+                <button type="submit" class="btn-primary-custom">💾 Guardar Cambios</button>
+                <button type="button" onclick="closeModal()" class="btn-gray-custom">❌ Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
 
     <script>
         // ========== FUNCIONES DEL MODAL ==========
@@ -266,14 +387,18 @@
         }
 
         function editPlayer(id) {
+            console.log('📝 Editando jugador ID:', id);
+            
             fetch('/coach/players/api/' + id)
                 .then(function(response) { 
                     if (!response.ok) {
-                        throw new Error('Error al cargar los datos');
+                        throw new Error('Error al cargar los datos: ' + response.status);
                     }
                     return response.json(); 
                 })
                 .then(function(data) {
+                    console.log('📊 Datos del jugador:', data);
+                    
                     document.getElementById('modalTitle').textContent = '✏️ Editar Jugador';
                     document.getElementById('playerId').value = data.id;
                     document.querySelector('[name="user_id"]').value = data.user_id || '';
@@ -284,11 +409,12 @@
                     document.querySelector('[name="email"]').value = data.email || '';
                     document.querySelector('[name="full_name"]').value = data.full_name || '';
                     document.getElementById('playerForm').action = '/coach/players/' + data.id;
+                    
                     openModal();
                 })
                 .catch(function(error) {
-                    console.error('Error:', error);
-                    alert('❌ Error al cargar los datos del jugador');
+                    console.error('❌ Error:', error);
+                    alert('❌ Error al cargar los datos del jugador: ' + error.message);
                 });
         }
 

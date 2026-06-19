@@ -6,39 +6,253 @@
     <title>Partidos | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F3F4F6;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-match {
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        .card-match:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+        }
+        .btn-primary-custom {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary-custom:hover {
+            background: #172554;
+            transform: scale(1.05);
+        }
+        .btn-gray-custom {
+            background: #4B5563;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-gray-custom:hover {
+            background: #374151;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #FFFFFF;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            padding: 1.25rem 1.5rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header button {
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
+        .modal-header button:hover {
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.9rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .table thead {
+            background: #1E3A8A;
+            color: #FFFFFF;
+        }
+        .table thead th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #E5E7EB;
+            color: #111827;
+        }
+        .table tbody tr:hover {
+            background: #F9FAFB;
+        }
+        .btn-edit {
+            color: #F59E0B;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .btn-edit:hover {
+            color: #D97706;
+            transform: scale(1.1);
+        }
+        .btn-delete {
+            color: #EF4444;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        .btn-delete:hover {
+            color: #DC2626;
+            transform: scale(1.1);
+        }
+        .btn-volver {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+        .btn-volver:hover {
+            background: #172554;
+        }
+        .text-azul-rey {
+            color: #1E3A8A;
+        }
+        .bg-azul-rey {
+            background: #1E3A8A;
+        }
+        .bg-azul-rey:hover {
+            background: #172554;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1E3A8A;
+        }
+        .stat-label {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        .badge-result {
+            font-weight: 700;
+            color: #22C55E;
+        }
+        .badge-pending {
+            color: #6B7280;
+        }
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            accent-color: #1E3A8A;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <%- include('../partials/navbar', { user: user }) %>
+<body>
+    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <div class="flex justify-between items-center mb-8">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-[#1E3A8A]">⚽ Gestión de Partidos</h1>
+                <h1 class="text-3xl font-bold" style="color: #1E3A8A;">⚽ Gestión de Partidos</h1>
                 <p class="text-gray-500 mt-1">Programa y organiza los partidos</p>
             </div>
-            <button onclick="openMatchModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
-                ➕ Agregar Partido
+            <button onclick="openMatchModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md mt-4 md:mt-0">
+                <span class="text-lg">➕</span> Agregar Partido
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="card-match p-6 text-center">
                 <div class="text-3xl mb-2">⚽</div>
-                <div class="text-2xl font-bold text-[#1E3A8A]"><%= matches.length %></div>
-                <div class="text-gray-500">Total</div>
+                <div class="stat-number"><%= matches.length %></div>
+                <div class="stat-label">Total Partidos</div>
             </div>
-            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
+            <div class="card-match p-6 text-center">
                 <div class="text-3xl mb-2">🏆</div>
-                <div class="text-2xl font-bold text-[#1E3A8A]"><%= matches.filter(function(m) { return m.result_home !== null; }).length %></div>
-                <div class="text-gray-500">Jugados</div>
+                <div class="stat-number"><%= matches.filter(function(m) { return m.result_home !== null; }).length %></div>
+                <div class="stat-label">Jugados</div>
             </div>
-            <div class="bg-white rounded-xl shadow p-6 text-center border border-gray-200">
+            <div class="card-match p-6 text-center">
                 <div class="text-3xl mb-2">📅</div>
-                <div class="text-2xl font-bold text-[#1E3A8A]"><%= matches.filter(function(m) { return new Date(m.date) >= new Date(); }).length %></div>
-                <div class="text-gray-500">Próximos</div>
+                <div class="stat-number"><%= matches.filter(function(m) { return new Date(m.date) >= new Date(); }).length %></div>
+                <div class="stat-label">Próximos</div>
             </div>
         </div>
 
+        <!-- Tabla de Partidos -->
         <div class="table-wrapper">
             <table class="table">
                 <thead>
@@ -49,40 +263,50 @@
                         <th>Hora</th>
                         <th>Lugar</th>
                         <th>Resultado</th>
-                        <th>Acciones</th>
+                        <th style="text-align: center;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% if (matches && matches.length > 0) { %>
                         <% for (var i = 0; i < matches.length; i++) { var m = matches[i]; %>
                             <tr>
-                                <td class="font-semibold"><%= m.home_team ? '🏠 ' : '✈️ ' %><%= m.opponent %></td>
+                                <td class="font-semibold" style="color: #111827;">
+                                    <%= m.home_team ? '🏠 ' : '✈️ ' %><%= m.opponent %>
+                                </td>
                                 <td><%= m.competition %></td>
                                 <td><%= new Date(m.date).toLocaleDateString() %></td>
                                 <td><%= m.time %></td>
                                 <td><%= m.location %></td>
                                 <td>
                                     <% if (m.result_home !== null && m.result_away !== null) { %>
-                                        <span class="font-bold text-green-600"><%= m.result_home %> - <%= m.result_away %></span>
+                                        <span class="badge-result"><%= m.result_home %> - <%= m.result_away %></span>
                                     <% } else { %>
-                                        <span class="text-gray-400">-</span>
+                                        <span class="badge-pending">-</span>
                                     <% } %>
                                 </td>
-                                <td class="flex gap-2">
-                                    <button onclick="editMatch('<%= m.id %>')" class="text-yellow-500 hover:text-yellow-700">✏️</button>
-                                    <a href="/coach/matches/<%= m.id %>/delete" class="text-red-500 hover:text-red-700" onclick="return confirm('¿Eliminar?')">🗑️</a>
+                                <td style="text-align: center;">
+                                    <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                        <button onclick="editMatch('<%= m.id %>')" class="btn-edit" title="Editar">✏️</button>
+                                        <a href="/coach/matches/<%= m.id %>/delete" class="btn-delete" onclick="return confirm('¿Eliminar este partido?')" title="Eliminar">🗑️</a>
+                                    </div>
                                 </td>
                             </tr>
                         <% } %>
                     <% } else { %>
-                        <tr><td colspan="7" class="text-center py-8 text-gray-500">No hay partidos</td></tr>
+                        <tr>
+                            <td colspan="7" class="text-center py-8" style="color: #6B7280;">
+                                <span style="font-size: 3rem; display: block; margin-bottom: 0.5rem;">⚽</span>
+                                No hay partidos registrados
+                            </td>
+                        </tr>
                     <% } %>
                 </tbody>
             </table>
         </div>
 
+        <!-- Volver -->
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
+            <a href="/coach/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -92,95 +316,103 @@
     <div id="matchModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="matchModalTitle" class="text-xl font-bold">Agregar Partido</h3>
+                <h3 id="matchModalTitle" class="text-xl font-bold">➕ Agregar Partido</h3>
                 <button onclick="closeMatchModal()">&times;</button>
             </div>
             <form id="matchForm" method="POST" action="/coach/matches" class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Rival</label>
-                    <input type="text" name="opponent" id="matchOpponent" class="form-input" required>
+                <div class="mb-4">
+                    <label class="form-label">🏟️ Rival</label>
+                    <input type="text" name="opponent" id="matchOpponent" class="form-input" placeholder="Ej: Real Madrid" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Competición</label>
-                    <input type="text" name="competition" id="matchCompetition" class="form-input" required>
+                <div class="mb-4">
+                    <label class="form-label">🏆 Competición</label>
+                    <input type="text" name="competition" id="matchCompetition" class="form-input" placeholder="Ej: Liga" required>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="mb-3">
-                        <label class="form-label">Fecha</label>
+                    <div class="mb-4">
+                        <label class="form-label">📅 Fecha</label>
                         <input type="date" name="date" id="matchDate" class="form-input" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Hora</label>
+                    <div class="mb-4">
+                        <label class="form-label">🕐 Hora</label>
                         <input type="time" name="time" id="matchTime" class="form-input" required>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Lugar</label>
-                    <input type="text" name="location" id="matchLocation" class="form-input" required>
+                <div class="mb-4">
+                    <label class="form-label">📍 Lugar</label>
+                    <input type="text" name="location" id="matchLocation" class="form-input" placeholder="Ej: Estadio Santiago Bernabéu" required>
                 </div>
-                <div class="mb-3">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" name="home_team" id="matchHomeTeam" class="mr-2">
-                        Jugamos de local
+                <div class="mb-4">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #111827; font-weight: 500;">
+                        <input type="checkbox" name="home_team" id="matchHomeTeam" class="checkbox-custom">
+                        🏠 Jugamos de local
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary w-full">Guardar</button>
-                <button type="button" onclick="closeMatchModal()" class="btn btn-gray w-full mt-2">Cancelar</button>
+                <button type="submit" class="btn-primary-custom w-full">💾 Guardar Partido</button>
+                <button type="button" onclick="closeMatchModal()" class="btn-gray-custom w-full mt-2">❌ Cancelar</button>
             </form>
         </div>
     </div>
 
     <%- include('../partials/footer') %>
 
-    <style>
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1100; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 20px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-header { background: #1E3A8A; color: white; padding: 1.25rem 1.5rem; border-radius: 20px 20px 0 0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header button { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-        .modal-body { padding: 1.5rem; }
-        .btn-primary { background: #1E3A8A; color: white; padding: 0.6rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; font-weight: 600; }
-        .btn-primary:hover { background: #172554; }
-        .btn-gray { background: #4B5563; color: white; padding: 0.6rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; font-weight: 600; }
-        .btn-gray:hover { background: #374151; }
-        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E7EB; border-radius: 12px; transition: all 0.3s; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
-        .form-input:focus, .form-select:focus { outline: none; border-color: #1E3A8A; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
-        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #111827; font-size: 0.9rem; }
-    </style>
-
     <script>
         function openMatchModal() {
             document.getElementById('matchModal').classList.add('active');
-            document.getElementById('matchModalTitle').textContent = 'Agregar Partido';
+            document.getElementById('matchModalTitle').textContent = '➕ Agregar Partido';
             document.getElementById('matchForm').action = '/coach/matches';
             document.getElementById('matchForm').reset();
+            document.getElementById('matchHomeTeam').checked = false;
         }
+        
         function closeMatchModal() {
             document.getElementById('matchModal').classList.remove('active');
         }
+        
         function editMatch(id) {
             fetch('/coach/matches/api/' + id)
-                .then(function(r) { return r.json(); })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Error al cargar los datos');
+                    }
+                    return response.json();
+                })
                 .then(function(data) {
-                    document.getElementById('matchModalTitle').textContent = 'Editar Partido';
+                    document.getElementById('matchModalTitle').textContent = '✏️ Editar Partido';
                     document.getElementById('matchForm').action = '/coach/matches/' + id;
-                    document.getElementById('matchOpponent').value = data.opponent;
-                    document.getElementById('matchCompetition').value = data.competition;
-                    document.getElementById('matchDate').value = data.date.split('T')[0];
-                    document.getElementById('matchTime').value = data.time;
-                    document.getElementById('matchLocation').value = data.location;
-                    document.getElementById('matchHomeTeam').checked = data.home_team;
+                    document.getElementById('matchOpponent').value = data.opponent || '';
+                    document.getElementById('matchCompetition').value = data.competition || '';
+                    if (data.date) {
+                        document.getElementById('matchDate').value = data.date.split('T')[0];
+                    }
+                    document.getElementById('matchTime').value = data.time || '';
+                    document.getElementById('matchLocation').value = data.location || '';
+                    document.getElementById('matchHomeTeam').checked = data.home_team || false;
                     document.getElementById('matchModal').classList.add('active');
                 })
                 .catch(function(error) {
                     console.error('Error:', error);
-                    alert('Error al cargar los datos');
+                    alert('❌ Error al cargar los datos del partido: ' + error.message);
                 });
         }
+        
+        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             var modal = document.getElementById('matchModal');
-            if (event.target === modal) closeMatchModal();
+            if (event.target === modal) {
+                closeMatchModal();
+            }
         }
+        
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                var modal = document.getElementById('matchModal');
+                if (modal.classList.contains('active')) {
+                    closeMatchModal();
+                }
+            }
+        });
     </script>
 </body>
 </html>

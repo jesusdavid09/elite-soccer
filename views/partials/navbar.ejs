@@ -1,217 +1,77 @@
-<nav class="navbar">
-    <div class="navbar-container">
+<nav class="navbar" style="background: #1E3A8A; padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-bottom: 3px solid #FFFFFF;">
+    <div class="navbar-container" style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <!-- Logo -->
-        <div class="navbar-logo">
-            <span class="crest">⚽</span>
+        <div class="navbar-logo" style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 2rem; color: #FFFFFF;">⚽</span>
             <div>
-                <div class="logo-text">ELITE SOCCER</div>
-                <div class="logo-sub">ACADEMY</div>
+                <div style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.3rem; color: #FFFFFF; letter-spacing: 1px;">ELITE SOCCER</div>
+                <div style="font-size: 0.6rem; color: #3B82F6; letter-spacing: 2px;">ACADEMY</div>
             </div>
         </div>
 
         <!-- Menú -->
-        <div class="navbar-menu">
+        <div class="navbar-menu" style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
             <% if (user && user.role === 'coach') { %>
-                <!-- Menú para ENTRENADOR -->
-                <a href="/coach/dashboard">🏠 Inicio</a>
-                <a href="/coach/players">👥 Jugadores</a>
-                
-                <!-- 🔥 NUEVO: Aprobar Jugadores con contador -->
-                <a href="/coach/approve-players" class="approve-link">
+                <a href="/coach/dashboard" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏠 Inicio</a>
+                <a href="/coach/players" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">👥 Jugadores</a>
+                <a href="/coach/approve-players" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px;">
                     📋 Aprobar
                     <% if (pendingCount && pendingCount > 0) { %>
-                        <span class="badge-pending"><%= pendingCount %></span>
+                        <span style="background: #EF4444; color: white; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 9999px; animation: pulse 2s infinite; min-width: 18px; text-align: center;"><%= pendingCount %></span>
                     <% } %>
                 </a>
-                
-                <a href="/coach/trainings">🏋️ Entrenamientos</a>
-                <a href="/coach/matches">⚽ Partidos</a>
-                <a href="/coach/announcements">📢 Anuncios</a>
-                <a href="/coach/attendance">✅ Asistencia</a>
+                <a href="/coach/trainings" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏋️ Entrenamientos</a>
+                <a href="/coach/matches" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">⚽ Partidos</a>
+                <a href="/coach/announcements" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">📢 Anuncios</a>
+                <a href="/coach/attendance" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">✅ Asistencia</a>
             <% } else if (user && user.role === 'player') { %>
-                <!-- Menú para JUGADOR -->
-                <a href="/player/dashboard">🏠 Inicio</a>
-                <a href="/player/attendance">✅ Asistencia</a>
-                <a href="/player/announcements">📢 Anuncios</a>
-                <a href="/player/profile">👤 Mi Perfil</a>
+                <a href="/player/dashboard" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏠 Inicio</a>
+                <a href="/player/attendance" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">✅ Asistencia</a>
+                <a href="/player/announcements" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">📢 Anuncios</a>
+                <a href="/player/profile" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">👤 Mi Perfil</a>
             <% } else { %>
-                <!-- Menú para usuarios NO autenticados -->
-                <a href="/">🏠 Inicio</a>
-                <a href="/login">🔑 Iniciar Sesión</a>
-                <a href="/register">📝 Registrarse</a>
+                <a href="/" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏠 Inicio</a>
+                <a href="/login" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🔑 Iniciar Sesión</a>
+                <a href="/register" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">📝 Registrarse</a>
             <% } %>
         </div>
 
         <!-- Usuario -->
-        <div class="user-area">
+        <div class="user-area" style="display: flex; align-items: center; gap: 1rem;">
             <% if (user) { %>
-                <span class="user-name">
+                <span style="color: #FFFFFF; font-weight: 500; font-size: 0.9rem;">
                     <%= user.full_name %>
-                    <span class="text-xs text-white/60 ml-1">
+                    <span style="font-size: 0.7rem; color: #93C5FD; margin-left: 4px;">
                         (<%= user.role === 'coach' ? 'Entrenador' : 'Jugador' %>)
                     </span>
                 </span>
-                <a href="/logout" class="logout-link">🚪 Salir</a>
+                <a href="/logout" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem 1rem; border-radius: 20px; color: #FFFFFF; text-decoration: none; font-size: 0.8rem; transition: all 0.3s ease;">🚪 Salir</a>
             <% } else { %>
-                <a href="/login" class="logout-link">🔑 Iniciar Sesión</a>
+                <a href="/login" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem 1rem; border-radius: 20px; color: #FFFFFF; text-decoration: none; font-size: 0.8rem; transition: all 0.3s ease;">🔑 Iniciar Sesión</a>
             <% } %>
         </div>
     </div>
 </nav>
 
 <style>
-    .navbar {
-        background: #1E3A8A;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-bottom: 3px solid #FFFFFF;
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
     }
-
-    .navbar-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .navbar-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .navbar-logo .crest {
-        font-size: 2rem;
-        color: #FFFFFF;
-    }
-
-    .navbar-logo .logo-text {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: 1.3rem;
-        color: #FFFFFF;
-        letter-spacing: 1px;
-    }
-
-    .navbar-logo .logo-sub {
-        font-size: 0.6rem;
-        color: #3B82F6;
-        letter-spacing: 2px;
-    }
-
-    .navbar-menu {
-        display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .navbar-menu a {
-        color: #FFFFFF;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        padding: 0.5rem 0;
-        transition: all 0.3s ease;
-        border-bottom: 2px solid transparent;
-        position: relative;
-    }
-
     .navbar-menu a:hover {
         border-bottom-color: #FFFFFF;
     }
-
-    /* 🔥 Estilos para el badge de pendientes */
-    .approve-link {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .badge-pending {
-        background: #EF4444;
-        color: white;
-        font-size: 0.65rem;
-        font-weight: 700;
-        padding: 0.15rem 0.5rem;
-        border-radius: 9999px;
-        animation: pulse-badge 2s infinite;
-        min-width: 18px;
-        text-align: center;
-    }
-
-    @keyframes pulse-badge {
-        0%, 100% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.1);
-        }
-    }
-
-    .user-area {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .user-area .user-name {
-        color: #FFFFFF;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    .user-area .logout-link {
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 0.3rem 1rem;
-        border-radius: 20px;
-        color: #FFFFFF;
-        text-decoration: none;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-    }
-
     .user-area .logout-link:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(255,255,255,0.3);
     }
-
-    /* ============== RESPONSIVE ============== */
     @media (max-width: 1024px) {
-        .navbar-container {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        .navbar-menu {
-            justify-content: center;
-            gap: 1rem;
-        }
-        .navbar-menu a {
-            font-size: 0.8rem;
-        }
+        .navbar-container { flex-direction: column; align-items: stretch; }
+        .navbar-menu { justify-content: center; gap: 1rem; }
+        .navbar-menu a { font-size: 0.8rem; }
     }
-
     @media (max-width: 768px) {
-        .navbar {
-            padding: 0.75rem 1rem;
-        }
-        .navbar-menu {
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-        .user-area .user-name {
-            font-size: 0.8rem;
-        }
-        .badge-pending {
-            font-size: 0.55rem;
-            padding: 0.1rem 0.4rem;
-            min-width: 16px;
-        }
+        .navbar { padding: 0.75rem 1rem; }
+        .navbar-menu { flex-wrap: wrap; gap: 0.75rem; }
+        .user-area .user-name { font-size: 0.8rem; }
     }
 </style>

@@ -15,6 +15,15 @@
                 <!-- Menú para ENTRENADOR -->
                 <a href="/coach/dashboard">🏠 Inicio</a>
                 <a href="/coach/players">👥 Jugadores</a>
+                
+                <!-- 🔥 NUEVO: Aprobar Jugadores con contador -->
+                <a href="/coach/approve-players" class="approve-link">
+                    📋 Aprobar
+                    <% if (pendingCount && pendingCount > 0) { %>
+                        <span class="badge-pending"><%= pendingCount %></span>
+                    <% } %>
+                </a>
+                
                 <a href="/coach/trainings">🏋️ Entrenamientos</a>
                 <a href="/coach/matches">⚽ Partidos</a>
                 <a href="/coach/announcements">📢 Anuncios</a>
@@ -111,10 +120,39 @@
         padding: 0.5rem 0;
         transition: all 0.3s ease;
         border-bottom: 2px solid transparent;
+        position: relative;
     }
 
     .navbar-menu a:hover {
         border-bottom-color: #FFFFFF;
+    }
+
+    /* 🔥 Estilos para el badge de pendientes */
+    .approve-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .badge-pending {
+        background: #EF4444;
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        animation: pulse-badge 2s infinite;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    @keyframes pulse-badge {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
     }
 
     .user-area {
@@ -169,6 +207,11 @@
         }
         .user-area .user-name {
             font-size: 0.8rem;
+        }
+        .badge-pending {
+            font-size: 0.55rem;
+            padding: 0.1rem 0.4rem;
+            min-width: 16px;
         }
     }
 </style>

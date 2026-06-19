@@ -49,6 +49,20 @@ app.get('/', (req, res) => {
 // ============== RUTAS PÚBLICAS ==============
 app.use('/', authRoutes);
 
+// ============== MIDDLEWARE PARA PENDING COUNT ==============
+app.use('/coach/*', authenticate, async (req: any, res: any, next: any) => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(*) as count FROM players WHERE status = $1',
+            ['pending']
+        );
+        res.locals.pendingCount = parseInt(result.rows[0]?.count || '0');
+    } catch (error) {
+        res.locals.pendingCount = 0;
+    }
+    next();
+});
+
 // ============== NOTIFICACIONES PUSH ==============
 app.post('/api/notifications/subscribe', authenticate, async (req: any, res: any) => {
     const subscription = req.body;
@@ -74,6 +88,89 @@ app.use('/coach/trainings', trainingRoutes);
 app.use('/coach/matches', matchRoutes);
 app.use('/coach/announcements', announcementRoutes);
 app.get('/player/dashboard', authenticate, getPlayerDashboard);
+
+// ============== APROBAR JUGADORES ==============
+app.get('/coach/approve-players', authenticate, async (req: any, res: any) => {
+    try {
+        const result = await pool.query(`
+            SELECT p.*, u.full_name, u.email 
+            FROM players p
+            JOIN users u ON p.user_id = u.id
+            ORDER BY p.created_at DESC
+        `);
+        res.render('coach/approve-players', {
+            title: 'Aprobar Jugadores',
+            pendingPlayers: result.rows,
+            user: req.user,
+            pendingCount: res.locals.pendingCount || 0
+        });
+    } catch (error) {
+        console.error('Error al cargar jugadores:', error);
+        res.render('coach/approve-players', {
+            title: 'Aprobar Jugadores',
+            pendingPlayers: [],
+            user: req.user,
+            pendingCount: 0
+        });
+    }
+});
+
+// Aprobar jugador
+app.post('/coach/players/:id/approve', authenticate, async (req: any, res: any) => {
+    try {
+        const id = req.params.id;
+        await pool.query('UPDATE players SET status = $1 WHERE id = $2', ['approved', id]);
+        res.json({ success: true, message: 'Jugador aprobado correctamente' });
+    } catch (error: any) {
+        console.error('Error al aprobar:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Rechazar jugador
+app.post('/coach/players/:id/reject', authenticate, async (req: any, res: any) => {
+    try {
+        const id = req.params.id;
+        await pool.query('UPDATE players SET status = $1 WHERE id = $2', ['rejected', id]);
+        res.json({ success: true, message: 'Jugador rechazado' });
+    } catch (error: any) {
+        console.error('Error al rechazar:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Revertir estado a pendiente
+app.post('/coach/players/:id/reset', authenticate, async (req: any, res: any) => {
+    try {
+        const id = req.params.id;
+        await pool.query('UPDATE players SET status = $1 WHERE id = $2', ['pending', id]);
+        res.json({ success: true, message: 'Estado revertido a pendiente' });
+    } catch (error: any) {
+        console.error('Error al revertir:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Obtener jugador por ID (para el modal)
+app.get('/coach/players/api/:id', authenticate, async (req: any, res: any) => {
+    try {
+        const id = req.params.id;
+        const result = await pool.query(`
+            SELECT p.*, u.full_name, u.email 
+            FROM players p
+            JOIN users u ON p.user_id = u.id
+            WHERE p.id = $1
+        `, [id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Jugador no encontrado' });
+        }
+        res.json(result.rows[0]);
+    } catch (error: any) {
+        console.error('Error al obtener jugador:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // ============== PERFIL JUGADOR ==============
 app.get('/player/profile', authenticate, async (req: any, res: any) => {

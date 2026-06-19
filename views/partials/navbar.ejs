@@ -1,0 +1,17 @@
+<nav class="bg-blue-600 text-white shadow-lg p-3">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="text-2xl">⚽</span>
+            <span class="text-xl font-bold">Elite Soccer</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <% if (user) { %>
+                <span><%= user.full_name %></span>
+                <a href="/logout" class="bg-red-500 px-4 py-1 rounded hover:bg-red-600">Salir</a>
+            <% } else { %>
+                <a href="/login" class="hover:text-blue-200">Iniciar Sesión</a>
+                <a href="/register" class="hover:text-blue-200">Registrarse</a>
+            <% } %>
+        </div>
+    </div>
+</nav>

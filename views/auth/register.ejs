@@ -1,6 +1,182 @@
-        document.getElementById('roleSelect').onchange = function() { 
-            document.getElementById('coachKeyDiv').style.display = this.value === 'coach' ? 'block' : 'none'; 
-        }; 
-        document.getElementById('roleSelect').onchange = function() { 
-            document.getElementById('coachKeyDiv').style.display = this.value === 'coach' ? 'block' : 'none'; 
-        }; 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | Elite Soccer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .register-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0A2540 0%, #1E40AF 100%);
+            padding: 2rem 1rem;
+        }
+        .register-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-register {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #1E40AF, #00AEEF);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-register:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,174,239,0.3);
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #00AEEF;
+            box-shadow: 0 0 0 3px rgba(0,174,239,0.1);
+        }
+        .sports-section {
+            background: rgba(30, 64, 175, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        @media (max-width: 500px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .register-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-hero">
+        <div class="register-card">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-2">⚽</div>
+                <h1 class="text-2xl font-bold text-dark-blue">CREAR CUENTA</h1>
+                <p class="text-sm text-gray-500">Elite Soccer Academy</p>
+            </div>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="bg-red-100 text-red-700 p-3 rounded-xl mb-4 text-center"><%= error %></div>
+            <% } %>
+            
+            <form method="POST" action="/register">
+                <!-- Datos de acceso -->
+                <div class="sports-section">
+                    <div class="section-title"><span>📝</span> Datos de acceso</div>
+                    <input type="text" name="full_name" class="form-input mb-3" placeholder="Nombre completo" required>
+                    <input type="email" name="email" class="form-input mb-3" placeholder="Correo electrónico" required>
+                    <input type="password" name="password" class="form-input" placeholder="Contraseña (mínimo 6 caracteres)" required>
+                </div>
+                
+                <!-- Datos deportivos (solo para jugadores) -->
+                <div id="playerFields" class="sports-section">
+                    <div class="section-title"><span>⚽</span> Datos deportivos</div>
+                    <div class="grid-2">
+                        <input type="number" name="jersey_number" id="jersey_number" class="form-input" placeholder="Número de camiseta">
+                        <input type="number" name="age" id="age" class="form-input" placeholder="Edad">
+                    </div>
+                    <select name="position" id="position" class="form-select mt-3">
+                        <option value="">Seleccionar posición</option>
+                        <option value="Portero">🧤 Portero</option>
+                        <option value="Defensa Central">🛡️ Defensa Central</option>
+                        <option value="Lateral Derecho">➡️ Lateral Derecho</option>
+                        <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+                        <option value="Mediocampista">🎯 Mediocampista</option>
+                        <option value="Delantero">⚽ Delantero</option>
+                    </select>
+                    <input type="text" name="phone" id="phone" class="form-input mt-3" placeholder="Teléfono (opcional)">
+                </div>
+                
+                <!-- Tipo de cuenta -->
+                <div class="sports-section">
+                    <div class="section-title"><span>👥</span> Tipo de cuenta</div>
+                    <select name="role" id="roleSelect" class="form-select">
+                        <option value="player">👤 Jugador</option>
+                        <option value="coach">👨‍🏫 Entrenador</option>
+                    </select>
+                    <div id="coachKeyDiv" style="display: none; margin-top: 1rem;">
+                        <input type="password" name="coach_key" class="form-input" placeholder="Clave de entrenador">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-register mt-3">Registrarse</button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <a href="/login" class="text-sm text-sport-blue hover:underline">¿Ya tienes cuenta? Iniciar Sesión</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const roleSelect = document.getElementById('roleSelect');
+        const playerFields = document.getElementById('playerFields');
+        const coachKeyDiv = document.getElementById('coachKeyDiv');
+        const jerseyInput = document.getElementById('jersey_number');
+        const positionSelect = document.getElementById('position');
+        const ageInput = document.getElementById('age');
+        const phoneInput = document.getElementById('phone');
+        
+        function updateForm() {
+            if (roleSelect.value === 'coach') {
+                playerFields.style.display = 'none';
+                coachKeyDiv.style.display = 'block';
+                jerseyInput.disabled = true;
+                positionSelect.disabled = true;
+                ageInput.disabled = true;
+                phoneInput.disabled = true;
+            } else {
+                playerFields.style.display = 'block';
+                coachKeyDiv.style.display = 'none';
+                jerseyInput.disabled = false;
+                positionSelect.disabled = false;
+                ageInput.disabled = false;
+                phoneInput.disabled = false;
+            }
+        }
+        roleSelect.addEventListener('change', updateForm);
+        updateForm();
+    </script>
+</body>
+</html>

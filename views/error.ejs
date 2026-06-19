@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error | Elite Soccer Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0A2540 0%, #1E40AF 100%);
+        }
+        .error-card {
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1E40AF, #00AEEF);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,174,239,0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="error-card bg-white rounded-2xl shadow-2xl p-8 text-center max-w-md w-full">
+        <div class="text-7xl mb-4">⚽</div>
+        <div class="text-6xl mb-4">⚠️</div>
+        <h2 class="text-2xl font-bold text-dark-blue mb-2">Oops! Algo salió mal</h2>
+        <p class="text-gray-600 mb-6"><%= message || 'La página que buscas no existe o ha sido movida.' %></p>
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <p class="text-sm text-gray-500 font-semibold mb-2">📌 ¿Qué puedes hacer?</p>
+            <ul class="text-sm text-gray-500 space-y-1">
+                <li>• Verifica que la URL sea correcta</li>
+                <li>• Regresa a la página de inicio</li>
+                <li>• Contacta al administrador si el problema persiste</li>
+            </ul>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-center">
+                🏠 Ir al inicio
+            </a>
+            <button onclick="history.back()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition text-center">
+                ↩️ Volver atrás
+            </button>
+        </div>
+    </div>
+</body>
+</html>

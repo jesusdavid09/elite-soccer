@@ -3,6 +3,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import webpush from 'web-push';
+import fs from 'fs';
 import authRoutes from './routes/authRoutes';
 import playerRoutes from './routes/playerRoutes';
 import trainingRoutes from './routes/trainingRoutes';
@@ -39,7 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // ============== CONFIGURACIÓN DE VISTAS ==============
 app.set('view engine', 'ejs');
-app.set('views', path.join(process.cwd(), 'views'));
+app.set('views', path.join(__dirname, '../views'));
 
 // ============== RUTA RAÍZ ==============
 app.get('/', (req, res) => {
@@ -160,6 +161,5 @@ app.listen(PORT, () => {
     console.log(`🚀 Servidor en http://localhost:${PORT}`);
     console.log(`📝 Login: http://localhost:${PORT}/login`);
     console.log(`📝 Registro: http://localhost:${PORT}/register`);
-    console.log(`📱 Página de bienvenida: http://localhost:${PORT}`);
     console.log(`✅ Elite Soccer App lista para usar`);
 });

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuncios | Elite Soccer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <%- include('../partials/navbar', { user: user }) %>
+    
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">📢 Anuncios del Equipo</h1>
+
+        <% if (announcements && announcements.length > 0) { %>
+            <% announcements.forEach(a => { %>
+                <div class="bg-white rounded-xl shadow p-6 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800"><%= a.title %></h3>
+                    <p class="text-gray-600 mt-2"><%= a.content %></p>
+                    <p class="text-sm text-gray-400 mt-3">Publicado por <%= a.author_name %> - <%= new Date(a.created_at).toLocaleString() %></p>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="bg-white rounded-xl shadow p-8 text-center text-gray-500">
+                No hay anuncios publicados
+            </div>
+        <% } %>
+        
+        <div class="mt-8 text-center">
+            <a href="/player/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">← Volver</a>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

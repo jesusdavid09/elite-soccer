@@ -97,7 +97,17 @@ app.get('/coach/approve-players', authenticate, async (req: any, res: any) => {
     try {
         console.log('📋 Cargando página de aprobar jugadores...');
         const result = await pool.query(`
-            SELECT p.*, u.full_name, u.email 
+            SELECT 
+                p.id,
+                p.user_id,
+                p.jersey_number,
+                p.position,
+                p.phone,
+                p.age,
+                p.status,
+                p.created_at,
+                u.full_name,
+                u.email
             FROM players p
             JOIN users u ON p.user_id = u.id
             ORDER BY p.created_at DESC
@@ -132,14 +142,13 @@ app.get('/coach/approve-players', authenticate, async (req: any, res: any) => {
 app.post('/coach/players/:id/approve', authenticate, async (req: any, res: any) => {
     console.log('📝 Endpoint approve llamado');
     console.log('📝 ID del jugador:', req.params.id);
-    console.log('📝 Usuario:', req.user?.id);
     
     try {
         const id = req.params.id;
         
         // Verificar que el jugador existe
         const checkResult = await pool.query(
-            'SELECT id, full_name, status FROM players WHERE id = $1',
+            'SELECT id, status FROM players WHERE id = $1',
             [id]
         );
         console.log('📊 Jugador encontrado:', checkResult.rows[0]);
@@ -166,11 +175,9 @@ app.post('/coach/players/:id/approve', authenticate, async (req: any, res: any) 
         });
     } catch (error: any) {
         console.error('❌ Error al aprobar:', error);
-        console.error('❌ Stack trace:', error.stack);
         res.status(500).json({ 
             success: false, 
-            message: error.message,
-            stack: error.stack 
+            message: error.message 
         });
     }
 });
@@ -185,7 +192,7 @@ app.post('/coach/players/:id/reject', authenticate, async (req: any, res: any) =
         
         // Verificar que el jugador existe
         const checkResult = await pool.query(
-            'SELECT id, full_name, status FROM players WHERE id = $1',
+            'SELECT id, status FROM players WHERE id = $1',
             [id]
         );
         
@@ -226,7 +233,7 @@ app.post('/coach/players/:id/reset', authenticate, async (req: any, res: any) =>
         
         // Verificar que el jugador existe
         const checkResult = await pool.query(
-            'SELECT id, full_name, status FROM players WHERE id = $1',
+            'SELECT id, status FROM players WHERE id = $1',
             [id]
         );
         
@@ -265,7 +272,17 @@ app.get('/coach/players/api/:id', authenticate, async (req: any, res: any) => {
     try {
         const id = req.params.id;
         const result = await pool.query(`
-            SELECT p.*, u.full_name, u.email 
+            SELECT 
+                p.id,
+                p.user_id,
+                p.jersey_number,
+                p.position,
+                p.phone,
+                p.age,
+                p.status,
+                p.created_at,
+                u.full_name,
+                u.email
             FROM players p
             JOIN users u ON p.user_id = u.id
             WHERE p.id = $1

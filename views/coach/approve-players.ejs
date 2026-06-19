@@ -171,6 +171,11 @@
             font-size: 4rem;
             margin-bottom: 1rem;
         }
+        /* Estilo para botón deshabilitado */
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -239,7 +244,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-500">📅 Solicitud</span>
-                                <span><%= new Date(player.created_at).toLocaleDateString() %></span>
+                                <span><%= player.created_at ? new Date(player.created_at).toLocaleDateString() : 'No disponible' %></span>
                             </div>
                         </div>
 
@@ -285,13 +290,14 @@
     <%- include('../partials/footer') %>
 
     <script>
-        // ========== FUNCIONES ==========
+        // ========== FUNCIONES MEJORADAS ==========
         
+        console.log('✅ Script de aprobar jugadores cargado');
+
         function filterPlayers(filter) {
             var cards = document.querySelectorAll('.player-card');
             var buttons = document.querySelectorAll('.filter-btn');
             
-            // Actualizar botones
             buttons.forEach(function(btn) {
                 btn.classList.remove('bg-[#1E3A8A]', 'text-white');
                 btn.classList.add('bg-gray-200', 'text-gray-700');
@@ -303,7 +309,6 @@
                 activeBtn.classList.add('bg-[#1E3A8A]', 'text-white');
             }
             
-            // Filtrar tarjetas
             cards.forEach(function(card) {
                 var status = card.dataset.status;
                 if (filter === 'all' || status === filter) {
@@ -315,70 +320,92 @@
         }
 
         function viewPlayer(id) {
-            fetch('/coach/players/api/' + id)
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error('Error al cargar los datos');
-                    }
-                    return response.json();
-                })
-                .then(function(data) {
-                    var html = `
-                        <div class="space-y-4">
-                            <div class="text-center">
-                                <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto">
-                                    ${data.full_name ? data.full_name.charAt(0).toUpperCase() : '?'}
-                                </div>
-                                <h3 class="text-2xl font-bold mt-2">${data.full_name || 'Sin nombre'}</h3>
-                                <span class="text-sm text-gray-500">#${data.jersey_number || 'N/A'} • ${data.position || 'Sin posición'}</span>
+            console.log('📝 Viendo jugador ID:', id);
+            
+            fetch('/coach/players/api/' + id, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('📊 Datos del jugador:', data);
+                var html = `
+                    <div class="space-y-4">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto">
+                                ${data.full_name ? data.full_name.charAt(0).toUpperCase() : '?'}
                             </div>
-                            
-                            <div class="border-t border-gray-200 pt-4">
-                                <div class="detail-row">
-                                    <span class="detail-label">📧 Email</span>
-                                    <span class="detail-value">${data.email || 'No registrado'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">📱 Teléfono</span>
-                                    <span class="detail-value">${data.phone || 'No registrado'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">🎂 Edad</span>
-                                    <span class="detail-value">${data.age || 'No especificada'}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">📅 Registro</span>
-                                    <span class="detail-value">${new Date(data.created_at).toLocaleDateString()}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">📊 Estado</span>
-                                    <span class="detail-value">
-                                        <span class="status-${data.status || 'pending'}">
-                                            ${data.status === 'approved' ? '✅ Aprobado' : (data.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente')}
-                                        </span>
+                            <h3 class="text-2xl font-bold mt-2">${data.full_name || 'Sin nombre'}</h3>
+                            <span class="text-sm text-gray-500">#${data.jersey_number || 'N/A'} • ${data.position || 'Sin posición'}</span>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="detail-row">
+                                <span class="detail-label">📧 Email</span>
+                                <span class="detail-value">${data.email || 'No registrado'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📱 Teléfono</span>
+                                <span class="detail-value">${data.phone || 'No registrado'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">🎂 Edad</span>
+                                <span class="detail-value">${data.age || 'No especificada'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📅 Registro</span>
+                                <span class="detail-value">${data.created_at ? new Date(data.created_at).toLocaleDateString() : 'No disponible'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📊 Estado</span>
+                                <span class="detail-value">
+                                    <span class="status-${data.status || 'pending'}">
+                                        ${data.status === 'approved' ? '✅ Aprobado' : (data.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente')}
                                     </span>
-                                </div>
+                                </span>
                             </div>
                         </div>
-                    `;
-                    document.getElementById('playerDetails').innerHTML = html;
-                    document.getElementById('playerModal').classList.add('active');
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    alert('❌ Error al cargar los datos del jugador');
-                });
+                    </div>
+                `;
+                document.getElementById('playerDetails').innerHTML = html;
+                document.getElementById('playerModal').classList.add('active');
+            })
+            .catch(function(error) {
+                console.error('❌ Error:', error);
+                alert('❌ Error al cargar los datos del jugador: ' + error.message);
+            });
         }
 
         function approvePlayer(id) {
             if (!confirm('¿Estás seguro de aprobar a este jugador?')) return;
             
+            console.log('📝 Aprobando jugador ID:', id);
+            
+            var buttons = document.querySelectorAll('button');
+            buttons.forEach(function(btn) { btn.disabled = true; });
+            
             fetch('/coach/players/' + id + '/approve', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
             })
-            .then(function(response) { return response.json(); })
+            .then(function(response) {
+                console.log('📊 Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(function(data) {
+                        throw new Error(data.message || 'Error en el servidor: ' + response.status);
+                    });
+                }
+                return response.json();
+            })
             .then(function(data) {
+                console.log('📊 Data recibida:', data);
                 if (data.success) {
                     alert('✅ Jugador aprobado correctamente');
                     location.reload();
@@ -387,19 +414,39 @@
                 }
             })
             .catch(function(error) {
-                alert('❌ Error de conexión: ' + error);
+                console.error('❌ Error:', error);
+                alert('❌ Error: ' + error.message);
+            })
+            .finally(function() {
+                var buttons = document.querySelectorAll('button');
+                buttons.forEach(function(btn) { btn.disabled = false; });
             });
         }
 
         function rejectPlayer(id) {
             if (!confirm('¿Estás seguro de rechazar a este jugador?')) return;
             
+            console.log('📝 Rechazando jugador ID:', id);
+            
+            var buttons = document.querySelectorAll('button');
+            buttons.forEach(function(btn) { btn.disabled = true; });
+            
             fetch('/coach/players/' + id + '/reject', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
             })
-            .then(function(response) { return response.json(); })
+            .then(function(response) {
+                console.log('📊 Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(function(data) {
+                        throw new Error(data.message || 'Error en el servidor: ' + response.status);
+                    });
+                }
+                return response.json();
+            })
             .then(function(data) {
+                console.log('📊 Data recibida:', data);
                 if (data.success) {
                     alert('❌ Jugador rechazado');
                     location.reload();
@@ -408,19 +455,39 @@
                 }
             })
             .catch(function(error) {
-                alert('❌ Error de conexión: ' + error);
+                console.error('❌ Error:', error);
+                alert('❌ Error: ' + error.message);
+            })
+            .finally(function() {
+                var buttons = document.querySelectorAll('button');
+                buttons.forEach(function(btn) { btn.disabled = false; });
             });
         }
 
         function resetPlayer(id) {
             if (!confirm('¿Revertir el estado de este jugador a pendiente?')) return;
             
+            console.log('📝 Revirtiendo jugador ID:', id);
+            
+            var buttons = document.querySelectorAll('button');
+            buttons.forEach(function(btn) { btn.disabled = true; });
+            
             fetch('/coach/players/' + id + '/reset', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
             })
-            .then(function(response) { return response.json(); })
+            .then(function(response) {
+                console.log('📊 Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(function(data) {
+                        throw new Error(data.message || 'Error en el servidor: ' + response.status);
+                    });
+                }
+                return response.json();
+            })
             .then(function(data) {
+                console.log('📊 Data recibida:', data);
                 if (data.success) {
                     alert('↩️ Estado revertido');
                     location.reload();
@@ -429,7 +496,12 @@
                 }
             })
             .catch(function(error) {
-                alert('❌ Error de conexión: ' + error);
+                console.error('❌ Error:', error);
+                alert('❌ Error: ' + error.message);
+            })
+            .finally(function() {
+                var buttons = document.querySelectorAll('button');
+                buttons.forEach(function(btn) { btn.disabled = false; });
             });
         }
 
@@ -437,7 +509,6 @@
             document.getElementById('playerModal').classList.remove('active');
         }
 
-        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             var modal = document.getElementById('playerModal');
             if (event.target === modal) {
@@ -445,7 +516,6 @@
             }
         }
 
-        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 var modal = document.getElementById('playerModal');

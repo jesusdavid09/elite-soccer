@@ -46,6 +46,25 @@ app.get('/', (req, res) => {
     res.render('index', { title: 'Elite Soccer Academy' });
 });
 
+// ========== TEST DE BASE DE DATOS ==========
+app.get('/test-db', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT NOW() as time');
+        res.json({ 
+            success: true, 
+            message: '✅ Conectado a NeonDB', 
+            time: result.rows[0].time,
+            database: process.env.DB_NAME || 'NeonDB'
+        });
+    } catch (error: any) {
+        console.error('❌ Error al probar conexión:', error.message);
+        res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+});
+
 // ========== RUTAS PÚBLICAS ==========
 app.use('/', authRoutes);
 
@@ -388,5 +407,6 @@ app.listen(PORT, () => {
     console.log(`📝 Login: http://localhost:${PORT}/login`);
     console.log(`📝 Registro: http://localhost:${PORT}/register`);
     console.log(`📋 Aprobar jugadores: http://localhost:${PORT}/coach/approve-players`);
+    console.log(`🔗 Test DB: http://localhost:${PORT}/test-db`);
     console.log(`✅ Elite Soccer App lista para usar\n`);
 });

@@ -1,436 +1,192 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar Asistencia | Elite Soccer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #F3F4F6;
-        }
-        h1, h2, h3 {
-            font-family: 'Poppins', sans-serif;
-        }
-        .card-event {
-            background: #FFFFFF;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            border: 1px solid #E5E7EB;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-        .card-event:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
-        }
-        .card-header {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-        }
-        .btn-confirm {
-            background: #22C55E;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.3rem 1rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-        .btn-confirm:hover {
-            background: #16A34A;
-            transform: scale(1.05);
-        }
-        .btn-maybe {
-            background: #F59E0B;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.3rem 1rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-        .btn-maybe:hover {
-            background: #D97706;
-            transform: scale(1.05);
-        }
-        .btn-no {
-            background: #EF4444;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.3rem 1rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-        .btn-no:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-        }
-        .btn-volver {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-        }
-        .btn-volver:hover {
-            background: #172554;
-        }
-        .text-azul-rey {
-            color: #1E3A8A;
-        }
-        .bg-azul-rey {
-            background: #1E3A8A;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1100;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: #FFFFFF;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-header {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 1.25rem 1.5rem;
-            border-radius: 20px 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-header button {
-            background: none;
-            border: none;
-            color: #FFFFFF;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-            line-height: 1;
-        }
-        .modal-header button:hover {
-            transform: rotate(90deg);
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #111827;
-            font-size: 0.9rem;
-        }
-        .form-select, .form-textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #E5E7EB;
-            border-radius: 12px;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            color: #111827;
-        }
-        .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #1E3A8A;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-        }
-        .btn-primary-custom {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 0.6rem 1.5rem;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            flex: 1;
-        }
-        .btn-primary-custom:hover {
-            background: #172554;
-        }
-        .btn-gray-custom {
-            background: #4B5563;
-            color: #FFFFFF;
-            padding: 0.6rem 1.5rem;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            flex: 1;
-        }
-        .btn-gray-custom:hover {
-            background: #374151;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-confirmed {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-        .status-maybe {
-            background: #FEF3C7;
-            color: #92400E;
-        }
-        .status-absent {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-        .event-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        .event-item:last-child {
-            border-bottom: none;
-        }
-        .event-item:hover {
-            background: #F9FAFB;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-        .empty-state .icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-    </style>
-</head>
-<body>
-    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-[#1E3A8A]">✅ Confirmar Asistencia</h1>
+    <p class="text-gray-500 mt-1">Selecciona tu disponibilidad para los próximos eventos de la academia</p>
+</div>
 
-    <main class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Header -->
-        <h1 class="text-3xl font-bold" style="color: #1E3A8A;">✅ Confirmar Asistencia</h1>
-        <p class="text-gray-500 mb-8">Selecciona tu disponibilidad para los próximos eventos</p>
-
-        <!-- Entrenamientos -->
-        <div class="card-event mb-8">
-            <div class="card-header">🏋️ Entrenamientos</div>
-            <% if (upcomingTrainings && upcomingTrainings.length > 0) { %>
-                <% upcomingTrainings.forEach(function(t) { %>
-                    <div class="event-item" id="training-<%= t.id %>">
-                        <div>
-                            <div class="font-semibold" style="color: #111827;"><%= t.title %></div>
-                            <div class="text-sm text-gray-500">
-                                <%= new Date(t.date).toLocaleDateString() %> - <%= t.time %>
-                                <span class="mx-1">•</span>
-                                <%= t.location %>
-                            </div>
-                        </div>
-                        <div class="flex gap-2 flex-wrap">
-                            <button onclick="confirmAttendance('training', '<%= t.id %>', 'yes')" class="btn-confirm">✅ Sí</button>
-                            <button onclick="confirmAttendance('training', '<%= t.id %>', 'maybe')" class="btn-maybe">🟡 Tal vez</button>
-                            <button onclick="askJustification('training', '<%= t.id %>')" class="btn-no">❌ No</button>
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8 transition duration-300 hover:shadow-md">
+    <div class="bg-[#1E3A8A] text-white px-6 py-3 font-semibold text-lg flex items-center gap-2">
+        <span>🏋️</span> Entrenamientos Próximos
+    </div>
+    
+    <% if (upcomingTrainings && upcomingTrainings.length > 0) { %>
+        <div class="divide-y divide-gray-100">
+            <% upcomingTrainings.forEach(function(t) { %>
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center p-6 gap-4 hover:bg-gray-50/50 transition duration-150" id="training-<%= t.id %>">
+                    <div>
+                        <div class="font-bold text-gray-900 text-base"><%= t.title %></div>
+                        <div class="text-sm text-gray-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span class="font-medium text-gray-600"><%= new Date(t.date).toLocaleDateString('es-CO') %></span>
+                            <span class="text-gray-300">•</span>
+                            <span><%= t.time %></span>
+                            <span class="text-gray-300">•</span>
+                            <span class="text-blue-600 font-medium"><%= t.location %></span>
                         </div>
                     </div>
-                <% }); %>
-            <% } else { %>
-                <div class="empty-state">
-                    <div class="icon">📅</div>
-                    <p class="text-gray-500">No hay entrenamientos próximos</p>
+                    <div class="flex gap-2 shrink-0 flex-wrap">
+                        <button onclick="confirmAttendance('training', '<%= t.id %>', 'yes')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition duration-200 active:scale-95 shadow-sm">
+                            ✅ Sí
+                        </button>
+                        <button onclick="confirmAttendance('training', '<%= t.id %>', 'maybe')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition duration-200 active:scale-95 shadow-sm">
+                            🟡 Tal vez
+                        </button>
+                        <button onclick="askJustification('training', '<%= t.id %>')" class="bg-red-500 hover:bg-red-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition duration-200 active:scale-95 shadow-sm">
+                            ❌ No
+                        </button>
+                    </div>
                 </div>
-            <% } %>
+            <% }); %>
         </div>
+    <% } else { %>
+        <div class="p-8 text-center text-gray-400">
+            <div class="text-4xl mb-2 select-none">📅</div>
+            <p>No hay entrenamientos agendados próximamente.</p>
+        </div>
+    <% } %>
+</div>
 
-        <!-- Partidos -->
-        <div class="card-event mb-8">
-            <div class="card-header">⚽ Partidos</div>
-            <% if (upcomingMatches && upcomingMatches.length > 0) { %>
-                <% upcomingMatches.forEach(function(m) { %>
-                    <div class="event-item" id="match-<%= m.id %>">
-                        <div>
-                            <div class="font-semibold" style="color: #111827;">vs <%= m.opponent %></div>
-                            <div class="text-sm text-gray-500">
-                                <%= new Date(m.date).toLocaleDateString() %> - <%= m.time %>
-                                <span class="mx-1">•</span>
-                                <%= m.location %>
-                            </div>
-                        </div>
-                        <div class="flex gap-2 flex-wrap">
-                            <button onclick="confirmAttendance('match', '<%= m.id %>', 'yes')" class="btn-confirm">✅ Sí</button>
-                            <button onclick="confirmAttendance('match', '<%= m.id %>', 'maybe')" class="btn-maybe">🟡 Tal vez</button>
-                            <button onclick="askJustification('match', '<%= m.id %>')" class="btn-no">❌ No</button>
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8 transition duration-300 hover:shadow-md">
+    <div class="bg-[#1E3A8A] text-white px-6 py-3 font-semibold text-lg flex items-center gap-2">
+        <span>⚽</span> Partidos Oficiales
+    </div>
+    
+    <% if (upcomingMatches && upcomingMatches.length > 0) { %>
+        <div class="divide-y divide-gray-100">
+            <% upcomingMatches.forEach(function(m) { %>
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center p-6 gap-4 hover:bg-gray-50/50 transition duration-150" id="match-<%= m.id %>">
+                    <div>
+                        <div class="font-bold text-gray-900 text-base">Rival: <span class="text-blue-900"><%= m.opponent %></span></div>
+                        <div class="text-sm text-gray-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span class="font-medium text-gray-600"><%= new Date(m.date).toLocaleDateString('es-CO') %></span>
+                            <span class="text-gray-300">•</span>
+                            <span><%= m.time %></span>
+                            <span class="text-gray-300">•</span>
+                            <span class="text-blue-600 font-medium"><%= m.location %></span>
                         </div>
                     </div>
-                <% }); %>
-            <% } else { %>
-                <div class="empty-state">
-                    <div class="icon">⚽</div>
-                    <p class="text-gray-500">No hay partidos próximos</p>
+                    <div class="flex gap-2 shrink-0 flex-wrap">
+                        <button onclick="confirmAttendance('match', '<%= m.id %>', 'yes')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition duration-200 active:scale-95 shadow-sm">
+                            ✅ Sí
+                        </button>
+                        <button onclick="confirmAttendance('match', '<%= m.id %>', 'maybe')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition duration-200 active:scale-95 shadow-sm">
+                            🟡 Tal vez
+                        </button>
+                        <button onclick="askJustification('match', '<%= m.id %>')" class="bg-red-500 hover:bg-red-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition duration-200 active:scale-95 shadow-sm">
+                            ❌ No
+                        </button>
+                    </div>
                 </div>
-            <% } %>
+            <% }); %>
         </div>
-
-        <!-- Volver -->
-        <div class="mt-8 text-center">
-            <a href="/player/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
-                ← Volver al Dashboard
-            </a>
+    <% } else { %>
+        <div class="p-8 text-center text-gray-400">
+            <div class="text-4xl mb-2 select-none">⚽</div>
+            <p>No hay partidos programados en el calendario actual.</p>
         </div>
-    </main>
+    <% } %>
+</div>
 
-    <!-- MODAL JUSTIFICACIÓN -->
-    <div id="justificationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-xl font-bold">📝 Justificar Ausencia</h3>
-                <button onclick="closeJustificationModal()">&times;</button>
+<div class="mt-8 text-center">
+    <a href="/player/dashboard" class="inline-flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold px-6 py-2.5 rounded-xl transition duration-200 active:scale-95 shadow-sm hover:shadow-md">
+        <span>←</span> Volver al Dashboard
+    </a>
+</div>
+
+<div id="justificationModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm items-center justify-center z-[1100] px-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all translate-y-0 scale-100 opacity-100">
+        <div class="bg-[#1E3A8A] text-white px-6 py-4 flex justify-between items-center">
+            <h3 class="text-lg font-bold flex items-center gap-2">📝 Justificar Ausencia</h3>
+            <button onclick="closeJustificationModal()" class="text-2xl font-light hover:rotate-90 transition duration-200 leading-none">&times;</button>
+        </div>
+        <div class="p-6">
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-900 mb-1.5">Motivo Principal</label>
+                <select id="reasonSelect" class="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-blue-900/10 transition">
+                    <option value="">Seleccionar motivo...</option>
+                    <option value="Estudio">📚 Estudio</option>
+                    <option value="Trabajo">💼 Trabajo</option>
+                    <option value="Enfermedad">🤒 Enfermedad / Lesión</option>
+                    <option value="Viaje">✈️ Viaje</option>
+                    <option value="Compromiso familiar">👨‍👩‍👧 Compromiso familiar</option>
+                    <option value="Otro">📝 Otro</option>
+                </select>
             </div>
-            <div class="modal-body">
-                <div class="mb-4">
-                    <label class="form-label">Motivo</label>
-                    <select id="reasonSelect" class="form-select">
-                        <option value="">Seleccionar motivo</option>
-                        <option value="Estudio">📚 Estudio</option>
-                        <option value="Trabajo">💼 Trabajo</option>
-                        <option value="Enfermedad">🤒 Enfermedad</option>
-                        <option value="Viaje">✈️ Viaje</option>
-                        <option value="Compromiso familiar">👨‍👩‍👧 Compromiso familiar</option>
-                        <option value="Otro">📝 Otro</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">Explicación</label>
-                    <textarea id="justificationText" class="form-textarea" rows="3" placeholder="Escribe una explicación..."></textarea>
-                </div>
-                <div class="flex gap-3 mt-4">
-                    <button onclick="closeJustificationModal()" class="btn-gray-custom">❌ Cancelar</button>
-                    <button onclick="submitJustification()" class="btn-primary-custom">📤 Enviar</button>
-                </div>
+            <div class="mb-5">
+                <label class="block text-sm font-semibold text-gray-900 mb-1.5">Detalles Adicionales</label>
+                <textarea id="justificationText" class="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-blue-900/10 transition resize-none" rows="3" placeholder="Escribe una breve explicación de tu ausencia..."></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeJustificationModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2.5 rounded-xl transition duration-200 active:scale-95">
+                    Cancelar
+                </button>
+                <button onclick="submitJustification()" class="flex-1 bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold py-2.5 rounded-xl transition duration-200 active:scale-95">
+                    Enviar Reporte
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <%- include('../partials/footer') %>
+<script>
+    let pendingJustification = { type: null, id: null };
 
-    <script>
-        var pendingJustification = { type: null, id: null };
-
-        function confirmAttendance(type, id, status) {
-            fetch('/player/attendance/confirm', {
+    async function confirmAttendance(type, id, status, justification = null) {
+        try {
+            const response = await fetch('/player/attendance/confirm', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: type, id: id, status: status, justification: null })
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    alert('✅ Asistencia confirmada');
-                    location.reload();
-                }
-            })
-            .catch(function(error) {
-                console.error('Error:', error);
-                alert('❌ Error al confirmar asistencia');
+                body: JSON.stringify({ type, id, status, justification })
             });
-        }
-
-        function askJustification(type, id) {
-            pendingJustification = { type: type, id: id };
-            document.getElementById('justificationModal').classList.add('active');
-            document.getElementById('reasonSelect').value = '';
-            document.getElementById('justificationText').value = '';
-        }
-
-        function submitJustification() {
-            var reason = document.getElementById('reasonSelect').value;
-            var explanation = document.getElementById('justificationText').value;
             
-            if (!reason) {
-                alert('⚠️ Por favor selecciona un motivo');
-                return;
-            }
+            const data = await response.json();
             
-            var justification = reason + (explanation ? ' - ' + explanation : '');
-            
-            fetch('/player/attendance/confirm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    type: pendingJustification.type,
-                    id: pendingJustification.id,
-                    status: 'no',
-                    justification: justification
-                })
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    alert('✅ Justificación enviada');
-                    closeJustificationModal();
-                    location.reload();
-                }
-            })
-            .catch(function(error) {
-                console.error('Error:', error);
-                alert('❌ Error al enviar justificación');
-            });
-        }
-
-        function closeJustificationModal() {
-            document.getElementById('justificationModal').classList.remove('active');
-            pendingJustification = { type: null, id: null };
-        }
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
-            var modal = document.getElementById('justificationModal');
-            if (event.target === modal) {
-                closeJustificationModal();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('❌ El servidor no pudo procesar la solicitud.');
             }
+        } catch (error) {
+            console.error('Error al actualizar asistencia:', error);
+            alert('❌ Ocurrió un error de red al guardar tu confirmación.');
         }
+    }
 
-        // Cerrar con tecla ESC
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                var modal = document.getElementById('justificationModal');
-                if (modal.classList.contains('active')) {
-                    closeJustificationModal();
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+    function askJustification(type, id) {
+        pendingJustification = { type, id };
+        const modal = document.getElementById('justificationModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.getElementById('reasonSelect').value = '';
+        document.getElementById('justificationText').value = '';
+    }
+
+    function submitJustification() {
+        const reason = document.getElementById('reasonSelect').value;
+        const explanation = document.getElementById('justificationText').value.trim();
+        
+        if (!reason) {
+            alert('⚠️ Por favor selecciona el motivo de tu inasistencia.');
+            return;
+        }
+        
+        const finalJustification = reason + (explanation ? ` - ${explanation}` : '');
+        confirmAttendance(pendingJustification.type, pendingJustification.id, 'no', finalJustification);
+        closeJustificationModal();
+    }
+
+    function closeJustificationModal() {
+        const modal = document.getElementById('justificationModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        pendingJustification = { type: null, id: null };
+    }
+
+    // Cerrar modal al interactuar con el fondo o teclado
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('justificationModal');
+        if (e.target === modal) closeJustificationModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeJustificationModal();
+    });
+</script>

@@ -314,12 +314,8 @@
                 padding: 1rem 0.85rem;
                 max-height: 98vh;
             }
-            .logo-icon {
-                font-size: 2rem;
-            }
-            .logo-title {
-                font-size: 1.25rem;
-            }
+            .logo-icon { font-size: 2rem; }
+            .logo-title { font-size: 1.25rem; }
             .form-input, .form-select {
                 font-size: 0.8rem;
                 padding: 0.4rem 0.6rem;
@@ -338,34 +334,19 @@
                 bottom: -6px;
                 left: -6px;
             }
-            .section-box {
-                padding: 0.5rem 0.6rem;
-            }
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .form-label {
-                font-size: 0.7rem;
-            }
+            .section-box { padding: 0.5rem 0.6rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .form-label, .checkbox-label { font-size: 0.7rem; }
             .alert-error, .alert-success {
                 font-size: 0.75rem;
                 padding: 0.3rem 0.5rem;
             }
-            .checkbox-label {
-                font-size: 0.7rem;
-            }
         }
 
         @media (max-width: 360px) {
-            .register-card {
-                padding: 0.75rem 0.6rem;
-            }
-            .logo-icon {
-                font-size: 1.75rem;
-            }
-            .logo-title {
-                font-size: 1rem;
-            }
+            .register-card { padding: 0.75rem 0.6rem; }
+            .logo-icon { font-size: 1.75rem; }
+            .logo-title { font-size: 1rem; }
             .form-input, .form-select {
                 font-size: 0.75rem;
                 padding: 0.35rem 0.5rem;
@@ -379,28 +360,33 @@
 </head>
 <body>
     <div class="register-card">
-        <!-- Logo -->
         <div class="logo-section">
             <span class="logo-icon">⚽</span>
             <h1 class="logo-title">ELITE SOCCER</h1>
             <p class="logo-subtitle">Academy</p>
         </div>
 
-        <!-- Mensajes de Error -->
-        <% if (typeof error !== 'undefined' && error) { %>
+        <% if (typeof messages !== 'undefined' && messages.error && messages.error.length > 0) { %>
+            <div class="alert-error">
+                ⚠️ <%= messages.error %>
+            </div>
+        <% } else if (typeof error !== 'undefined' && error) { %>
             <div class="alert-error">
                 ⚠️ <%= error %>
             </div>
         <% } %>
-        <% if (typeof success !== 'undefined' && success) { %>
+
+        <% if (typeof messages !== 'undefined' && messages.success && messages.success.length > 0) { %>
+            <div class="alert-success">
+                ✅ <%= messages.success %>
+            </div>
+        <% } else if (typeof success !== 'undefined' && success) { %>
             <div class="alert-success">
                 ✅ <%= success %>
             </div>
         <% } %>
 
-        <!-- Formulario de Registro -->
         <form method="POST" action="/register" id="registerForm">
-            <!-- Datos de acceso -->
             <div class="section-box">
                 <div class="section-title">📝 Datos de acceso</div>
                 <div class="form-group">
@@ -417,7 +403,6 @@
                 </div>
             </div>
 
-            <!-- Datos deportivos (solo para jugadores) -->
             <div id="playerFields" class="section-box">
                 <div class="section-title">⚽ Datos deportivos</div>
                 <div class="grid-2">
@@ -448,7 +433,6 @@
                 </div>
             </div>
 
-            <!-- Tipo de cuenta -->
             <div class="section-box">
                 <div class="section-title">👥 Tipo de cuenta</div>
                 <select name="role" id="roleSelect" class="form-select">
@@ -457,29 +441,26 @@
                 </select>
                 <div id="coachKeyDiv" style="display: none; margin-top: 0.5rem;">
                     <label class="form-label">🔑 Clave de entrenador</label>
-                    <input type="password" name="coach_key" class="form-input" placeholder="Ingresa la clave de entrenador">
+                    <input type="password" name="coach_key" id="coach_key" class="form-input" placeholder="Ingresa la clave de entrenador">
                 </div>
             </div>
 
-            <!-- Términos y condiciones -->
             <div class="form-group">
                 <label class="checkbox-label">
                     <input type="checkbox" name="terms" class="form-checkbox" required>
-                    Acepto los <a href="#" target="_blank">términos y condiciones</a>
+                    <span>Acepto los <a href="#" target="_blank">términos y condiciones</a></span>
                 </label>
             </div>
 
             <button type="submit" class="btn-register">🚀 Registrarse</button>
         </form>
 
-        <!-- Separador -->
         <div class="divider">
             <span class="divider-line"></span>
             <span class="divider-text">¿Ya tienes cuenta?</span>
             <span class="divider-line"></span>
         </div>
 
-        <!-- Link a Login -->
         <p class="login-link">
             <a href="/login">🔑 Iniciar Sesión</a>
         </p>
@@ -490,6 +471,7 @@
         const roleSelect = document.getElementById('roleSelect');
         const playerFields = document.getElementById('playerFields');
         const coachKeyDiv = document.getElementById('coachKeyDiv');
+        const coachKeyInput = document.getElementById('coach_key');
         const jerseyInput = document.getElementById('jersey_number');
         const positionSelect = document.getElementById('position');
         const ageInput = document.getElementById('age');
@@ -499,33 +481,38 @@
             if (roleSelect.value === 'coach') {
                 playerFields.style.display = 'none';
                 coachKeyDiv.style.display = 'block';
+                
                 jerseyInput.disabled = true;
                 positionSelect.disabled = true;
                 ageInput.disabled = true;
                 phoneInput.disabled = true;
-                // Remover required de campos de jugador
+                coachKeyInput.disabled = false;
+
                 jerseyInput.removeAttribute('required');
                 positionSelect.removeAttribute('required');
                 ageInput.removeAttribute('required');
+                coachKeyInput.setAttribute('required', 'required');
             } else {
                 playerFields.style.display = 'block';
                 coachKeyDiv.style.display = 'none';
+                
                 jerseyInput.disabled = false;
                 positionSelect.disabled = false;
                 ageInput.disabled = false;
                 phoneInput.disabled = false;
-                // Agregar required a campos de jugador
+                coachKeyInput.disabled = true;
+
                 jerseyInput.setAttribute('required', 'required');
                 positionSelect.setAttribute('required', 'required');
                 ageInput.setAttribute('required', 'required');
+                coachKeyInput.removeAttribute('required');
             }
         }
 
         roleSelect.addEventListener('change', updateForm);
-        // Ejecutar al cargar la página
-        updateForm();
+        updateForm(); // Carga inicial
 
-        // ========== VALIDACIÓN DE CONTRASEÑA EN TIEMPO REAL ==========
+        // ========== VALIDACIÓN EN TIEMPO REAL ==========
         const passwordInput = document.querySelector('input[name="password"]');
         if (passwordInput) {
             passwordInput.addEventListener('input', function() {
@@ -539,7 +526,6 @@
             });
         }
 
-        // ========== VALIDACIÓN DE EMAIL ==========
         const emailInput = document.querySelector('input[name="email"]');
         if (emailInput) {
             emailInput.addEventListener('blur', function() {
@@ -558,76 +544,63 @@
             const email = document.querySelector('input[name="email"]').value;
             const fullName = document.querySelector('input[name="full_name"]').value;
             const terms = document.querySelector('input[name="terms"]').checked;
-            const role = document.getElementById('roleSelect').value;
+            const role = roleSelect.value;
 
-            // Validar contraseña
-            if (password.length < 6) {
+            if (fullName.trim().length < 2) {
                 e.preventDefault();
-                alert('⚠️ La contraseña debe tener al menos 6 caracteres');
+                alert('⚠️ Ingresa un nombre completo válido.');
                 return false;
             }
 
-            // Validar email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 e.preventDefault();
-                alert('⚠️ Ingresa un correo electrónico válido');
+                alert('⚠️ Ingresa un correo electrónico válido.');
                 return false;
             }
 
-            // Validar nombre
-            if (!fullName || fullName.trim().length < 2) {
+            if (password.length < 6) {
                 e.preventDefault();
-                alert('⚠️ Ingresa tu nombre completo');
+                alert('⚠️ La contraseña debe tener al menos 6 caracteres.');
                 return false;
             }
 
-            // Validar términos
-            if (!terms) {
-                e.preventDefault();
-                alert('⚠️ Debes aceptar los términos y condiciones');
-                return false;
-            }
-
-            // Validar campos de jugador
             if (role === 'player') {
-                const jersey = document.getElementById('jersey_number').value;
-                const position = document.getElementById('position').value;
-                const age = document.getElementById('age').value;
+                const jersey = jerseyInput.value;
+                const position = positionSelect.value;
+                const age = ageInput.value;
 
                 if (!jersey || jersey < 1 || jersey > 99) {
                     e.preventDefault();
-                    alert('⚠️ Ingresa un número de camiseta válido (1-99)');
+                    alert('⚠️ Ingresa un número de camiseta válido (1-99).');
                     return false;
                 }
-
                 if (!position) {
                     e.preventDefault();
-                    alert('⚠️ Selecciona una posición');
+                    alert('⚠️ Selecciona tu posición en el campo.');
                     return false;
                 }
-
                 if (!age || age < 1 || age > 99) {
                     e.preventDefault();
-                    alert('⚠️ Ingresa una edad válida (1-99)');
+                    alert('⚠️ Ingresa una edad válida.');
                     return false;
                 }
             }
 
-            // Validar clave de entrenador
-            if (role === 'coach') {
-                const coachKey = document.querySelector('input[name="coach_key"]').value;
-                if (!coachKey) {
-                    e.preventDefault();
-                    alert('⚠️ Ingresa la clave de entrenador');
-                    return false;
-                }
+            if (role === 'coach' && !coachKeyInput.value.trim()) {
+                e.preventDefault();
+                alert('⚠️ Ingresa la clave de verificación de entrenador.');
+                return false;
+            }
+
+            if (!terms) {
+                e.preventDefault();
+                alert('⚠️ Debes aceptar los términos y condiciones.');
+                return false;
             }
 
             return true;
         });
-
-        console.log('✅ Script de registro cargado correctamente');
     </script>
 </body>
 </html>

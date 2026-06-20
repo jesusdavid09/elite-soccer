@@ -1,111 +1,40 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anuncios | Elite Soccer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #F3F4F6;
-        }
-        h1, h2, h3 {
-            font-family: 'Poppins', sans-serif;
-        }
-        .card-announcement {
-            background: #FFFFFF;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
-        }
-        .card-announcement:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
-        }
-        .btn-volver {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-        }
-        .btn-volver:hover {
-            background: #172554;
-        }
-        .text-azul-rey {
-            color: #1E3A8A;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        .author-avatar {
-            width: 32px;
-            height: 32px;
-            background: #1E3A8A;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFFFFF;
-            font-weight: 700;
-            font-size: 0.875rem;
-            flex-shrink: 0;
-        }
-    </style>
-</head>
-<body>
-    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-[#1E3A8A]">📢 Anuncios del Equipo</h1>
+    <p class="text-gray-500 mt-1">Mantente informado de las novedades del club</p>
+</div>
 
-    <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold" style="color: #1E3A8A;">📢 Anuncios del Equipo</h1>
-            <p class="text-gray-500 mt-1">Mantente informado de las novedades del club</p>
-        </div>
-
-        <!-- Lista de Anuncios -->
-        <% if (announcements && announcements.length > 0) { %>
-            <div class="space-y-4">
-                <% announcements.forEach(a => { %>
-                    <div class="card-announcement p-6">
-                        <h3 class="text-xl font-bold" style="color: #111827;"><%= a.title %></h3>
-                        <p class="text-gray-600 mt-2"><%= a.content %></p>
-                        <div class="flex items-center gap-3 mt-4 pt-4 border-t border-gray-200">
-                            <div class="author-avatar">
-                                <%= a.author_name ? a.author_name.charAt(0).toUpperCase() : 'A' %>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold" style="color: #111827;"><%= a.author_name || 'Administrador' %></p>
-                                <p class="text-xs text-gray-400"><%= new Date(a.created_at).toLocaleString() %></p>
-                            </div>
-                        </div>
+<% if (announcements && announcements.length > 0) { %>
+    <div class="space-y-4">
+        <% announcements.forEach(a => { %>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-blue-900/5">
+                <h3 class="text-xl font-bold text-gray-900"><%= a.title %></h3>
+                <p class="text-gray-600 mt-2 whitespace-pre-line"><%= a.content %></p>
+                
+                <div class="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
+                    <div class="w-9 h-9 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 uppercase select-none">
+                        <%= a.author_name ? a.author_name.charAt(0).toUpperCase() : 'A' %>
                     </div>
-                <% }); %>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900"><%= a.author_name || 'Administrador' %></p>
+                        <p class="text-xs text-gray-400">
+                            <%= new Date(a.created_at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' }) %>
+                        </p>
+                    </div>
+                </div>
             </div>
-        <% } else { %>
-            <div class="card-announcement p-12 empty-state">
-                <div class="icon">📢</div>
-                <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay anuncios publicados</h3>
-                <p class="text-gray-400">Aún no hay novedades del club</p>
-                <p class="text-gray-400 text-sm mt-2">Vuelve más tarde para ver las actualizaciones</p>
-            </div>
-        <% } %>
+        <% }); %>
+    </div>
+<% } else { %>
+    <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm max-w-2xl mx-auto">
+        <div class="text-6xl mb-4 select-none">📢</div>
+        <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay anuncios publicados</h3>
+        <p class="text-gray-400">Aún no hay novedades registradas en el club.</p>
+        <p class="text-gray-400 text-sm mt-1">Vuelve más tarde para ver las actualizaciones del cuerpo técnico.</p>
+    </div>
+<% } %>
 
-        <!-- Volver -->
-        <div class="mt-8 text-center">
-            <a href="/player/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
-                ← Volver al Dashboard
-            </a>
-        </div>
-    </main>
-
-    <%- include('../partials/footer') %>
-</body>
-</html>
+<div class="mt-8 text-center">
+    <a href="/player/dashboard" class="inline-flex items-center gap-2 bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold px-6 py-2.5 rounded-xl transition duration-200 active:scale-95 shadow-sm hover:shadow-md">
+        <span>←</span> Volver al Dashboard
+    </a>
+</div>

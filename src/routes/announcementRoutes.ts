@@ -1,21 +1,30 @@
 import { Router } from 'express';
 import * as announcementController from '../controllers/announcementController';
-import { authenticate, isCoach, isCoachOrAdmin } from '../middlewares/auth';
+import { authenticate, isCoachOrAdmin } from '../middlewares/auth';
 
 const router = Router();
 
-// ============== MIDDLEWARES ==============
-// Todas las rutas requieren autenticación y rol de coach o admin
+// ============== MIDDLEWARES GLOBAL DE RUTA ==============
+// Todas las rutas mapeadas en este archivo pasan primero por aquí
 router.use(authenticate);
 router.use(isCoachOrAdmin);
 
-// ============== RUTAS PRINCIPALES ==============
+// ============== RUTAS ESTÁTICAS / GENERALES ==============
+
 /**
  * @route   GET /coach/announcements
  * @desc    Obtener todos los anuncios
  * @access  Coach/Admin
  */
 router.get('/', announcementController.getAnnouncements);
+
+/**
+ * @route   GET /coach/announcements/featured
+ * @desc    Obtener anuncios destacados
+ * @access  Coach/Admin
+ */
+// 🔥 SOLUCIÓN: Movido arriba para evitar colisiones semánticas con parámetros dinámicos
+router.get('/featured', announcementController.getFeaturedAnnouncements);
 
 /**
  * @route   POST /coach/announcements
@@ -25,16 +34,9 @@ router.get('/', announcementController.getAnnouncements);
  */
 router.post('/', announcementController.createAnnouncement);
 
-// ============== RUTAS DE ACCIÓN ==============
-/**
- * @route   GET /coach/announcements/:id/delete
- * @desc    Eliminar un anuncio por ID
- * @access  Coach/Admin (solo autor o admin)
- * @param   {string} id - ID del anuncio
- */
-router.get('/:id/delete', announcementController.deleteAnnouncement);
 
-// ============== RUTAS DE API ==============
+// ============== RUTAS DE API (JSON) ==============
+
 /**
  * @route   GET /coach/announcements/api/:id
  * @desc    Obtener un anuncio por ID (formato JSON)
@@ -42,6 +44,17 @@ router.get('/:id/delete', announcementController.deleteAnnouncement);
  * @param   {string} id - ID del anuncio
  */
 router.get('/api/:id', announcementController.getAnnouncementById);
+
+
+// ============== RUTAS DINÁMICAS POR ID (ACCIONES) ==============
+
+/**
+ * @route   GET /coach/announcements/:id/delete
+ * @desc    Eliminar un anuncio por ID
+ * @access  Coach/Admin (solo autor o admin)
+ * @param   {string} id - ID del anuncio
+ */
+router.get('/:id/delete', announcementController.deleteAnnouncement);
 
 /**
  * @route   POST /coach/announcements/:id/edit
@@ -60,13 +73,5 @@ router.post('/:id/edit', announcementController.updateAnnouncement);
  * @body    { published: boolean }
  */
 router.post('/:id/publish', announcementController.togglePublish);
-
-// ============== RUTA PARA ANUNCIOS DESTACADOS ==============
-/**
- * @route   GET /coach/announcements/featured
- * @desc    Obtener anuncios destacados
- * @access  Coach/Admin
- */
-router.get('/featured', announcementController.getFeaturedAnnouncements);
 
 export default router;

@@ -3,7 +3,7 @@ import pool from '../config/database';
 
 // ============== DASHBOARD DEL ENTRENADOR ==============
 export const getCoachDashboard = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.id;
+    const userId = Number((req as any).user?.id);
     console.log(`📊 Cargando dashboard del entrenador (ID: ${userId})`);
     
     try {
@@ -19,7 +19,7 @@ export const getCoachDashboard = async (req: Request, res: Response) => {
             pendingCountResult,
             recentPlayersResult
         ] = await Promise.all([
-            // Estadísticas
+            // Estadísticas (COUNT retorna bigint -> string en pg)
             pool.query('SELECT COUNT(*) as count FROM players'),
             pool.query('SELECT COUNT(*) as count FROM trainings'),
             pool.query('SELECT COUNT(*) as count FROM matches'),
@@ -74,15 +74,15 @@ export const getCoachDashboard = async (req: Request, res: Response) => {
             `)
         ]);
         
-        // Extraer datos
+        // Extraer datos asegurando formato numérico
         const stats = {
-            players: parseInt(playersResult.rows[0]?.count || '0'),
-            trainings: parseInt(trainingsResult.rows[0]?.count || '0'),
-            matches: parseInt(matchesResult.rows[0]?.count || '0'),
-            announcements: parseInt(announcementsResult.rows[0]?.count || '0')
+            players: parseInt(playersResult.rows[0]?.count || '0', 10),
+            trainings: parseInt(trainingsResult.rows[0]?.count || '0', 10),
+            matches: parseInt(matchesResult.rows[0]?.count || '0', 10),
+            announcements: parseInt(announcementsResult.rows[0]?.count || '0', 10)
         };
         
-        const pendingCount = parseInt(pendingCountResult.rows[0]?.count || '0');
+        const pendingCount = parseInt(pendingCountResult.rows[0]?.count || '0', 10);
         const upcomingTrainings = upcomingTrainingsResult.rows || [];
         const upcomingMatches = upcomingMatchesResult.rows || [];
         const latestAnnouncements = latestAnnouncementsResult.rows || [];
@@ -118,7 +118,7 @@ export const getCoachDashboard = async (req: Request, res: Response) => {
 
 // ============== DASHBOARD DEL JUGADOR ==============
 export const getPlayerDashboard = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.id;
+    const userId = Number((req as any).user?.id);
     console.log(`📊 Cargando dashboard del jugador (ID: ${userId})`);
     
     try {
@@ -172,7 +172,7 @@ export const getPlayerDashboard = async (req: Request, res: Response) => {
                 ORDER BY a.created_at DESC 
                 LIMIT 5
             `),
-            // Estadísticas del jugador
+            // Estadísticas del jugador (solo si el jugador existe)
             player ? pool.query(`
                 SELECT 
                     goals,
@@ -245,9 +245,17 @@ export const getCoachDashboardData = async (req: Request, res: Response) => {
             `)
         ]);
         
+        const rawStats = statsResult.rows[0] || { players: '0', trainings: '0', matches: '0', announcements: '0' };
+        
+        // CORRECCIÓN: Parsear las cadenas de bigint de pg a tipo Number para consistencia de la API
         res.json({
-            stats: statsResult.rows[0] || { players: 0, trainings: 0, matches: 0, announcements: 0 },
-            pending: parseInt(pendingResult.rows[0]?.count || '0'),
+            stats: {
+                players: parseInt(rawStats.players, 10),
+                trainings: parseInt(rawStats.trainings, 10),
+                matches: parseInt(rawStats.matches, 10),
+                announcements: parseInt(rawStats.announcements, 10)
+            },
+            pending: parseInt(pendingResult.rows[0]?.count || '0', 10),
             recentPlayers: recentResult.rows || []
         });
     } catch (error) {
@@ -258,7 +266,7 @@ export const getCoachDashboardData = async (req: Request, res: Response) => {
 
 // ============== DASHBOARD DEL JUGADOR (API) ==============
 export const getPlayerDashboardData = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.id;
+    const userId = Number((req as any).user?.id);
     
     try {
         const playerResult = await pool.query(`
@@ -300,6 +308,8 @@ export const getPlayerDashboardData = async (req: Request, res: Response) => {
                     goals,
                     assists,
                     matches_played,
+                    yellow_cards,
+                    red_cards,
                     season
                 FROM statistics 
                 WHERE player_id = $1 

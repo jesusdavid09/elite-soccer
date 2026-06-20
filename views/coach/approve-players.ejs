@@ -15,95 +15,16 @@
         h1, h2, h3 {
             font-family: 'Poppins', sans-serif;
         }
-        .card {
+        .player-card {
             background: #FFFFFF;
             border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid #E5E7EB;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
-        }
-        .status-pending {
-            background: #FEF3C7;
-            color: #92400E;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-approved {
-            background: #D1FAE5;
-            color: #065F46;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-rejected {
-            background: #FEE2E2;
-            color: #991B1B;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .btn-approve {
-            background: #22C55E;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-approve:hover {
-            background: #16A34A;
-            transform: scale(1.05);
-        }
-        .btn-reject {
-            background: #EF4444;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-reject:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-        }
-        .btn-view {
-            background: #3B82F6;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-view:hover {
-            background: #2563EB;
-        }
-        .btn-reset {
-            background: #6B7280;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-reset:hover {
-            background: #4B5563;
-            transform: scale(1.05);
+        .player-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.12);
         }
         .modal {
             display: none;
@@ -124,79 +45,15 @@
         .modal-content {
             background: #FFFFFF;
             border-radius: 20px;
-            max-width: 600px;
+            max-width: 550px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            animation: slideIn 0.3s ease;
+            animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
+            from { transform: translateY(-30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-header {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 1.25rem 1.5rem;
-            border-radius: 20px 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-header button {
-            background: none;
-            border: none;
-            color: #FFFFFF;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-            line-height: 1;
-        }
-        .modal-header button:hover {
-            transform: rotate(90deg);
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        .detail-label {
-            font-weight: 600;
-            color: #4B5563;
-        }
-        .detail-value {
-            color: #111827;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        .btn-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .azul-rey {
-            color: #1E3A8A;
-        }
-        .bg-azul-rey {
-            background: #1E3A8A;
-        }
-        .bg-azul-rey:hover {
-            background: #172554;
-        }
-        .text-blanco {
-            color: #FFFFFF;
-        }
-        .border-azul-rey {
-            border-color: #1E3A8A;
         }
     </style>
 </head>
@@ -204,90 +61,92 @@
     <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div>
-                <h1 class="text-3xl font-bold" style="color: #1E3A8A;">📋 Aprobar Jugadores</h1>
-                <p class="text-gray-500 mt-1">Revisa y aprueba las solicitudes de nuevos jugadores</p>
+                <h1 class="text-3xl font-bold text-[#1E3A8A]">📋 Aprobar Jugadores</h1>
+                <p class="text-gray-500 mt-1">Revisa y gestiona las solicitudes de incorporación a la academia</p>
             </div>
-            <div class="mt-4 md:mt-0 flex gap-3">
-                <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg font-semibold">
-                    Pendientes: <span id="pendingCount"><%= pendingPlayers ? pendingPlayers.length : 0 %></span>
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <span class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center gap-2">
+                    ⏳ Pendientes: <span id="pendingCount"><%= pendingPlayers ? pendingPlayers.filter(p => p.status === 'pending' || !p.status).length : 0 %></span>
                 </span>
-                <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition">
+                <a href="/coach/dashboard" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm">
                     ← Volver
                 </a>
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="card p-4 mb-6">
-            <div class="flex flex-wrap gap-4">
-                <button onclick="filterPlayers('all')" class="filter-btn px-4 py-2 rounded-lg bg-[#1E3A8A] text-white transition" data-filter="all">
-                    Todos
-                </button>
-                <button onclick="filterPlayers('pending')" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-filter="pending">
-                    ⏳ Pendientes
-                </button>
-                <button onclick="filterPlayers('approved')" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-filter="approved">
-                    ✅ Aprobados
-                </button>
-                <button onclick="filterPlayers('rejected')" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-filter="rejected">
-                    ❌ Rechazados
-                </button>
-            </div>
+        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-200 mb-8 flex flex-wrap gap-2">
+            <button onclick="filterPlayers('all')" class="filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-[#1E3A8A] text-white transition-all duration-200" data-filter="all">
+                Todos
+            </button>
+            <button onclick="filterPlayers('pending')" class="filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-gray-150 text-gray-700 hover:bg-gray-200 transition-all duration-200" data-filter="pending">
+                ⏳ Pendientes
+            </button>
+            <button onclick="filterPlayers('approved')" class="filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-gray-150 text-gray-700 hover:bg-gray-200 transition-all duration-200" data-filter="approved">
+                ✅ Aprobados
+            </button>
+            <button onclick="filterPlayers('rejected')" class="filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-gray-150 text-gray-700 hover:bg-gray-200 transition-all duration-200" data-filter="rejected">
+                ❌ Rechazados
+            </button>
         </div>
 
-        <!-- Lista de Jugadores -->
         <div id="playersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <% if (pendingPlayers && pendingPlayers.length > 0) { %>
-                <% for (var i = 0; i < pendingPlayers.length; i++) { var player = pendingPlayers[i]; %>
-                    <div class="card p-6 player-card" data-status="<%= player.status || 'pending' %>">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-xl font-bold">
-                                <%= player.full_name ? player.full_name.charAt(0).toUpperCase() : '?' %>
+                <% pendingPlayers.forEach(player => { %>
+                    <div class="player-card p-6 flex flex-col justify-between" data-status="<%= player.status || 'pending' %>">
+                        <div>
+                            <div class="flex justify-between items-start gap-4 mb-4">
+                                <div class="w-12 h-12 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-lg font-bold shadow-inner shrink-0">
+                                    <%= player.full_name ? player.full_name.charAt(0).toUpperCase() : '?' %>
+                                </div>
+                                
+                                <% if (player.status === 'approved') { %>
+                                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">✅ Aprobado</span>
+                                <% } else if (player.status === 'rejected') { %>
+                                    <span class="bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-xs font-bold">❌ Rechazado</span>
+                                <% } else { %>
+                                    <span class="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold">⏳ Pendiente</span>
+                                <% } %>
                             </div>
-                            <span class="status-<%= player.status || 'pending' %>">
-                                <%= player.status === 'approved' ? '✅ Aprobado' : (player.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente') %>
-                            </span>
-                        </div>
-                        
-                        <h3 class="text-xl font-bold" style="color: #1E3A8A;"><%= player.full_name || 'Sin nombre' %></h3>
-                        <p class="text-gray-500 text-sm">#<%= player.jersey_number || 'N/A' %> • <%= player.position || 'Sin posición' %></p>
-                        
-                        <div class="mt-4 space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📧 Email</span>
-                                <span><%= player.email || 'No registrado' %></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📱 Teléfono</span>
-                                <span><%= player.phone || 'No registrado' %></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📅 Solicitud</span>
-                                <span><%= player.created_at ? new Date(player.created_at).toLocaleDateString() : 'No disponible' %></span>
+                            
+                            <h3 class="text-xl font-bold text-gray-900 line-clamp-1"><%= player.full_name || 'Sin nombre' %></h3>
+                            <p class="text-gray-500 text-sm font-medium mt-0.5">Dorsal #<%= player.jersey_number || 'N/A' %> • <span class="text-[#1E3A8A] font-semibold"><%= player.position || 'Sin posición' %></span></p>
+                            
+                            <div class="mt-4 space-y-2.5 text-sm border-t border-gray-100 pt-3">
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-gray-400">📧 Correo</span>
+                                    <span class="text-gray-700 truncate max-w-[180px] font-medium"><%= player.email || 'No registrado' %></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">📱 Teléfono</span>
+                                    <span class="text-gray-700 font-medium"><%= player.phone || 'No registrado' %></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">📅 Envío</span>
+                                    <span class="text-gray-700 font-medium"><%= player.created_at ? new Date(player.created_at).toLocaleDateString('es-CO') : 'No disponible' %></span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mt-4 flex gap-2">
-                            <button onclick="viewPlayer('<%= player.id %>')" class="btn-view flex-1">👁️ Ver</button>
+                        <div class="mt-6 flex gap-2 border-t border-gray-100 pt-4">
+                            <button onclick="viewPlayer('<%= player.id %>')" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold py-2 px-3 rounded-xl transition text-sm">👁️ Ver</button>
                             <% if (player.status !== 'approved' && player.status !== 'rejected') { %>
-                                <button onclick="approvePlayer('<%= player.id %>')" class="btn-approve flex-1">✅ Aprobar</button>
-                                <button onclick="rejectPlayer('<%= player.id %>')" class="btn-reject flex-1">❌ Rechazar</button>
+                                <button onclick="approvePlayer('<%= player.id %>')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-3 rounded-xl transition text-sm shadow-sm">✅ Aprobar</button>
+                                <button onclick="rejectPlayer('<%= player.id %>')" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-3 rounded-xl transition text-sm shadow-sm">❌ Rechazar</button>
                             <% } else { %>
-                                <button onclick="resetPlayer('<%= player.id %>')" class="btn-reset flex-1">↩️ Revertir</button>
+                                <button onclick="resetPlayer('<%= player.id %>')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-xl transition text-sm">↩️ Revertir</button>
                             <% } %>
                         </div>
                     </div>
-                <% } %>
+                <% }); %>
             <% } else { %>
                 <div class="col-span-full">
-                    <div class="card p-12 empty-state">
-                        <div class="icon">🎉</div>
-                        <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay solicitudes pendientes</h3>
-                        <p class="text-gray-400">Todos los jugadores han sido procesados</p>
-                        <a href="/coach/dashboard" class="inline-block mt-6 bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition">
+                    <div class="bg-white rounded-2xl p-12 text-center border border-gray-200 shadow-sm">
+                        <div class="text-5xl mb-4">🎉</div>
+                        <h3 class="text-2xl font-bold text-gray-700 mb-2">No hay registros</h3>
+                        <p class="text-gray-400 max-w-sm mx-auto">No se encontraron solicitudes de jugadores ingresadas en la base de datos.</p>
+                        <a href="/coach/dashboard" class="inline-block mt-5 bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2.5 rounded-xl font-semibold transition shadow-md">
                             Volver al Dashboard
                         </a>
                     </div>
@@ -296,253 +155,154 @@
         </div>
     </main>
 
-    <!-- Modal de Detalles -->
     <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-xl font-bold">👤 Detalles del Jugador</h3>
-                <button onclick="closeModal()">&times;</button>
+        <div class="modal-content shadow-2xl">
+            <div class="bg-[#1E3A8A] text-white p-5 rounded-t-[20px] flex justify-between items-center">
+                <h3 class="text-xl font-bold flex items-center gap-2">👤 Perfil de Aspirante</h3>
+                <button onclick="closeModal()" class="text-3xl font-light leading-none transition-transform duration-200 hover:rotate-90">&times;</button>
             </div>
-            <div class="modal-body" id="playerDetails">
-                <!-- Contenido dinámico -->
-            </div>
+            <div class="p-6" id="playerDetails">
+                </div>
         </div>
     </div>
 
     <%- include('../partials/footer') %>
 
     <script>
-        console.log('✅ Script de aprobar jugadores cargado');
+        console.log('✅ Sistema de control de solicitudes de Elite Soccer operativo.');
 
+        // Filtros dinámicos en Front-End
         function filterPlayers(filter) {
-            var cards = document.querySelectorAll('.player-card');
-            var buttons = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.player-card');
+            const buttons = document.querySelectorAll('.filter-btn');
             
-            buttons.forEach(function(btn) {
+            buttons.forEach(btn => {
                 btn.classList.remove('bg-[#1E3A8A]', 'text-white');
                 btn.classList.add('bg-gray-200', 'text-gray-700');
             });
             
-            var activeBtn = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
+            const activeBtn = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
             if (activeBtn) {
                 activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
                 activeBtn.classList.add('bg-[#1E3A8A]', 'text-white');
             }
             
-            cards.forEach(function(card) {
-                var status = card.dataset.status;
-                if (filter === 'all' || status === filter) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+            cards.forEach(card => {
+                const status = card.dataset.status;
+                card.style.display = (filter === 'all' || status === filter) ? 'flex' : 'none';
             });
         }
 
+        // Obtención de datos del jugador vía API
         function viewPlayer(id) {
-            console.log('📝 Viendo jugador ID:', id);
-            
-            fetch('/coach/players/api/' + id, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin'
+            fetch('/coach/players/api/' + id)
+            .then(res => {
+                if (!res.ok) throw new Error('Estado de respuesta inválido: ' + res.status);
+                return res.json();
             })
-            .then(function(response) {
-                if (!response.ok) {
-                    throw new Error('Error al cargar los datos: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                console.log('📊 Datos del jugador:', data);
-                var html = `
-                    <div class="space-y-4">
+            .then(data => {
+                const badgeStyle = data.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (data.status === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200');
+                const badgeText = data.status === 'approved' ? '✅ Aprobado' : (data.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente');
+
+                const html = `
+                    <div class="space-y-6">
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto">
+                            <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto shadow-inner">
                                 ${data.full_name ? data.full_name.charAt(0).toUpperCase() : '?'}
                             </div>
-                            <h3 class="text-2xl font-bold mt-2" style="color: #1E3A8A;">${data.full_name || 'Sin nombre'}</h3>
-                            <span class="text-sm text-gray-500">#${data.jersey_number || 'N/A'} • ${data.position || 'Sin posición'}</span>
+                            <h3 class="text-2xl font-bold mt-3 text-gray-950">${data.full_name || 'Sin nombre'}</h3>
+                            <p class="text-sm font-semibold text-gray-500 mt-0.5">Dorsal #${data.jersey_number || 'N/A'} • <span class="text-[#1E3A8A]">${data.position || 'Sin posición'}</span></p>
                         </div>
                         
-                        <div class="border-t border-gray-200 pt-4">
-                            <div class="detail-row">
-                                <span class="detail-label">📧 Email</span>
-                                <span class="detail-value">${data.email || 'No registrado'}</span>
+                        <div class="border-t border-gray-100 pt-4 space-y-3.5 text-sm">
+                            <div class="flex justify-between py-1.5 border-b border-gray-50">
+                                <span class="font-semibold text-gray-400">📧 Correo Electrónico</span>
+                                <span class="text-gray-900 font-medium">${data.email || 'No registrado'}</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">📱 Teléfono</span>
-                                <span class="detail-value">${data.phone || 'No registrado'}</span>
+                            <div class="flex justify-between py-1.5 border-b border-gray-50">
+                                <span class="font-semibold text-gray-400">📱 Número Telefónico</span>
+                                <span class="text-gray-900 font-medium">${data.phone || 'No registrado'}</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">🎂 Edad</span>
-                                <span class="detail-value">${data.age || 'No especificada'}</span>
+                            <div class="flex justify-between py-1.5 border-b border-gray-50">
+                                <span class="font-semibold text-gray-400">🎂 Edad Actual</span>
+                                <span class="text-gray-900 font-medium">${data.age || 'No especificada'} años</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">📅 Registro</span>
-                                <span class="detail-value">${data.created_at ? new Date(data.created_at).toLocaleDateString() : 'No disponible'}</span>
+                            <div class="flex justify-between py-1.5 border-b border-gray-50">
+                                <span class="font-semibold text-gray-400">📅 Fecha de Solicitud</span>
+                                <span class="text-gray-900 font-medium">${data.created_at ? new Date(data.created_at).toLocaleDateString('es-CO') : 'No disponible'}</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">📊 Estado</span>
-                                <span class="detail-value">
-                                    <span class="status-${data.status || 'pending'}">
-                                        ${data.status === 'approved' ? '✅ Aprobado' : (data.status === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente')}
-                                    </span>
-                                </span>
+                            <div class="flex justify-between items-center py-1.5">
+                                <span class="font-semibold text-gray-400">📊 Estado del Cupo</span>
+                                <span class="px-3 py-1 border rounded-full text-xs font-bold ${badgeStyle}">${badgeText}</span>
                             </div>
                         </div>
+                        <button onclick="closeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold transition mt-2">Cerrar Detalle</button>
                     </div>
                 `;
                 document.getElementById('playerDetails').innerHTML = html;
                 document.getElementById('playerModal').classList.add('active');
             })
-            .catch(function(error) {
-                console.error('❌ Error:', error);
-                alert('❌ Error al cargar los datos del jugador: ' + error.message);
+            .catch(err => {
+                console.error('❌ Error de API:', err);
+                alert('No se pudo mapear la información del jugador seleccionado.');
             });
+        }
+
+        // Envío de Mutaciones de Estado (Aprobar, Rechazar, Revertir)
+        function sendStatusMutation(url, successMsg) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
+            })
+            .then(res => {
+                if (!res.ok) return res.json().then(data => { throw new Error(data.message || 'Error de procesamiento'); });
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(successMsg);
+                    location.reload();
+                } else {
+                    alert('La acción no pudo ser completada: ' + data.message);
+                }
+            })
+            .catch(err => alert('Error en servidor: ' + err.message))
+            .finally(() => buttons.forEach(btn => btn.disabled = false));
         }
 
         function approvePlayer(id) {
-            if (!confirm('¿Estás seguro de aprobar a este jugador?')) return;
-            
-            console.log('📝 Aprobando jugador ID:', id);
-            
-            var buttons = document.querySelectorAll('button');
-            buttons.forEach(function(btn) { btn.disabled = true; });
-            
-            fetch('/coach/players/' + id + '/approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                console.log('📊 Response status:', response.status);
-                if (!response.ok) {
-                    return response.json().then(function(data) {
-                        throw new Error(data.message || 'Error en el servidor: ' + response.status);
-                    });
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                console.log('📊 Data recibida:', data);
-                if (data.success) {
-                    alert('✅ Jugador aprobado correctamente');
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.message || 'No se pudo aprobar'));
-                }
-            })
-            .catch(function(error) {
-                console.error('❌ Error:', error);
-                alert('❌ Error: ' + error.message);
-            })
-            .finally(function() {
-                var buttons = document.querySelectorAll('button');
-                buttons.forEach(function(btn) { btn.disabled = false; });
-            });
+            if (confirm('¿Estás seguro de autorizar el ingreso de este jugador?')) {
+                sendStatusMutation(`/coach/players/${id}/approve`, '✅ Jugador aprobado e incorporado correctamente.');
+            }
         }
 
         function rejectPlayer(id) {
-            if (!confirm('¿Estás seguro de rechazar a este jugador?')) return;
-            
-            console.log('📝 Rechazando jugador ID:', id);
-            
-            var buttons = document.querySelectorAll('button');
-            buttons.forEach(function(btn) { btn.disabled = true; });
-            
-            fetch('/coach/players/' + id + '/reject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                console.log('📊 Response status:', response.status);
-                if (!response.ok) {
-                    return response.json().then(function(data) {
-                        throw new Error(data.message || 'Error en el servidor: ' + response.status);
-                    });
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                console.log('📊 Data recibida:', data);
-                if (data.success) {
-                    alert('❌ Jugador rechazado');
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.message || 'No se pudo rechazar'));
-                }
-            })
-            .catch(function(error) {
-                console.error('❌ Error:', error);
-                alert('❌ Error: ' + error.message);
-            })
-            .finally(function() {
-                var buttons = document.querySelectorAll('button');
-                buttons.forEach(function(btn) { btn.disabled = false; });
-            });
+            if (confirm('¿Estás seguro de rechazar esta solicitud de ingreso?')) {
+                sendStatusMutation(`/coach/players/${id}/reject`, '❌ Solicitud de jugador rechazada.');
+            }
         }
 
         function resetPlayer(id) {
-            if (!confirm('¿Revertir el estado de este jugador a pendiente?')) return;
-            
-            console.log('📝 Revirtiendo jugador ID:', id);
-            
-            var buttons = document.querySelectorAll('button');
-            buttons.forEach(function(btn) { btn.disabled = true; });
-            
-            fetch('/coach/players/' + id + '/reset', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                console.log('📊 Response status:', response.status);
-                if (!response.ok) {
-                    return response.json().then(function(data) {
-                        throw new Error(data.message || 'Error en el servidor: ' + response.status);
-                    });
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                console.log('📊 Data recibida:', data);
-                if (data.success) {
-                    alert('↩️ Estado revertido');
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.message || 'No se pudo revertir'));
-                }
-            })
-            .catch(function(error) {
-                console.error('❌ Error:', error);
-                alert('❌ Error: ' + error.message);
-            })
-            .finally(function() {
-                var buttons = document.querySelectorAll('button');
-                buttons.forEach(function(btn) { btn.disabled = false; });
-            });
+            if (confirm('¿Deseas revertir el estado del jugador de nuevo a pendiente?')) {
+                sendStatusMutation(`/coach/players/${id}/reset`, '↩️ Estado de la solicitud restaurado a pendiente.');
+            }
         }
 
         function closeModal() {
             document.getElementById('playerModal').classList.remove('active');
         }
 
-        window.onclick = function(event) {
-            var modal = document.getElementById('playerModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+        window.onclick = function(e) {
+            const m = document.getElementById('playerModal');
+            if (e.target === m) closeModal();
         }
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                var modal = document.getElementById('playerModal');
-                if (modal.classList.contains('active')) {
-                    closeModal();
-                }
-            }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
         });
     </script>
 </body>

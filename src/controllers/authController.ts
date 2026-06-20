@@ -7,17 +7,19 @@ import { generateToken } from '../utils/jwt';
 export const showLogin = (req: Request, res: Response) => {
     const user = (req as any).user;
     if (user) {
+        // CORRECCIÓN: Si es jugador, verificar que esté aprobado antes de mandarlo al dashboard
         if (user.role === 'coach') {
             return res.redirect('/coach/dashboard');
-        } else {
+        } else if (user.role === 'player' && user.approved) {
             return res.redirect('/player/dashboard');
         }
+        // Si no está aprobado, dejamos que vea la pantalla para que entienda su estado
     }
     
     res.render('auth/login', { 
         title: 'Iniciar Sesión', 
-        error: req.flash?.('error') || null, 
-        success: req.flash?.('success') || null 
+        error: (req as any).flash?.('error') || null, 
+        success: (req as any).flash?.('success') || null 
     });
 };
 
@@ -27,15 +29,15 @@ export const showRegister = (req: Request, res: Response) => {
     if (user) {
         if (user.role === 'coach') {
             return res.redirect('/coach/dashboard');
-        } else {
+        } else if (user.role === 'player' && user.approved) {
             return res.redirect('/player/dashboard');
         }
     }
     
     res.render('auth/register', { 
         title: 'Registro', 
-        error: req.flash?.('error') || null,
-        success: req.flash?.('success') || null
+        error: (req as any).flash?.('error') || null,
+        success: (req as any).flash?.('success') || null
     });
 };
 
@@ -44,7 +46,6 @@ export const login = async (req: Request, res: Response) => {
     const { email, password, remember } = req.body;
     
     console.log(`🔐 Intento de login: ${email}`);
-    console.log('📝 Body:', req.body);
     
     if (!email || !password) {
         console.log('❌ Email o contraseña vacíos');
@@ -84,6 +85,7 @@ export const login = async (req: Request, res: Response) => {
             });
         }
         
+        // CORRECCIÓN: Si no está aprobado, se corta el flujo aquí de forma segura
         if (user.role === 'player' && !user.approved) {
             console.log(`⏳ Usuario pendiente de aprobación: ${email}`);
             return res.render('auth/login', { 
@@ -93,11 +95,13 @@ export const login = async (req: Request, res: Response) => {
             });
         }
         
+        // El token ahora guarda también el estado 'approved' para consistencia del middleware
         const token = generateToken({ 
             id: user.id, 
             email: user.email, 
             role: user.role, 
-            full_name: user.full_name 
+            full_name: user.full_name,
+            approved: user.approved 
         });
         
         const maxAge = remember ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
@@ -125,10 +129,9 @@ export const login = async (req: Request, res: Response) => {
     }
 };
 
-// ============== REGISTRAR USUARIO (VERSIÓN MEJORADA) ==============
+// ============== REGISTRAR USUARIO ==============
 export const register = async (req: Request, res: Response) => {
     console.log('📝 ===== INICIO DE REGISTRO =====');
-    console.log('📝 Body recibido:', req.body);
     
     const { 
         email, 
@@ -143,45 +146,39 @@ export const register = async (req: Request, res: Response) => {
         terms 
     } = req.body;
     
+    // Función interna para ahorrar código repetitivo al renderizar errores en el registro
+    const renderRegisterError = (msg: string) => {
+        return res.render('auth/register', { 
+            title: 'Registro', 
+            error: msg,
+            success: null
+        });
+    };
+    
     try {
         // ========== VALIDACIONES ==========
-        console.log('🔍 Validando campos...');
-        
         if (!email || !password || !full_name || !role) {
             console.log('❌ Campos obligatorios faltantes');
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ Todos los campos obligatorios deben ser completados' 
-            });
+            return renderRegisterError('⚠️ Todos los campos obligatorios deben ser completados');
         }
         
         if (!terms) {
             console.log('❌ Términos no aceptados');
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ Debes aceptar los términos y condiciones' 
-            });
+            return renderRegisterError('⚠️ Debes aceptar los términos y condiciones');
         }
         
         if (password.length < 6) {
             console.log('❌ Contraseña demasiado corta');
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ La contraseña debe tener al menos 6 caracteres' 
-            });
+            return renderRegisterError('⚠️ La contraseña debe tener al menos 6 caracteres');
         }
         
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             console.log('❌ Email inválido');
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ El correo electrónico no es válido' 
-            });
+            return renderRegisterError('⚠️ El correo electrónico no es válido');
         }
         
         // ========== VERIFICAR EMAIL EXISTENTE ==========
-        console.log('🔍 Verificando email existente...');
         const existingUser = await pool.query(
             'SELECT id FROM users WHERE email = $1',
             [email.toLowerCase().trim()]
@@ -189,73 +186,43 @@ export const register = async (req: Request, res: Response) => {
         
         if (existingUser.rows.length > 0) {
             console.log(`❌ Email ya registrado: ${email}`);
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ El email ya está registrado. Inicia sesión o usa otro email.' 
-            });
+            return renderRegisterError('⚠️ El email ya está registrado. Inicia sesión o usa otro email.');
         }
-        console.log('✅ Email disponible');
         
         // ========== VERIFICAR CLAVE DE ENTRENADOR ==========
         if (role === 'coach') {
-            console.log('🔍 Verificando clave de entrenador...');
             const secretKey = process.env.COACH_SECRET_KEY || 'elite_soccer_2024';
             
             if (!coach_key) {
                 console.log('❌ Clave de entrenador no proporcionada');
-                return res.render('auth/register', { 
-                    title: 'Registro', 
-                    error: '⚠️ Debes ingresar la clave de entrenador' 
-                });
+                return renderRegisterError('⚠️ Debes ingresar la clave de entrenador');
             }
             
             if (coach_key !== secretKey) {
-                console.log(`❌ Clave de entrenador incorrecta: ${coach_key}`);
-                return res.render('auth/register', { 
-                    title: 'Registro', 
-                    error: '⚠️ Clave de entrenador incorrecta' 
-                });
+                console.log(`❌ Clave de entrenador incorrecta`);
+                return renderRegisterError('⚠️ Clave de entrenador incorrecta');
             }
-            console.log('✅ Clave de entrenador verificada');
         }
         
         // ========== VALIDAR CAMPOS DE JUGADOR ==========
         if (role === 'player') {
-            console.log('🔍 Validando campos de jugador...');
-            
             if (!jersey_number) {
-                console.log('❌ Número de camiseta faltante');
-                return res.render('auth/register', { 
-                    title: 'Registro', 
-                    error: '⚠️ El número de camiseta es obligatorio' 
-                });
+                return renderRegisterError('⚠️ El número de camiseta es obligatorio');
             }
             
             const jerseyNum = parseInt(jersey_number);
             if (isNaN(jerseyNum) || jerseyNum < 1 || jerseyNum > 99) {
-                console.log(`❌ Número de camiseta inválido: ${jersey_number}`);
-                return res.render('auth/register', { 
-                    title: 'Registro', 
-                    error: '⚠️ El número de camiseta debe estar entre 1 y 99' 
-                });
+                return renderRegisterError('⚠️ El número de camiseta debe estar entre 1 y 99');
             }
             
             if (!position) {
-                console.log('❌ Posición faltante');
-                return res.render('auth/register', { 
-                    title: 'Registro', 
-                    error: '⚠️ La posición es obligatoria' 
-                });
+                return renderRegisterError('⚠️ La posición es obligatoria');
             }
-            console.log('✅ Campos de jugador válidos');
         }
         
         // ========== CREAR USUARIO ==========
-        console.log('🔐 Hasheando contraseña...');
         const hashedPassword = await hashPassword(password);
-        console.log('✅ Contraseña hasheada');
         
-        console.log('📝 Insertando usuario...');
         const userResult = await pool.query(
             `INSERT INTO users (email, password_hash, full_name, role, approved) 
              VALUES ($1, $2, $3, $4, $5) 
@@ -264,12 +231,9 @@ export const register = async (req: Request, res: Response) => {
         );
         
         const userId = userResult.rows[0].id;
-        console.log(`✅ Usuario creado con ID: ${userId}`);
         
-        // ========== CREAR JUGADOR ==========
+        // ========== CREAR JUGADOR PERFIL Y ESTADÍSTICAS ==========
         if (role === 'player') {
-            console.log('📝 Creando perfil de jugador...');
-            
             const playerResult = await pool.query(
                 `INSERT INTO players (user_id, jersey_number, position, age, phone, status) 
                  VALUES ($1, $2, $3, $4, $5, $6) 
@@ -278,67 +242,36 @@ export const register = async (req: Request, res: Response) => {
             );
             
             const playerId = playerResult.rows[0].id;
-            console.log(`✅ Jugador creado con ID: ${playerId}`);
             
-            console.log('📝 Creando estadísticas...');
             await pool.query(
                 `INSERT INTO statistics (player_id, season) VALUES ($1, $2)`,
                 [playerId, new Date().getFullYear().toString()]
             );
-            console.log('✅ Estadísticas creadas');
         }
         
         console.log(`✅ Registro exitoso: ${full_name} (${role})`);
         console.log('📝 ===== FIN DE REGISTRO =====');
         
-        // ========== MENSAJE DE ÉXITO ==========
-        if (role === 'coach') {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: null, 
-                success: '✅ Cuenta de entrenador creada exitosamente. ¡Ya puedes iniciar sesión!' 
-            });
-        } else {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: null, 
-                success: '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el entrenador.' 
-            });
-        }
+        // ========== REDIRECCIÓN CON ÉXITO ==========
+        return res.render('auth/login', { 
+            title: 'Iniciar Sesión', 
+            error: null, 
+            success: role === 'coach' 
+                ? '✅ Cuenta de entrenador creada exitosamente. ¡Ya puedes iniciar sesión!' 
+                : '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el entrenador.'
+        });
         
     } catch (error: any) {
-        console.error('❌ ===== ERROR EN REGISTRO =====');
-        console.error('❌ Mensaje:', error.message);
-        console.error('❌ Código:', error.code);
-        console.error('❌ Stack:', error.stack);
+        console.error('❌ ===== ERROR EN REGISTRO =====', error.message);
         
-        // Manejo de errores específicos de PostgreSQL
         if (error.code === '23505') {
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ El email ya está registrado. Por favor, usa otro email o inicia sesión.' 
-            });
+            return renderRegisterError('⚠️ El email ya está registrado. Por favor, usa otro email o inicia sesión.');
+        }
+        if (error.code === '23503' || error.code === '42P01') {
+            return renderRegisterError('⚠️ Error de estructura en la base de datos. Contacta al administrador.');
         }
         
-        if (error.code === '23503') {
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ Error de relación en la base de datos. Contacta al administrador.' 
-            });
-        }
-        
-        if (error.code === '42P01') {
-            return res.render('auth/register', { 
-                title: 'Registro', 
-                error: '⚠️ Error de tabla en la base de datos. Contacta al administrador.' 
-            });
-        }
-        
-        // Error general
-        return res.render('auth/register', { 
-            title: 'Registro', 
-            error: '❌ Error en el servidor. Por favor, intenta nuevamente más tarde.' 
-        });
+        return renderRegisterError('❌ Error en el servidor. Por favor, intenta nuevamente más tarde.');
     }
 };
 
@@ -359,7 +292,8 @@ export const checkAuth = (req: Request, res: Response) => {
                 id: user.id, 
                 full_name: user.full_name, 
                 email: user.email, 
-                role: user.role 
+                role: user.role,
+                approved: user.approved
             } 
         });
     }
@@ -368,7 +302,12 @@ export const checkAuth = (req: Request, res: Response) => {
 
 // ============== OBTENER PERFIL DE USUARIO ==============
 export const getProfile = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.id;
+    // CORRECCIÓN: Castear id a número para evitar roturas de tipos con Postgres
+    const userId = Number((req as any).user?.id);
+    
+    if (isNaN(userId)) {
+        return res.status(401).json({ error: 'Usuario no autenticado o ID inválido' });
+    }
     
     try {
         const result = await pool.query(

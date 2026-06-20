@@ -1,492 +1,129 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Soccer Academy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<div class="bg-white text-gray-950 font-['Inter',sans-serif] min-h-screen antialiased selection:bg-blue-600 selection:text-white">
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #FFFFFF;
-            color: #111827;
-        }
+    <section class="relative min-h-screen flex flex-col justify-center bg-[linear-gradient(135deg,#1E3A8A_0%,#172554_60%,#0F172A_100%)] overflow-hidden isolate">
+        <div class="absolute inset-0 bg-black/30 -z-10"></div>
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522778119026-d364fcece646?w=1600')] bg-cover bg-center opacity-15 -z-10"></div>
 
-        h1, h2, h3 {
-            font-family: 'Poppins', sans-serif;
-        }
+        <div class="container mx-auto px-4 py-8 text-center">
+            <div class="max-w-4xl mx-auto animate-[fadeInUp_0.8s_ease]">
+                
+                <div class="inline-block p-6 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-6 animate-[float_3s_ease-in-out_infinite]">
+                    <span class="text-6xl md:text-5xl block select-none">⚽</span>
+                </div>
 
-        .title-font {
-            font-family: 'Bebas Neue', cursive;
-            letter-spacing: 2px;
-        }
+                <h1 class="font-['Bebas_Neue',cursive] tracking-[4px] text-6xl md:text-7xl lg:text-8xl text-white font-extrabold leading-none mb-1">
+                    ELITE SOCCER
+                </h1>
+                <p class="font-['Bebas_Neue',cursive] tracking-[8px] text-2xl md:text-3xl text-blue-300 font-light mb-4">
+                    ACADEMY
+                </p>
 
-        /* ========== ANIMACIONES ========== */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+                <p class="text-lg md:text-xl text-white/80 max-w-xl mx-auto mb-4 font-medium px-4">
+                    Disciplina • Compromiso • Excelencia
+                </p>
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
+                <p class="text-sm md:text-base italic text-white/60 max-w-md mx-auto mb-8 px-4 font-normal">
+                    "La excelencia no es un acto, sino un hábito"
+                </p>
 
-        @keyframes pulse-slow {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .hero-content {
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        /* ========== HERO SECTION ========== */
-        .hero-section {
-            background: linear-gradient(135deg, #1E3A8A 0%, #172554 60%, #0F172A 100%);
-            min-height: 100vh;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 0;
-        }
-
-        .hero-bg-image {
-            position: absolute;
-            inset: 0;
-            background-image: url('https://images.unsplash.com/photo-1522778119026-d364fcece646?w=1600');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
-            z-index: 0;
-        }
-
-        .hero-content-wrapper {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .hero-shield {
-            display: inline-block;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 50%;
-            margin-bottom: 1.5rem;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .hero-shield span {
-            font-size: 4rem;
-            display: block;
-        }
-
-        .hero-title {
-            font-size: 4rem;
-            font-weight: 800;
-            color: #FFFFFF;
-            letter-spacing: 4px;
-            margin-bottom: 0.25rem;
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: #93C5FD;
-            letter-spacing: 8px;
-            font-weight: 300;
-            margin-bottom: 1rem;
-        }
-
-        .hero-motto {
-            font-size: 1.125rem;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 600px;
-            margin: 0 auto 1.5rem;
-        }
-
-        .hero-quote {
-            font-size: 1rem;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.6);
-            max-width: 500px;
-            margin: 0 auto 2rem;
-        }
-
-        .btn-hero {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.75rem 2.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
-        }
-
-        .btn-hero:hover {
-            background: #172554;
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5);
-        }
-
-        .btn-hero-outline {
-            background: transparent;
-            color: #FFFFFF;
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            transition: all 0.3s ease;
-            padding: 0.75rem 2.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-hero-outline:hover {
-            background: #FFFFFF;
-            color: #1E3A8A;
-            border-color: #FFFFFF;
-            transform: scale(1.05);
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1;
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-indicator .scroll-box {
-            width: 28px;
-            height: 44px;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 9999px;
-            display: flex;
-            justify-content: center;
-            padding-top: 0.5rem;
-        }
-
-        .scroll-indicator .scroll-dot {
-            width: 4px;
-            height: 10px;
-            background: #FFFFFF;
-            border-radius: 9999px;
-            animation: scrollPulse 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-
-        @keyframes scrollPulse {
-            0%, 100% { opacity: 1; transform: translateY(0); }
-            50% { opacity: 0.5; transform: translateY(8px); }
-        }
-
-        /* ========== FEATURES SECTION ========== */
-        .features-section {
-            padding: 5rem 1rem;
-            background: #FFFFFF;
-        }
-
-        .features-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            color: #1E3A8A;
-            margin-bottom: 0.5rem;
-        }
-
-        .features-subtitle {
-            text-align: center;
-            color: #6B7280;
-            max-width: 600px;
-            margin: 0 auto 3rem;
-        }
-
-        .feature-card {
-            background: #F8FAFC;
-            border-radius: 16px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.15);
-            border-color: #1E3A8A;
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1E3A8A;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-desc {
-            color: #6B7280;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* ========== CTA SECTION ========== */
-        .cta-section {
-            padding: 5rem 1rem;
-            background: linear-gradient(135deg, #1E3A8A 0%, #172554 100%);
-            text-align: center;
-        }
-
-        .cta-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #FFFFFF;
-            margin-bottom: 0.5rem;
-        }
-
-        .cta-subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.125rem;
-            margin-bottom: 2rem;
-        }
-
-        .btn-cta {
-            background: #FFFFFF;
-            color: #1E3A8A;
-            padding: 0.75rem 2.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-cta:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        /* ========== FOOTER ========== */
-        .footer {
-            background: #0F172A;
-            color: #FFFFFF;
-            padding: 2rem 1rem;
-            text-align: center;
-        }
-
-        .footer-icons {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .footer-icons span {
-            font-size: 1.5rem;
-        }
-
-        .footer-text {
-            font-size: 0.875rem;
-            color: #94A3B8;
-        }
-
-        .footer-copy {
-            font-size: 0.75rem;
-            color: #64748B;
-            margin-top: 0.5rem;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
-                letter-spacing: 2px;
-            }
-            .hero-subtitle {
-                font-size: 1.125rem;
-                letter-spacing: 4px;
-            }
-            .hero-shield span {
-                font-size: 3rem;
-            }
-            .features-title {
-                font-size: 2rem;
-            }
-            .cta-title {
-                font-size: 2rem;
-            }
-            .feature-card {
-                padding: 1.5rem 1rem;
-            }
-            .btn-hero, .btn-hero-outline {
-                padding: 0.6rem 1.5rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            .hero-subtitle {
-                font-size: 1rem;
-                letter-spacing: 2px;
-            }
-            .hero-shield {
-                padding: 1rem;
-            }
-            .hero-shield span {
-                font-size: 2.5rem;
-            }
-            .features-title {
-                font-size: 1.75rem;
-            }
-            .cta-title {
-                font-size: 1.75rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- ========== HERO SECTION ========== -->
-    <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-bg-image"></div>
-
-        <div class="hero-content-wrapper">
-            <div class="container mx-auto px-4 text-center">
-                <div class="hero-content max-w-4xl mx-auto">
-                    <!-- Shield -->
-                    <div class="hero-shield float-animation">
-                        <span>⚽</span>
-                    </div>
-
-                    <!-- Title -->
-                    <h1 class="hero-title">ELITE SOCCER</h1>
-                    <p class="hero-subtitle">ACADEMY</p>
-
-                    <!-- Motto -->
-                    <p class="hero-motto">
-                        Disciplina • Compromiso • Excelencia
-                    </p>
-
-                    <!-- Quote -->
-                    <p class="hero-quote">
-                        "La excelencia no es un acto, sino un hábito"
-                    </p>
-
-                    <!-- Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/login" class="btn-hero">
-                            Iniciar Sesión
-                        </a>
-                        <a href="/register" class="btn-hero-outline">
-                            Registrarse
-                        </a>
-                    </div>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
+                    <a href="/login" class="w-full sm:w-auto text-center bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold px-10 py-3.5 rounded-full transition duration-300 shadow-[0_4px_12px_rgba(30,58,138,0.4)] hover:shadow-[0_8px_25px_rgba(30,58,138,0.5)] hover:scale-105 active:scale-100">
+                        Iniciar Sesión
+                    </a>
+                    <a href="/register" class="w-full sm:w-auto text-center bg-transparent text-white border-2 border-white/60 hover:bg-white hover:text-[#1E3A8A] hover:border-white font-semibold px-10 py-3.5 rounded-full transition duration-300 hover:scale-105 active:scale-100">
+                        Registrarse
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator">
-            <div class="scroll-box">
-                <div class="scroll-dot"></div>
+        <div class="absolute bottom-8 left-100% left-1/2 -translate-x-1/2 animate-[bounce_2s_infinite] select-none pointer-events-none hidden md:block">
+            <div class="w-7 h-11 border-2 border-white/40 rounded-full flex justify-center pt-2">
+                <div class="w-1 h-2.5 bg-white rounded-full animate-[scrollPulse_2s_infinite]"></div>
             </div>
         </div>
     </section>
 
-    <!-- ========== FEATURES SECTION ========== -->
-    <section class="features-section">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <h2 class="features-title title-font">¿POR QUÉ ELEGIRNOS?</h2>
-            <p class="features-subtitle">
+    <section class="py-20 px-4 bg-white">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="font-['Bebas_Neue',cursive] tracking-[2px] text-4xl md:text-5xl text-center text-[#1E3A8A] font-bold mb-2">
+                ¿POR QUÉ ELEGIRNOS?
+            </h2>
+            <p class="text-center text-gray-500 max-w-xl mx-auto mb-12 text-sm md:text-base font-normal">
                 Somos una academia comprometida con la formación integral de futbolistas
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="feature-card">
-                    <span class="feature-icon">🏆</span>
-                    <h3 class="feature-title">Metodología Profesional</h3>
-                    <p class="feature-desc">Entrenamientos basados en las mejores academias del mundo</p>
+                
+                <div class="bg-slate-50 border border-gray-200 hover:border-[#1E3A8A] rounded-2xl p-8 text-center transition duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(30,58,138,0.15)] group">
+                    <span class="text-5xl block mb-4 group-hover:scale-110 transition duration-300 select-none">🏆</span>
+                    <h3 class="font-['Poppins',sans-serif] text-xl font-bold text-[#1E3A8A] mb-2">Metodología Profesional</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-normal">Entrenamientos basados en las mejores academias del mundo</p>
                 </div>
-                <div class="feature-card">
-                    <span class="feature-icon">👥</span>
-                    <h3 class="feature-title">Cuerpo Técnico Calificado</h3>
-                    <p class="feature-desc">Profesionales con experiencia y pasión por el fútbol</p>
+                
+                <div class="bg-slate-50 border border-gray-200 hover:border-[#1E3A8A] rounded-2xl p-8 text-center transition duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(30,58,138,0.15)] group">
+                    <span class="text-5xl block mb-4 group-hover:scale-110 transition duration-300 select-none">👥</span>
+                    <h3 class="font-['Poppins',sans-serif] text-xl font-bold text-[#1E3A8A] mb-2">Cuerpo Técnico Calificado</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-normal">Profesionales con experiencia y pasión por el fútbol</p>
                 </div>
-                <div class="feature-card">
-                    <span class="feature-icon">⚽</span>
-                    <h3 class="feature-title">Instalaciones de Primera</h3>
-                    <p class="feature-desc">Canchas y equipamiento de alta calidad</p>
+                
+                <div class="bg-slate-50 border border-gray-200 hover:border-[#1E3A8A] rounded-2xl p-8 text-center transition duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(30,58,138,0.15)] group">
+                    <span class="text-5xl block mb-4 group-hover:scale-110 transition duration-300 select-none">⚽</span>
+                    <h3 class="font-['Poppins',sans-serif] text-xl font-bold text-[#1E3A8A] mb-2">Instalaciones de Primera</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-normal">Canchas y equipamiento de alta calidad para el máximo rendimiento</p>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- ========== CTA SECTION ========== -->
-    <section class="cta-section">
-        <div class="container mx-auto px-4">
-            <h2 class="cta-title title-font">¿LISTO PARA COMENZAR?</h2>
-            <p class="cta-subtitle">Únete a Elite Soccer Academy y lleva tu talento al siguiente nivel</p>
-            <a href="/register" class="btn-cta">
+    <section class="py-20 px-4 bg-[linear-gradient(135deg,#1E3A8A_0%,#172554_100%)] text-center">
+        <div class="container mx-auto">
+            <h2 class="font-['Bebas_Neue',cursive] tracking-[2px] text-4xl md:text-5xl text-white font-bold mb-2">
+                ¿LISTO PARA COMENZAR?
+            </h2>
+            <p class="text-white/80 text-base md:text-lg max-w-md mx-auto mb-8 font-normal px-4">
+                Únete a Elite Soccer Academy y lleva tu talento al siguiente nivel
+            </p>
+            <a href="/register" class="inline-block bg-white hover:bg-gray-100 text-[#1E3A8A] font-semibold px-10 py-3.5 rounded-full transition duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-100">
                 Comienza ahora
             </a>
         </div>
     </section>
 
-    <!-- ========== FOOTER ========== -->
-    <footer class="footer">
+    <footer class="bg-slate-950 text-white py-12 text-center">
         <div class="container mx-auto px-4">
-            <div class="footer-icons">
+            <div class="flex justify-center gap-6 mb-4 text-2xl select-none opacity-80">
                 <span>⚽</span>
                 <span>🏆</span>
                 <span>🎯</span>
             </div>
-            <p class="footer-text">
-                &copy; 2025 Elite Soccer Academy - Disciplina • Compromiso • Excelencia
+            <p class="text-sm text-slate-400 font-medium">
+                &copy; 2026 Elite Soccer Academy - Disciplina • Compromiso • Excelencia
             </p>
-            <p class="footer-copy">
+            <p class="text-xs text-slate-500 mt-2 font-normal">
                 Todos los derechos reservados
             </p>
         </div>
     </footer>
-</body>
-</html>
+
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-10px); }
+    }
+    @keyframes scrollPulse {
+        0%, 100% { opacity: 1; transform: translateY(0); }
+        50% { opacity: 0.5; transform: translateY(8px); }
+    }
+</style>

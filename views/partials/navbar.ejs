@@ -1,77 +1,59 @@
-<nav class="navbar" style="background: #1E3A8A; padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-bottom: 3px solid #FFFFFF;">
-    <div class="navbar-container" style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        <!-- Logo -->
-        <div class="navbar-logo" style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 2rem; color: #FFFFFF;">⚽</span>
+<nav class="sticky top-0 z-50 bg-[#1E3A8A] text-white px-4 md:px-8 py-4 shadow-md border-b-4 border-white">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-4">
+        
+        <div class="flex items-center gap-3 shrink-0">
+            <span class="text-3xl select-none">⚽</span>
             <div>
-                <div style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.3rem; color: #FFFFFF; letter-spacing: 1px;">ELITE SOCCER</div>
-                <div style="font-size: 0.6rem; color: #3B82F6; letter-spacing: 2px;">ACADEMY</div>
+                <div class="font-extrabold text-xl tracking-wider font-['Poppins'] leading-tight">ELITE SOCCER</div>
+                <div class="text-[10px] font-bold text-blue-400 tracking-[0.2em] uppercase leading-none">Academy</div>
             </div>
         </div>
 
-        <!-- Menú -->
-        <div class="navbar-menu" style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
+        <div class="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-sm font-medium">
             <% if (user && user.role === 'coach') { %>
-                <a href="/coach/dashboard" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏠 Inicio</a>
-                <a href="/coach/players" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">👥 Jugadores</a>
-                <a href="/coach/approve-players" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px;">
+                <a href="/coach/dashboard" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">🏠 Inicio</a>
+                <a href="/coach/players" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">👥 Jugadores</a>
+                <a href="/coach/approve-players" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200 flex items-center gap-1.5">
                     📋 Aprobar
                     <% if (pendingCount && pendingCount > 0) { %>
-                        <span style="background: #EF4444; color: white; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 9999px; animation: pulse 2s infinite; min-width: 18px; text-align: center;"><%= pendingCount %></span>
+                        <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse min-w-[18px] text-center">
+                            <%= pendingCount %>
+                        </span>
                     <% } %>
                 </a>
-                <a href="/coach/trainings" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏋️ Entrenamientos</a>
-                <a href="/coach/matches" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">⚽ Partidos</a>
-                <a href="/coach/announcements" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">📢 Anuncios</a>
-                <a href="/coach/attendance" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">✅ Asistencia</a>
+                <a href="/coach/trainings" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">🏋️ Entrenamientos</a>
+                <a href="/coach/matches" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">⚽ Partidos</a>
+                <a href="/coach/announcements" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">📢 Anuncios</a>
+                <a href="/coach/attendance" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">✅ Asistencia</a>
             <% } else if (user && user.role === 'player') { %>
-                <a href="/player/dashboard" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏠 Inicio</a>
-                <a href="/player/attendance" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">✅ Asistencia</a>
-                <a href="/player/announcements" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">📢 Anuncios</a>
-                <a href="/player/profile" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">👤 Mi Perfil</a>
+                <a href="/player/dashboard" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">🏠 Inicio</a>
+                <a href="/player/attendance" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">✅ Asistencia</a>
+                <a href="/player/announcements" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">📢 Anuncios</a>
+                <a href="/player/profile" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">👤 Mi Perfil</a>
             <% } else { %>
-                <a href="/" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🏠 Inicio</a>
-                <a href="/login" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">🔑 Iniciar Sesión</a>
-                <a href="/register" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 0.5rem 0; transition: all 0.3s ease; border-bottom: 2px solid transparent;">📝 Registrarse</a>
+                <a href="/" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">🏠 Inicio</a>
+                <a href="/login" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">🔑 Iniciar Sesión</a>
+                <a href="/register" class="py-1 border-b-2 border-transparent hover:border-white transition duration-200">📝 Registrarse</a>
             <% } %>
         </div>
 
-        <!-- Usuario -->
-        <div class="user-area" style="display: flex; align-items: center; gap: 1rem;">
+        <div class="flex items-center gap-4 text-sm shrink-0">
             <% if (user) { %>
-                <span style="color: #FFFFFF; font-weight: 500; font-size: 0.9rem;">
+                <span class="font-medium hidden sm:inline">
                     <%= user.full_name %>
-                    <span style="font-size: 0.7rem; color: #93C5FD; margin-left: 4px;">
+                    <span class="text-xs text-blue-300 ml-1 font-normal">
                         (<%= user.role === 'coach' ? 'Entrenador' : 'Jugador' %>)
                     </span>
                 </span>
-                <a href="/logout" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem 1rem; border-radius: 20px; color: #FFFFFF; text-decoration: none; font-size: 0.8rem; transition: all 0.3s ease;">🚪 Salir</a>
+                <a href="/logout" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs px-4 py-2 rounded-full transition duration-200 active:scale-95">
+                    🚪 Salir
+                </a>
             <% } else { %>
-                <a href="/login" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem 1rem; border-radius: 20px; color: #FFFFFF; text-decoration: none; font-size: 0.8rem; transition: all 0.3s ease;">🔑 Iniciar Sesión</a>
+                <a href="/login" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs px-4 py-2 rounded-full transition duration-200 active:scale-95">
+                    🔑 Iniciar Sesión
+                </a>
             <% } %>
         </div>
+        
     </div>
 </nav>
-
-<style>
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-    .navbar-menu a:hover {
-        border-bottom-color: #FFFFFF;
-    }
-    .user-area .logout-link:hover {
-        background: rgba(255,255,255,0.3);
-    }
-    @media (max-width: 1024px) {
-        .navbar-container { flex-direction: column; align-items: stretch; }
-        .navbar-menu { justify-content: center; gap: 1rem; }
-        .navbar-menu a { font-size: 0.8rem; }
-    }
-    @media (max-width: 768px) {
-        .navbar { padding: 0.75rem 1rem; }
-        .navbar-menu { flex-wrap: wrap; gap: 0.75rem; }
-        .user-area .user-name { font-size: 0.8rem; }
-    }
-</style>

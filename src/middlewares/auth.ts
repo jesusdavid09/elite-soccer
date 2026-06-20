@@ -2,6 +2,21 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/jwt';
 import pool from '../config/database';
 
+// Opcional: Extendemos la interfaz Request de Express localmente para tener autocompletado nativo
+declare global {
+    namespace Express {
+        interface Request {
+            user?: {
+                id: number;
+                email: string;
+                full_name: string;
+                role: string;
+                approved: boolean;
+            };
+        }
+    }
+}
+
 // ============== AUTENTICACIÓN PRINCIPAL ==============
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     console.log(`🔐 Verificando autenticación para: ${req.url}`);
@@ -11,7 +26,6 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     
     if (!token) {
         console.log('❌ Token no encontrado, redirigiendo a login');
-        // Si es una petición API, devolver 401
         if (req.path.startsWith('/api/')) {
             return res.status(401).json({ error: 'No autenticado' });
         }
@@ -55,25 +69,13 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
                 if (req.path.startsWith('/api/')) {
                     return res.status(403).json({ error: 'Cuenta pendiente de aprobación' });
                 }
-                req.flash('error', '⏳ Tu cuenta está pendiente de aprobación');
+                // Asegúrate de que req.flash esté inicializado en tu app.ts si usas esta línea
+                if ((req as any).flash) (req as any).flash('error', '⏳ Tu cuenta está pendiente de aprobación');
                 return res.redirect('/login');
             }
             
-            // Verificar que el rol coincida con lo que se espera
-            if (req.path.startsWith('/coach') && user.role !== 'coach') {
-                console.log(`❌ Usuario ${user.email} intenta acceder a ruta de coach`);
-                if (req.path.startsWith('/api/')) {
-                    return res.status(403).json({ error: 'Acceso denegado' });
-                }
-                return res.status(403).render('error', {
-                    title: 'Acceso Denegado',
-                    message: 'No tienes permisos de entrenador',
-                    user: (req as any).user
-                });
-            }
-            
-            // Guardar usuario en req
-            (req as any).user = {
+            // ✅ ASIGNACIÓN CORRECTA: Guardar usuario en req ANTES de cualquier otra validación o paso al siguiente middleware
+            req.user = {
                 id: user.id,
                 email: user.email,
                 full_name: user.full_name,
@@ -102,7 +104,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
 // ============== VERIFICAR SI ES ENTRENADOR ==============
 export const isCoach = (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
+    const user = req.user;
     
     if (!user) {
         console.log('❌ Intento de acceso sin autenticación');
@@ -127,7 +129,7 @@ export const isCoach = (req: Request, res: Response, next: NextFunction) => {
 
 // ============== VERIFICAR SI ES JUGADOR ==============
 export const isPlayer = (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
+    const user = req.user;
     
     if (!user) {
         console.log('❌ Intento de acceso sin autenticación');
@@ -152,7 +154,7 @@ export const isPlayer = (req: Request, res: Response, next: NextFunction) => {
 
 // ============== VERIFICAR SI ES ADMIN ==============
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
+    const user = req.user;
     
     if (!user) {
         console.log('❌ Intento de acceso sin autenticación');
@@ -177,7 +179,7 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
 // ============== VERIFICAR SI ES COACH O ADMIN ==============
 export const isCoachOrAdmin = (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
+    const user = req.user;
     
     if (!user) {
         console.log('❌ Intento de acceso sin autenticación');
@@ -202,7 +204,7 @@ export const isCoachOrAdmin = (req: Request, res: Response, next: NextFunction) 
 
 // ============== OBTENER USUARIO ACTUAL (API) ==============
 export const getCurrentUser = async (req: Request, res: Response) => {
-    const user = (req as any).user;
+    const user = req.user;
     
     if (!user) {
         return res.status(401).json({ error: 'No autenticado' });

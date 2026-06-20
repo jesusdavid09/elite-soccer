@@ -8,252 +8,53 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #F3F4F6;
-        }
-        h1, h2, h3 {
-            font-family: 'Poppins', sans-serif;
-        }
-        .card-player {
-            background: #FFFFFF;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
-        }
-        .card-player:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
-        }
-        .stat-card {
-            background: #FFFFFF;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            border: 1px solid #E5E7EB;
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
-        }
-        .btn-edit {
-            background: #F59E0B;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.4rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-edit:hover {
-            background: #D97706;
-            transform: scale(1.05);
-        }
-        .btn-delete {
-            background: #EF4444;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-            padding: 0.4rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-delete:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-        }
-        .btn-volver {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-        }
-        .btn-volver:hover {
-            background: #172554;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; }
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
             z-index: 1100;
         }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: #FFFFFF;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease;
-        }
+        .modal.active { display: flex; }
+        .modal-content { animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
+            from { transform: translateY(-30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-header {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 1.25rem 1.5rem;
-            border-radius: 20px 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-header button {
-            background: none;
-            border: none;
-            color: #FFFFFF;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-            line-height: 1;
-        }
-        .modal-header button:hover {
-            transform: rotate(90deg);
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .btn-primary-custom {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            width: 100%;
-        }
-        .btn-primary-custom:hover {
-            background: #172554;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-        }
-        .btn-gray-custom {
-            background: #4B5563;
-            color: #FFFFFF;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-        .btn-gray-custom:hover {
-            background: #374151;
-            transform: translateY(-2px);
-        }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #E5E7EB;
-            border-radius: 12px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            color: #111827;
-            font-family: 'Inter', sans-serif;
-        }
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #1E3A8A;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #111827;
-            font-size: 0.9rem;
-        }
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1E3A8A;
-        }
-        .stat-label {
-            color: #6B7280;
-            font-size: 0.9rem;
-        }
-        .text-azul-rey {
-            color: #1E3A8A;
-        }
-        .bg-azul-rey {
-            background: #1E3A8A;
-        }
-        .bg-azul-rey:hover {
-            background: #172554;
-        }
-        .player-avatar {
-            width: 96px;
-            height: 96px;
-            background: #1E3A8A;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #FFFFFF;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
     <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold" style="color: #1E3A8A;">👥 Plantilla de Jugadores</h1>
-                <p class="text-gray-500 mt-1">Gestiona toda la información de tus jugadores</p>
+                <h1 class="text-3xl font-bold text-[#1E3A8A]">👥 Plantilla de Jugadores</h1>
+                <p class="text-gray-500 mt-1">Gestiona y actualiza la información técnica de tus jugadores</p>
             </div>
-            <!-- Botón de Agregar Jugador eliminado según solicitud -->
         </div>
 
         <!-- Estadísticas -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div class="stat-card p-6 text-center">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
                 <div class="text-3xl mb-2">👥</div>
-                <div class="stat-number"><%= players.length %></div>
-                <div class="stat-label">Total Jugadores</div>
+                <div class="text-3xl font-extrabold text-[#1E3A8A]"><%= players.length %></div>
+                <div class="text-sm font-medium text-gray-400 mt-0.5">Total Jugadores</div>
             </div>
-            <div class="stat-card p-6 text-center">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
                 <div class="text-3xl mb-2">⚡</div>
-                <div class="stat-number" style="color: #22C55E;">Activos</div>
-                <div class="stat-label">En el club</div>
+                <div class="text-3xl font-extrabold text-emerald-500">Activos</div>
+                <div class="text-sm font-medium text-gray-400 mt-0.5">En el club</div>
             </div>
-            <div class="stat-card p-6 text-center">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
                 <div class="text-3xl mb-2">📊</div>
-                <div class="stat-number" style="color: #F59E0B;">Posiciones</div>
-                <div class="stat-label">Por definir</div>
+                <div class="text-3xl font-extrabold text-amber-500">Posiciones</div>
+                <div class="text-sm font-medium text-gray-400 mt-0.5">Por definir</div>
             </div>
         </div>
 
@@ -261,56 +62,59 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <% if (players && players.length > 0) { %>
                 <% for (var i = 0; i < players.length; i++) { var player = players[i]; %>
-                    <div class="card-player p-6">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="player-avatar">
-                                <%= player.jersey_number || '⚽' %>
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 transition duration-300 hover:-translate-y-1 hover:shadow-md flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-col items-center text-center">
+                                <div class="w-20 h-20 bg-[#1E3A8A] rounded-full flex items-center justify-center text-2xl font-bold text-white shadow-sm border border-blue-900/10">
+                                    <%= player.jersey_number || '⚽' %>
+                                </div>
+                                <h3 class="text-xl font-bold mt-3 text-gray-900"><%= player.full_name %></h3>
+                                <p class="text-[#1E3A8A] font-extrabold text-sm">#<%= player.jersey_number || 'S/N' %></p>
+                                <div class="flex gap-2 mt-2.5">
+                                    <span class="bg-blue-50 text-[#1E3A8A] font-semibold px-3 py-1 rounded-full text-xs border border-blue-100"><%= player.position || 'Sin posición' %></span>
+                                    <span class="bg-amber-50 text-amber-800 font-semibold px-3 py-1 rounded-full text-xs border border-amber-100"><%= player.age || '?' %> años</span>
+                                </div>
+                                <span class="mt-3 text-xs font-bold px-2.5 py-0.5 rounded-md <%= player.active !== false ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' %>">
+                                    <%= player.active !== false ? '✅ Activo' : '❌ Inactivo' %>
+                                </span>
                             </div>
-                            <h3 class="text-xl font-bold mt-3" style="color: #111827;"><%= player.full_name %></h3>
-                            <p class="text-[#1E3A8A] font-semibold">#<%= player.jersey_number %></p>
-                            <div class="flex gap-2 mt-2">
-                                <span class="bg-[#1E3A8A] text-white px-2 py-1 rounded-full text-xs"><%= player.position || 'Sin posición' %></span>
-                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"><%= player.age || '?' %> años</span>
+                            
+                            <div class="mt-5 pt-4 border-t border-gray-100 space-y-2 text-xs font-medium">
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-gray-400">📧 Email</span>
+                                    <span class="text-gray-700 truncate max-w-[180px]" title="<%= player.email %>"><%= player.email %></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">📱 Teléfono</span>
+                                    <span class="text-gray-700"><%= player.phone || 'No registrado' %></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">📅 Registro</span>
+                                    <span class="text-gray-700"><%= new Date(player.created_at).toLocaleDateString('es-CO') %></span>
+                                </div>
                             </div>
-                            <span class="mt-2 text-sm <%= player.active !== false ? 'text-green-600' : 'text-red-600' %>">
-                                <%= player.active !== false ? '✅ Activo' : '❌ Inactivo' %>
-                            </span>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-gray-200 space-y-1 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📧 Email</span>
-                                <span style="color: #111827;"><%= player.email %></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📱 Teléfono</span>
-                                <span style="color: #111827;"><%= player.phone || 'No registrado' %></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">📅 Registro</span>
-                                <span style="color: #111827;"><%= new Date(player.created_at).toLocaleDateString() %></span>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex gap-2">
-                            <button onclick="editPlayer('<%= player.id %>')" class="btn-edit flex-1">✏️ Editar</button>
-                            <a href="/coach/players/<%= player.id %>/delete" class="btn-delete flex-1" onclick="return confirm('¿Eliminar a <%= player.full_name %>?')">🗑️ Eliminar</a>
+
+                        <div class="mt-5 flex gap-2 pt-2">
+                            <button onclick="editPlayer('<%= player.id %>')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm active:scale-95">✏️ Editar</button>
+                            <a href="/coach/players/<%= player.id %>/delete" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm active:scale-95 text-center" onclick="return confirm('¿Estás totalmente seguro de eliminar a <%= player.full_name %> de la plantilla?')">🗑️ Eliminar</a>
                         </div>
                     </div>
                 <% } %>
             <% } else { %>
                 <div class="col-span-full">
-                    <div class="card-player p-12 empty-state">
-                        <div class="icon">👥</div>
-                        <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay jugadores registrados</h3>
-                        <p class="text-gray-400">Comienza agregando jugadores a tu plantilla</p>
-                        <!-- Botón de Agregar Jugador eliminado según solicitud -->
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center max-w-xl mx-auto">
+                        <div class="text-5xl mb-4">👥</div>
+                        <h3 class="text-2xl font-bold text-gray-700 mb-1">No hay jugadores registrados</h3>
+                        <p class="text-gray-400 text-sm">Las solicitudes aprobadas aparecerán automáticamente en esta sección.</p>
                     </div>
                 </div>
             <% } %>
         </div>
 
         <!-- Volver -->
-        <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
+        <div class="mt-10 text-center">
+            <a href="/coach/dashboard" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition inline-block shadow-sm">
                 ← Volver al Dashboard
             </a>
         </div>
@@ -318,28 +122,35 @@
 
     <!-- ===== MODAL JUGADOR ===== -->
     <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle" class="text-xl font-bold">✏️ Editar Jugador</h3>
-                <button onclick="closeModal()">&times;</button>
+        <div class="modal-content bg-white rounded-2xl max-w-md w-11/12 overflow-hidden shadow-2xl">
+            <div class="bg-[#1E3A8A] text-white px-6 py-4 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-lg font-bold">✏️ Editar Jugador</h3>
+                <button onclick="closeModal()" class="text-3xl font-light leading-none hover:rotate-90 transition duration-200">&times;</button>
             </div>
-            <form id="playerForm" method="POST" action="/coach/players" class="modal-body">
+            <form id="playerForm" method="POST" action="/coach/players" class="p-6 max-h-[75vh] overflow-y-auto">
                 <input type="hidden" id="playerId" name="id">
+                
                 <div class="mb-4">
-                    <label class="form-label">👤 Nombre Completo *</label>
-                    <input type="text" name="full_name" class="form-input" required placeholder="Ej: Juan Pérez">
+                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">👤 Nombre Completo *</label>
+                    <input type="text" name="full_name" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] text-sm font-medium text-gray-800" required placeholder="Ej: Juan Pérez">
                 </div>
                 <div class="mb-4">
-                    <label class="form-label">🆔 ID del Usuario *</label>
-                    <input type="text" name="user_id" class="form-input" required placeholder="ID del usuario">
+                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">🆔 ID del Usuario *</label>
+                    <input type="text" name="user_id" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl bg-gray-50 focus:outline-none text-sm font-medium text-gray-500 cursor-not-allowed" readonly required placeholder="ID del usuario">
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-900 mb-1.5">🔢 Dorsal *</label>
+                        <input type="number" name="jersey_number" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] text-sm font-medium text-gray-800" required placeholder="Ej: 10" min="1" max="99">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-900 mb-1.5">🎂 Edad</label>
+                        <input type="number" name="age" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] text-sm font-medium text-gray-800" placeholder="Ej: 25" min="1" max="99">
+                    </div>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label">🔢 Número de Camiseta *</label>
-                    <input type="number" name="jersey_number" class="form-input" required placeholder="Ej: 10" min="1" max="99">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">📌 Posición</label>
-                    <select name="position" class="form-select">
+                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">📌 Posición Táctica</label>
+                    <select name="position" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] text-sm font-medium text-gray-800 bg-white">
                         <option value="">Seleccionar posición</option>
                         <option value="Portero">🧤 Portero</option>
                         <option value="Defensa Central">🛡️ Defensa Central</option>
@@ -350,19 +161,18 @@
                     </select>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label">🎂 Edad</label>
-                    <input type="number" name="age" class="form-input" placeholder="Ej: 25" min="1" max="99">
+                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">📱 Teléfono</label>
+                    <input type="text" name="phone" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] text-sm font-medium text-gray-800" placeholder="Ej: 555-1234">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label">📱 Teléfono</label>
-                    <input type="text" name="phone" class="form-input" placeholder="Ej: 555-1234">
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">📧 Correo Electrónico</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] text-sm font-medium text-gray-800" placeholder="Ej: jugador@email.com">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label">📧 Email</label>
-                    <input type="email" name="email" class="form-input" placeholder="Ej: jugador@email.com">
+                
+                <div class="flex flex-col gap-2 pt-2">
+                    <button type="submit" class="w-full bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold py-2.5 rounded-xl transition shadow-sm">💾 Guardar Cambios</button>
+                    <button type="button" onclick="closeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">❌ Cancelar</button>
                 </div>
-                <button type="submit" class="btn-primary-custom">💾 Guardar Cambios</button>
-                <button type="button" onclick="closeModal()" class="btn-gray-custom">❌ Cancelar</button>
             </form>
         </div>
     </div>
@@ -370,15 +180,9 @@
     <%- include('../partials/footer') %>
 
     <script>
-        // ========== FUNCIONES DEL MODAL ==========
         function openModal() {
             var modal = document.getElementById('playerModal');
             modal.classList.add('active');
-            document.getElementById('modalTitle').textContent = '➕ Agregar Jugador';
-            document.getElementById('playerForm').action = '/coach/players';
-            document.getElementById('playerId').value = '';
-            document.getElementById('playerForm').reset();
-            document.querySelector('[name="user_id"]').value = '';
         }
 
         function closeModal() {
@@ -387,18 +191,12 @@
         }
 
         function editPlayer(id) {
-            console.log('📝 Editando jugador ID:', id);
-            
             fetch('/coach/players/api/' + id)
                 .then(function(response) { 
-                    if (!response.ok) {
-                        throw new Error('Error al cargar los datos: ' + response.status);
-                    }
+                    if (!response.ok) throw new Error('Error al extraer los datos del jugador');
                     return response.json(); 
                 })
                 .then(function(data) {
-                    console.log('📊 Datos del jugador:', data);
-                    
                     document.getElementById('modalTitle').textContent = '✏️ Editar Jugador';
                     document.getElementById('playerId').value = data.id;
                     document.querySelector('[name="user_id"]').value = data.user_id || '';
@@ -413,26 +211,20 @@
                     openModal();
                 })
                 .catch(function(error) {
-                    console.error('❌ Error:', error);
-                    alert('❌ Error al cargar los datos del jugador: ' + error.message);
+                    console.error('Error:', error);
+                    alert('❌ No se pudieron cargar los datos del jugador correctamente.');
                 });
         }
 
-        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             var modal = document.getElementById('playerModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+            if (event.target === modal) closeModal();
         }
 
-        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 var modal = document.getElementById('playerModal');
-                if (modal.classList.contains('active')) {
-                    closeModal();
-                }
+                if (modal.classList.contains('active')) closeModal();
             }
         });
     </script>

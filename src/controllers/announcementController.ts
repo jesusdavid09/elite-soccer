@@ -47,15 +47,15 @@ export const createAnnouncement = async (req: Request, res: Response) => {
     console.log('📝 Título:', title);
     console.log('📝 Autor ID:', userId);
     
-    if (!title || !content) {
+    if (!title || !content || !title.trim() || !content.trim()) {
         console.log('❌ Error: Título o contenido vacío');
-        req.flash('error', '⚠️ El título y el contenido son obligatorios');
+        (req as any).flash('error', '⚠️ El título y el contenido son obligatorios');
         return res.redirect('/coach/announcements');
     }
     
     if (!userId) {
         console.log('❌ Error: Usuario no autenticado');
-        req.flash('error', '❌ Debes iniciar sesión para crear anuncios');
+        (req as any).flash('error', '❌ Debes iniciar sesión para crear anuncios');
         return res.redirect('/coach/announcements');
     }
     
@@ -68,28 +68,28 @@ export const createAnnouncement = async (req: Request, res: Response) => {
         );
         
         console.log(`✅ Anuncio creado con ID: ${result.rows[0].id}`);
-        req.flash('success', '✅ Anuncio creado correctamente');
+        (req as any).flash('success', '✅ Anuncio creado correctamente');
         res.redirect('/coach/announcements');
     } catch (error) {
         console.error('❌ Error al crear anuncio:', error);
-        req.flash('error', '❌ Error al crear el anuncio');
+        (req as any).flash('error', '❌ Error al crear el anuncio');
         res.redirect('/coach/announcements');
     }
 };
 
 // ============== ELIMINAR ANUNCIO ==============
 export const deleteAnnouncement = async (req: Request, res: Response) => {
-    // 🔥 SOLUCIÓN: Convertir id a string
-    const id = String(req.params.id); // Convertir a string explícitamente
+    // Convertir ID a número para evitar conflictos de tipos con la DB
+    const id = Number(req.params.id); 
     const userId = (req as any).user?.id;
     
     console.log(`🗑️ Eliminando anuncio ID: ${id}`);
     console.log(`👤 Usuario ID: ${userId}`);
     
-    // Validar ID
-    if (!id || id === 'undefined' || id === 'null') {
+    // Validar ID numérico
+    if (isNaN(id) || id <= 0) {
         console.log('❌ Error: ID inválido');
-        req.flash('error', '❌ ID de anuncio inválido');
+        (req as any).flash('error', '❌ ID de anuncio inválido');
         return res.redirect('/coach/announcements');
     }
     
@@ -102,15 +102,15 @@ export const deleteAnnouncement = async (req: Request, res: Response) => {
         
         if (checkResult.rows.length === 0) {
             console.log(`❌ Anuncio ${id} no encontrado`);
-            req.flash('error', '❌ El anuncio no existe');
+            (req as any).flash('error', '❌ El anuncio no existe');
             return res.redirect('/coach/announcements');
         }
         
-        // Verificar que el usuario es el autor o es admin/coach
+        // Verificar permisos (mismo autor o rol administrador)
         const announcement = checkResult.rows[0];
         if (announcement.author_id !== userId && (req as any).user?.role !== 'admin') {
             console.log(`❌ Usuario ${userId} no es autor del anuncio ${id}`);
-            req.flash('error', '❌ No tienes permiso para eliminar este anuncio');
+            (req as any).flash('error', '❌ No tienes permiso para eliminar este anuncio');
             return res.redirect('/coach/announcements');
         }
         
@@ -118,21 +118,24 @@ export const deleteAnnouncement = async (req: Request, res: Response) => {
         await pool.query('DELETE FROM announcements WHERE id = $1', [id]);
         
         console.log(`✅ Anuncio ${id} eliminado correctamente`);
-        req.flash('success', '✅ Anuncio eliminado correctamente');
+        (req as any).flash('success', '✅ Anuncio eliminado correctamente');
         res.redirect('/coach/announcements');
     } catch (error) {
         console.error(`❌ Error al eliminar anuncio ${id}:`, error);
-        req.flash('error', '❌ Error al eliminar el anuncio');
+        (req as any).flash('error', '❌ Error al eliminar el anuncio');
         res.redirect('/coach/announcements');
     }
 };
 
 // ============== OBTENER ANUNCIO POR ID (API) ==============
 export const getAnnouncementById = async (req: Request, res: Response) => {
-    // 🔥 SOLUCIÓN: Convertir id a string
-    const id = String(req.params.id);
+    const id = Number(req.params.id);
     
     console.log(`📋 Obteniendo anuncio ID: ${id}`);
+    
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'ID de anuncio inválido' });
+    }
     
     try {
         const result = await pool.query(`
@@ -163,15 +166,19 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
 
 // ============== ACTUALIZAR ANUNCIO ==============
 export const updateAnnouncement = async (req: Request, res: Response) => {
-    // 🔥 SOLUCIÓN: Convertir id a string
-    const id = String(req.params.id);
+    const id = Number(req.params.id);
     const { title, content } = req.body;
     const userId = (req as any).user?.id;
     
     console.log(`✏️ Actualizando anuncio ID: ${id}`);
     
-    if (!title || !content) {
-        req.flash('error', '⚠️ El título y el contenido son obligatorios');
+    if (isNaN(id)) {
+        (req as any).flash('error', '❌ ID de anuncio inválido');
+        return res.redirect('/coach/announcements');
+    }
+
+    if (!title || !content || !title.trim() || !content.trim()) {
+        (req as any).flash('error', '⚠️ El título y el contenido son obligatorios');
         return res.redirect('/coach/announcements');
     }
     
@@ -182,13 +189,13 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
         );
         
         if (checkResult.rows.length === 0) {
-            req.flash('error', '❌ El anuncio no existe');
+            (req as any).flash('error', '❌ El anuncio no existe');
             return res.redirect('/coach/announcements');
         }
         
         const announcement = checkResult.rows[0];
         if (announcement.author_id !== userId && (req as any).user?.role !== 'admin') {
-            req.flash('error', '⚠️ No tienes permiso para editar este anuncio');
+            (req as any).flash('error', '⚠️ No tienes permiso para editar este anuncio');
             return res.redirect('/coach/announcements');
         }
         
@@ -200,24 +207,28 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
         );
         
         console.log(`✅ Anuncio ${id} actualizado`);
-        req.flash('success', '✅ Anuncio actualizado correctamente');
+        (req as any).flash('success', '✅ Anuncio actualizado correctamente');
         res.redirect('/coach/announcements');
     } catch (error) {
         console.error(`❌ Error al actualizar anuncio ${id}:`, error);
-        req.flash('error', '❌ Error al actualizar el anuncio');
+        (req as any).flash('error', '❌ Error al actualizar el anuncio');
         res.redirect('/coach/announcements');
     }
 };
 
 // ============== PUBLICAR/DESPUBLICAR ANUNCIO ==============
 export const togglePublish = async (req: Request, res: Response) => {
-    // 🔥 SOLUCIÓN: Convertir id a string
-    const id = String(req.params.id);
-    const { published } = req.body;
+    const id = Number(req.params.id);
+    // Forzar conversión limpia a booleano
+    const published = req.body.published === true || req.body.published === 'true';
     const userId = (req as any).user?.id;
     
     console.log(`📝 Cambiando estado de publicación del anuncio ${id} a: ${published}`);
     
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'ID inválido' });
+    }
+
     try {
         const checkResult = await pool.query(
             'SELECT id, author_id FROM announcements WHERE id = $1',

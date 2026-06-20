@@ -1,262 +1,69 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error | Elite Soccer Academy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<!-- Vista parcial: error.ejs (Diseñada para uso global o inyección en layouts) -->
 
-        body {
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            background: linear-gradient(135deg, #1E3A8A 0%, #172554 50%, #0F172A 100%);
-            position: relative;
-            overflow: hidden;
-        }
+<div class="fixed inset-0 min-h-screen w-full flex items-center justify-center p-4 bg-[linear-gradient(135deg,#1E3A8A_0%,#172554_50%,#0F172A_100%)] overflow-hidden isolate select-none">
+    
+    <!-- Efecto de Fondo Decorativo (Círculos rotativos con gradientes radiales) -->
+    <div class="absolute -inset-[50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.05)_0%,transparent_50%),radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.05)_0%,transparent_50%)] animate-[spin_30s_linear_infinite] pointer-events-none -z-10"></div>
 
-        /* Efecto de fondo con círculos decorativos */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
-            animation: rotate 30s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .error-card {
-            background: #FFFFFF;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            max-width: 450px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 0.6s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .error-icon {
-            font-size: 4.5rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .error-code {
-            font-family: 'Bebas Neue', cursive;
-            font-size: 5rem;
-            color: #1E3A8A;
-            line-height: 1;
-            letter-spacing: 4px;
-            margin-bottom: 0.25rem;
-        }
-
-        .error-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 0.5rem;
-        }
-
-        .error-message {
-            color: #6B7280;
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .error-help {
-            background: #F8FAFC;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.5rem;
-            text-align: left;
-            border: 1px solid #E5E7EB;
-        }
-
-        .error-help-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 0.5rem;
-        }
-
-        .error-help-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .error-help-list li {
-            color: #6B7280;
-            font-size: 0.875rem;
-            padding: 0.25rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .error-help-list li::before {
-            content: '•';
-            color: #1E3A8A;
-            font-weight: 700;
-        }
-
-        .btn-primary {
-            background: #1E3A8A;
-            color: #FFFFFF;
-            padding: 0.6rem 2rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .btn-primary:hover {
-            background: #172554;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
-        }
-
-        .btn-secondary {
-            background: #F3F4F6;
-            color: #111827;
-            padding: 0.6rem 2rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .btn-secondary:hover {
-            background: #E5E7EB;
-            transform: translateY(-2px);
-        }
-
-        .error-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .error-actions .btn-primary,
-        .error-actions .btn-secondary {
-            width: 100%;
-            text-align: center;
-        }
-
-        /* Decorative elements */
-        .error-card::before {
-            content: '⚽';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            font-size: 4rem;
-            opacity: 0.1;
-            transform: rotate(15deg);
-        }
-
-        .error-card::after {
-            content: '🏆';
-            position: absolute;
-            bottom: -15px;
-            left: -15px;
-            font-size: 3rem;
-            opacity: 0.08;
-            transform: rotate(-10deg);
-        }
-
-        @media (min-width: 480px) {
-            .error-actions {
-                flex-direction: row;
-            }
-            .error-actions .btn-primary,
-            .error-actions .btn-secondary {
-                width: auto;
-                flex: 1;
-            }
-            .error-card {
-                padding: 3rem;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .error-code {
-                font-size: 3.5rem;
-            }
-            .error-icon {
-                font-size: 3.5rem;
-            }
-            .error-card {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="error-card">
-        <span class="error-icon">⚠️</span>
-        <div class="error-code">404</div>
-        <h2 class="error-title">¡Oops! Algo salió mal</h2>
-        <p class="error-message">
-            <%= message || 'La página que buscas no existe o ha sido movida.' %>
+    <!-- Tarjeta de Error Principal -->
+    <div class="relative bg-white rounded-[24px] border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 xs:p-8 md:p-12 text-center max-w-[450px] w-full animate-[fadeInUp_0.6s_ease] backdrop-blur-sm
+                before:content-['⚽'] before:absolute before:-top-5 before:-right-5 before:text-6xl before:opacity-10 before:rotate-15 before:pointer-events-none
+                after:content-['🏆'] after:absolute after:-bottom-4 after:-left-4 after:text-5xl after:opacity-[0.08] after:rotate-[-10deg] after:pointer-events-none">
+        
+        <!-- Icono y Código del Estado -->
+        <span class="block text-6xl xs:text-7xl mb-2">⚠️</span>
+        <div class="font-['Bebas_Neue',cursive] text-6xl xs:text-7xl md:text-8xl text-[#1E3A8A] leading-none tracking-[4px] mb-1">
+            <%= errorStatus || '404' %>
+        </div>
+        
+        <!-- Títulos y Mensaje descriptivo -->
+        <h2 class="font-['Poppins',sans-serif] text-xl xs:text-2xl font-bold text-gray-900 mb-2">
+            ¡Oops! Algo salió mal
+        </h2>
+        <p class="text-sm xs:text-base text-gray-500 mb-6 leading-relaxed px-2 font-normal">
+            <%= message || 'La página que buscas no existe o ha sido movida temporalmente.' %>
         </p>
 
-        <div class="error-help">
-            <p class="error-help-title">📌 ¿Qué puedes hacer?</p>
-            <ul class="error-help-list">
-                <li>Verifica que la URL sea correcta</li>
-                <li>Regresa a la página de inicio</li>
-                <li>Contacta al administrador si el problema persiste</li>
+        <!-- Caja de Ayuda o Sugerencias -->
+        <div class="bg-slate-50 border border-gray-200 rounded-xl p-4 mb-6 text-left">
+            <p class="text-xs xs:text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                <span>📌</span> ¿Qué puedes hacer?
+            </p>
+            <ul class="space-y-1.5">
+                <li class="text-xs xs:text-sm text-gray-500 flex items-start gap-2 before:content-['•'] before:text-[#1E3A8A] before:font-bold">
+                    Verifica que la dirección URL ingresada sea correcta.
+                </li>
+                <li class="text-xs xs:text-sm text-gray-500 flex items-start gap-2 before:content-['•'] before:text-[#1E3A8A] before:font-bold">
+                    Regresa a la plataforma principal.
+                </li>
+                <li class="text-xs xs:text-sm text-gray-500 flex items-start gap-2 before:content-['•'] before:text-[#1E3A8A] before:font-bold">
+                    Contacta al soporte técnico si el problema persiste.
+                </li>
             </ul>
         </div>
 
-        <div class="error-actions">
-            <a href="/" class="btn-primary">🏠 Ir al inicio</a>
-            <button onclick="history.back()" class="btn-secondary">↩️ Volver atrás</button>
+        <!-- Acciones Disponibles -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/" class="w-full sm:flex-1 text-center bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-sm px-6 py-3 rounded-full shadow-sm hover:shadow-[0_8px_25px_rgba(30,58,138,0.4)] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5">
+                <span>🏠</span> Ir al inicio
+            </a>
+            <button onclick="history.back()" class="w-full sm:flex-1 text-center bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200 font-semibold text-sm px-6 py-3 rounded-full transition duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>↩️</span> Volver atrás
+            </button>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<!-- Estilos Inyectados para Animación de Entrada (Requerido para la tarjeta) -->
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+</style>

@@ -5,68 +5,15 @@ import dotenv from 'dotenv';
 import webpush from 'web-push';
 import flash from 'express-flash';
 import session from 'express-session';
+import pool from './config/database';
+import { authenticate } from './middlewares/auth';
+
+// ============== IMPORTACIÓN DE ENRUTADORES ==============
 import authRoutes from './routes/authRoutes';
 import playerRoutes from './routes/playerRoutes';
 import trainingRoutes from './routes/trainingRoutes';
 import matchRoutes from './routes/matchRoutes';
 import announcementRoutes from './routes/announcementRoutes';
-import {
-    getCoachDashboard,
-    getPlayerDashboard,
-    getCoachDashboardData,
-    getPlayerDashboardData
-} from './controllers/dashboardController';
-import {
-    getAnnouncements,
-    createAnnouncement,
-    deleteAnnouncement,
-    getAnnouncementById,
-    getPlayerAnnouncements
-} from './controllers/announcementController';
-import {
-    getMatches,
-    createMatch,
-    updateMatch,
-    deleteMatch,
-    getMatchById,
-    getUpcomingMatches,
-    updateMatchResult
-} from './controllers/matchController';
-import {
-    getTrainings,
-    createTraining,
-    updateTraining,
-    deleteTraining,
-    getTrainingById,
-    getUpcomingTrainings,
-    getTrainingsByDateRange,
-    cancelTraining
-} from './controllers/trainingController';
-import {
-    getPlayers,
-    createPlayer,
-    updatePlayer,
-    deletePlayer,
-    getPlayerById,
-    getPendingUsers,
-    approveUser,
-    rejectUser,
-    uploadPlayerPhoto,
-    approveAllPending,
-    rejectAllPending
-} from './controllers/playerController';
-import {
-    showLogin,
-    showRegister,
-    login,
-    register,
-    logout,
-    checkAuth,
-    getProfile
-} from './controllers/authController';
-import { authenticate } from './middlewares/auth';
-import { upload } from './middlewares/upload';
-import pool from './config/database';
 
 dotenv.config();
 
@@ -79,53 +26,51 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env
     );
     console.log('✅ Notificaciones push configuradas');
 } else {
-    console.log('⚠️ VAPID keys no configuradas');
+    console.log('⚠️ VAPID keys no configuradas en el entorno');
 }
 
 // ============== INICIALIZAR APP ==============
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ============== MIDDLEWARES ==============
+// ============== MIDDLEWARES DE PARSEO Y SESIÓN ==============
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Session (necesario para flash)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'elite_soccer_secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 24 horas
+        maxAge: 24 * 60 * 60 * 1000 // 24 Horas
     }
 }));
 
-// Flash messages
 app.use(flash());
 
-// Archivos estáticos
+// ============== CONFIGURACIÓN DE VISTAS Y ESTÁTICOS ==============
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
 
-// ============== MIDDLEWARE PARA PENDING COUNT ==============
-app.use('/coach', authenticate, async (req: any, res: any, next: any) => {
+// ============== MIDDLEWARE GLOBAL: CONTADOR JUGADORES PENDIENTES ==============
+app.use('/coach', authenticate, async (req, res, next) => {
     try {
         const result = await pool.query(
             'SELECT COUNT(*) as count FROM players WHERE status = $1',
             ['pending']
         );
-        res.locals.pendingCount = parseInt(result.rows[0]?.count || '0');
+        res.locals.pendingCount = parseInt(result.rows[0]?.count || '0', 10);
+        
         if (process.env.NODE_ENV !== 'production') {
-            console.log(`📊 Jugadores pendientes: ${res.locals.pendingCount}`);
+            console.log(`📊 Dashboard Coach - Jugadores pendientes: ${res.locals.pendingCount}`);
         }
     } catch (error) {
-        console.error('❌ Error al contar pendientes:', error);
+        console.error('❌ Error al contar solicitudes de jugadores pendientes:', error);
         res.locals.pendingCount = 0;
     }
     next();
@@ -136,22 +81,13 @@ app.get('/', (req, res) => {
     res.render('index', { title: 'Elite Soccer Academy' });
 });
 
-// ============== RUTAS PÚBLICAS (AUTH) ==============
-app.get('/login', showLogin);
-app.get('/register', showRegister);
-app.post('/login', login);
-app.post('/register', register);
-app.get('/logout', logout);
-
-// ============== RUTAS DE API (AUTH) ==============
-app.get('/api/auth/check', authenticate, checkAuth);
-app.get('/api/auth/profile', authenticate, getProfile);
-
-// ============== NOTIFICACIONES PUSH ==============
-app.post('/api/notifications/subscribe', authenticate, async (req: any, res: any) => {
+// ============== CONFIGURACIÓN DE SUSCRIPCIÓN PUSH ==============
+app.post('/api/notifications/subscribe', authenticate, async (req, res) => {
     const subscription = req.body;
     const userId = req.user?.id;
-    if (!userId) return res.status(401).json({ error: 'No autenticado' });
+    
+    if (!userId) return res.status(401).json({ error: 'No autorizado' });
+    
     try {
         await pool.query(
             `INSERT INTO push_subscriptions (user_id, subscription) 
@@ -159,315 +95,72 @@ app.post('/api/notifications/subscribe', authenticate, async (req: any, res: any
              ON CONFLICT (user_id) DO UPDATE SET subscription = $2`,
             [userId, JSON.stringify(subscription)]
         );
-        res.json({ success: true });
+        return res.json({ success: true });
     } catch (error) {
-        console.error('❌ Error al guardar suscripción:', error);
-        res.status(500).json({ error: 'Error al guardar suscripción' });
+        console.error('❌ Error al guardar la suscripción push:', error);
+        return res.status(500).json({ error: 'Error interno al guardar suscripción' });
     }
 });
 
-// ============== DASHBOARDS ==============
-app.get('/coach/dashboard', authenticate, getCoachDashboard);
-app.get('/player/dashboard', authenticate, getPlayerDashboard);
-
-// ============== API DASHBOARDS ==============
-app.get('/api/coach/dashboard', authenticate, getCoachDashboardData);
-app.get('/api/player/dashboard', authenticate, getPlayerDashboardData);
-
-// ============== JUGADORES (COACH) ==============
-app.get('/coach/players', authenticate, getPlayers);
-app.post('/coach/players', authenticate, createPlayer);
-app.post('/coach/players/:id', authenticate, updatePlayer);
-app.get('/coach/players/:id/delete', authenticate, deletePlayer);
-app.post('/coach/players/:id/photo', authenticate, upload.single('photo'), uploadPlayerPhoto);
-
-// ============== APROBACIONES ==============
-app.get('/coach/players/pending', authenticate, getPendingUsers);
-app.get('/coach/players/pending/:id/approve', authenticate, approveUser);
-app.get('/coach/players/pending/:id/reject', authenticate, rejectUser);
-app.post('/coach/players/pending/approve-all', authenticate, approveAllPending);
-app.post('/coach/players/pending/reject-all', authenticate, rejectAllPending);
-
-// ============== JUGADORES (API) ==============
-app.get('/coach/players/api/:id', authenticate, getPlayerById);
-
-// ============== APROBAR JUGADORES (VISTA ESPECÍFICA) ==============
-app.get('/coach/approve-players', authenticate, async (req: any, res: any) => {
-    try {
-        console.log('📋 Cargando página de aprobar jugadores...');
-        const result = await pool.query(`
-            SELECT 
-                p.id,
-                p.user_id,
-                p.jersey_number,
-                p.position,
-                p.phone,
-                p.age,
-                p.status,
-                p.created_at,
-                u.full_name,
-                u.email
-            FROM players p
-            JOIN users u ON p.user_id = u.id
-            ORDER BY p.created_at DESC
-        `);
-        console.log(`✅ ${result.rows.length} jugadores encontrados`);
-        
-        res.render('coach/approve-players', {
-            title: 'Aprobar Jugadores',
-            pendingPlayers: result.rows,
-            user: req.user,
-            pendingCount: res.locals.pendingCount || 0
-        });
-    } catch (error) {
-        console.error('❌ Error al cargar jugadores:', error);
-        res.render('coach/approve-players', {
-            title: 'Aprobar Jugadores',
-            pendingPlayers: [],
-            user: req.user,
-            pendingCount: 0
-        });
-    }
-});
-
-// ============== APROBAR/RECHAZAR JUGADORES (API) ==============
-app.post('/coach/players/:id/approve', authenticate, async (req: any, res: any) => {
-    console.log(`📝 Aprobando jugador ID: ${req.params.id}`);
-    try {
-        const id = req.params.id;
-        const checkResult = await pool.query(
-            'SELECT id, status FROM players WHERE id = $1',
-            [id]
-        );
-        if (checkResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: 'Jugador no encontrado' });
-        }
-        const result = await pool.query(
-            'UPDATE players SET status = $1 WHERE id = $2 RETURNING *',
-            ['approved', id]
-        );
-        console.log(`✅ Jugador ${id} aprobado`);
-        res.json({ success: true, message: 'Jugador aprobado correctamente', player: result.rows[0] });
-    } catch (error: any) {
-        console.error('❌ Error al aprobar:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-app.post('/coach/players/:id/reject', authenticate, async (req: any, res: any) => {
-    console.log(`📝 Rechazando jugador ID: ${req.params.id}`);
-    try {
-        const id = req.params.id;
-        const checkResult = await pool.query(
-            'SELECT id, status FROM players WHERE id = $1',
-            [id]
-        );
-        if (checkResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: 'Jugador no encontrado' });
-        }
-        const result = await pool.query(
-            'UPDATE players SET status = $1 WHERE id = $2 RETURNING *',
-            ['rejected', id]
-        );
-        console.log(`✅ Jugador ${id} rechazado`);
-        res.json({ success: true, message: 'Jugador rechazado', player: result.rows[0] });
-    } catch (error: any) {
-        console.error('❌ Error al rechazar:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-app.post('/coach/players/:id/reset', authenticate, async (req: any, res: any) => {
-    console.log(`📝 Revirtiendo jugador ID: ${req.params.id}`);
-    try {
-        const id = req.params.id;
-        const checkResult = await pool.query(
-            'SELECT id, status FROM players WHERE id = $1',
-            [id]
-        );
-        if (checkResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: 'Jugador no encontrado' });
-        }
-        const result = await pool.query(
-            'UPDATE players SET status = $1 WHERE id = $2 RETURNING *',
-            ['pending', id]
-        );
-        console.log(`✅ Estado del jugador ${id} revertido`);
-        res.json({ success: true, message: 'Estado revertido a pendiente', player: result.rows[0] });
-    } catch (error: any) {
-        console.error('❌ Error al revertir:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// ============== ENTRENAMIENTOS ==============
-app.get('/coach/trainings', authenticate, getTrainings);
-app.post('/coach/trainings', authenticate, createTraining);
-app.post('/coach/trainings/:id', authenticate, updateTraining);
-app.get('/coach/trainings/:id/delete', authenticate, deleteTraining);
-
-// API Entrenamientos
-app.get('/coach/trainings/api/:id', authenticate, getTrainingById);
-app.get('/api/trainings/upcoming', authenticate, getUpcomingTrainings);
-app.get('/api/trainings/range', authenticate, getTrainingsByDateRange);
-app.post('/api/trainings/:id/cancel', authenticate, cancelTraining);
-
-// ============== PARTIDOS ==============
-app.get('/coach/matches', authenticate, getMatches);
-app.post('/coach/matches', authenticate, createMatch);
-app.post('/coach/matches/:id', authenticate, updateMatch);
-app.get('/coach/matches/:id/delete', authenticate, deleteMatch);
-
-// API Partidos
-app.get('/coach/matches/api/:id', authenticate, getMatchById);
-app.get('/api/matches/upcoming', authenticate, getUpcomingMatches);
-app.post('/api/matches/:id/result', authenticate, updateMatchResult);
-
-// ============== ANUNCIOS (COACH) ==============
-app.get('/coach/announcements', authenticate, getAnnouncements);
-app.post('/coach/announcements', authenticate, createAnnouncement);
-app.get('/coach/announcements/:id/delete', authenticate, deleteAnnouncement);
-app.get('/coach/announcements/api/:id', authenticate, getAnnouncementById);
-
-// ============== ANUNCIOS (PLAYER) ==============
-app.get('/player/announcements', authenticate, getPlayerAnnouncements);
-
-// ============== PERFIL JUGADOR ==============
-app.get('/player/profile', authenticate, async (req: any, res: any) => {
-    try {
-        const player = await pool.query(`
-            SELECT p.*, u.full_name, u.email FROM players p
-            JOIN users u ON p.user_id = u.id WHERE u.id = $1
-        `, [req.user.id]);
-        res.render('player/edit-profile', { 
-            title: 'Mi Perfil', 
-            player: player.rows[0] || null, 
-            user: req.user 
-        });
-    } catch (error) {
-        console.error('❌ Error al cargar perfil:', error);
-        res.redirect('/player/dashboard');
-    }
-});
-
-app.post('/player/profile/upload-photo', authenticate, upload.single('photo'), async (req: any, res: any) => {
-    if (req.file) {
-        const photoUrl = `/uploads/players/${req.file.filename}`;
-        await pool.query('UPDATE players SET photo_url = $1 WHERE user_id = $2', [photoUrl, req.user.id]);
-        console.log('✅ Foto actualizada:', photoUrl);
-    }
-    res.redirect('/player/profile');
-});
-
-// ============== CONFIRMAR ASISTENCIA (PLAYER) ==============
-app.get('/player/attendance', authenticate, async (req: any, res: any) => {
-    try {
-        const trainings = await pool.query(`SELECT * FROM trainings WHERE date >= CURRENT_DATE ORDER BY date ASC`);
-        const matches = await pool.query(`SELECT * FROM matches WHERE date >= CURRENT_DATE ORDER BY date ASC`);
-        res.render('player/confirm-attendance', {
-            title: 'Confirmar Asistencia',
-            upcomingTrainings: trainings.rows,
-            upcomingMatches: matches.rows,
-            user: req.user
-        });
-    } catch (error) {
-        console.error('❌ Error al cargar asistencia:', error);
-        res.render('player/confirm-attendance', { 
-            title: 'Confirmar Asistencia', 
-            upcomingTrainings: [], 
-            upcomingMatches: [], 
-            user: req.user 
-        });
-    }
-});
-
-app.post('/player/attendance/confirm', authenticate, async (req: any, res: any) => {
-    const { type, id, status, justification } = req.body;
-    console.log('📝 Confirmando asistencia:', { type, id, status });
-    
-    try {
-        const player = await pool.query('SELECT id FROM players WHERE user_id = $1', [req.user.id]);
-        if (player.rows.length === 0) {
-            return res.status(404).json({ error: 'Jugador no encontrado' });
-        }
-        
-        const table = type === 'training' ? 'training_attendance' : 'match_attendance';
-        const idField = type === 'training' ? 'training_id' : 'match_id';
-        
-        await pool.query(
-            `INSERT INTO ${table} (player_id, ${idField}, status, justification) 
-             VALUES ($1, $2, $3, $4)
-             ON CONFLICT (player_id, ${idField}) 
-             DO UPDATE SET status = $3, justification = $4`,
-            [player.rows[0].id, id, status, justification || null]
-        );
-        console.log('✅ Asistencia confirmada');
-        res.json({ success: true });
-    } catch (error) {
-        console.error('❌ Error al confirmar asistencia:', error);
-        res.status(500).json({ error: 'Error al confirmar asistencia' });
-    }
-});
-
-// ============== ASISTENCIA (COACH) ==============
-app.get('/coach/attendance', authenticate, async (req: any, res: any) => {
-    try {
-        const trainings = await pool.query(`SELECT id, title, date FROM trainings ORDER BY date DESC LIMIT 10`);
-        const matches = await pool.query(`SELECT id, opponent, date FROM matches ORDER BY date DESC LIMIT 10`);
-        res.render('coach/attendance', {
-            title: 'Asistencia',
-            trainings: trainings.rows,
-            matches: matches.rows,
-            user: req.user
-        });
-    } catch (error) {
-        console.error('❌ Error al cargar asistencia del entrenador:', error);
-        res.render('coach/attendance', { 
-            title: 'Asistencia', 
-            trainings: [], 
-            matches: [], 
-            user: req.user 
-        });
-    }
-});
-
-app.get('/coach/attendance/list', authenticate, async (req: any, res: any) => {
+// ============== ENDPOINTS AUXILIARES DE ASISTENCIA DINÁMICA ==============
+// 🔥 SOLUCIÓN: Eliminación de consultas con templates dinámicos inseguros
+app.get('/coach/attendance/list', authenticate, async (req, res) => {
     const { type, id } = req.query;
-    console.log('📝 Listando asistencias:', { type, id });
+    console.log('📋 Solicitando listado de asistencia:', { type, id });
     
+    if (type !== 'training' && type !== 'match') {
+        return res.status(400).json({ error: 'Tipo de asistencia inválido' });
+    }
+
     try {
-        const table = type === 'training' ? 'training_attendance' : 'match_attendance';
-        const idField = type === 'training' ? 'training_id' : 'match_id';
-        const result = await pool.query(
-            `SELECT a.*, p.jersey_number, u.full_name as player_name FROM ${table} a
-             JOIN players p ON a.player_id = p.id
-             JOIN users u ON p.user_id = u.id
-             WHERE a.${idField} = $1`,
-            [id]
-        );
-        console.log(`✅ ${result.rows.length} asistencias encontradas`);
-        res.json(result.rows);
+        // Ejecución de sentencias explícitas fijas según el contexto para blindar la base de datos
+        const queryTraining = `
+            SELECT a.*, p.jersey_number, u.full_name as player_name 
+            FROM training_attendance a
+            JOIN players p ON a.player_id = p.id
+            JOIN users u ON p.user_id = u.id
+            WHERE a.training_id = $1`;
+
+        const queryMatch = `
+            SELECT a.*, p.jersey_number, u.full_name as player_name 
+            FROM match_attendance a
+            JOIN players p ON a.player_id = p.id
+            JOIN users u ON p.user_id = u.id
+            WHERE a.match_id = $1`;
+
+        const targetQuery = type === 'training' ? queryTraining : queryMatch;
+        const result = await pool.query(targetQuery, [id]);
+        
+        return res.json(result.rows);
     } catch (error) {
-        console.error('❌ Error al listar asistencias:', error);
-        res.status(500).json({ error: 'Error al listar asistencias' });
+        console.error('❌ Error al listar asistencias en lote:', error);
+        return res.status(500).json({ error: 'Error del servidor al obtener las asistencias' });
     }
 });
 
-// ============== ERROR 404 ==============
-app.use((req: any, res: any) => {
-    console.log(`❌ 404 - Página no encontrada: ${req.url}`);
+// ============== MONTADO DE ENRUTADORES MODULARES ==============
+// 🚀 Toda la lógica repetida se delegó limpiamente a sus respectivos archivos de ruta
+app.use('/', authRoutes);
+app.use('/', playerRoutes);
+app.use('/', trainingRoutes);
+app.use('/', matchRoutes);
+app.use('/', announcementRoutes);
+
+// ============== MANEJO DE ERROR 404 ==============
+app.use((req, res) => {
+    console.log(`⚠️ Error 404 - Ruta no localizada: ${req.originalUrl}`);
     res.status(404).render('error', { 
         title: 'Error 404', 
-        message: 'Página no encontrada',
+        message: 'La página que buscas no existe en el sistema.',
         user: req.user 
     });
 });
 
 // ============== INICIAR SERVIDOR ==============
 app.listen(PORT, () => {
-    console.log(`\n🚀 Servidor en http://localhost:${PORT}`);
-    console.log(`📝 Login: http://localhost:${PORT}/login`);
-    console.log(`📝 Registro: http://localhost:${PORT}/register`);
-    console.log(`📋 Aprobar jugadores: http://localhost:${PORT}/coach/approve-players`);
-    console.log(`✅ Elite Soccer App lista para usar\n`);
+    console.log(`\n⚽ =================================================== ⚽`);
+    console.log(`🚀 Elite Soccer Academy corriendo en http://localhost:${PORT}`);
+    console.log(`🔐 Acceso Autenticación: http://localhost:${PORT}/login`);
+    console.log(`📋 Gestión de Plantilla: http://localhost:${PORT}/coach/players`);
+    console.log(`⚽ =================================================== ⚽\n`);
 });

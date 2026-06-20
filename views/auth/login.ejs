@@ -86,6 +86,7 @@
         .login-card::after {
             content: '🏆';
             position: absolute;
+            top: auto;
             bottom: -10px;
             left: -10px;
             font-size: 2rem;
@@ -295,12 +296,8 @@
                 padding: 1.25rem 1rem;
                 max-height: 98vh;
             }
-            .logo-icon {
-                font-size: 2.5rem;
-            }
-            .logo-title {
-                font-size: 1.5rem;
-            }
+            .logo-icon { font-size: 2.5rem; }
+            .logo-title { font-size: 1.5rem; }
             .form-input {
                 font-size: 0.85rem;
                 padding: 0.5rem 0.75rem;
@@ -319,34 +316,18 @@
                 bottom: -6px;
                 left: -6px;
             }
-            .form-label {
-                font-size: 0.75rem;
-            }
-            .checkbox-label {
-                font-size: 0.75rem;
-            }
-            .forgot-link {
-                font-size: 0.75rem;
-            }
+            .form-label, .checkbox-label, .forgot-link { font-size: 0.75rem; }
             .alert-error, .alert-success {
                 font-size: 0.8rem;
                 padding: 0.4rem 0.6rem;
             }
-            .divider-text {
-                font-size: 0.65rem;
-            }
+            .divider-text { font-size: 0.65rem; }
         }
 
         @media (max-width: 360px) {
-            .login-card {
-                padding: 1rem 0.75rem;
-            }
-            .logo-icon {
-                font-size: 2rem;
-            }
-            .logo-title {
-                font-size: 1.25rem;
-            }
+            .login-card { padding: 1rem 0.75rem; }
+            .logo-icon { font-size: 2rem; }
+            .logo-title { font-size: 1.25rem; }
             .form-input {
                 font-size: 0.8rem;
                 padding: 0.4rem 0.6rem;
@@ -365,26 +346,32 @@
 </head>
 <body>
     <div class="login-card">
-        <!-- Logo -->
         <div class="logo-section">
             <span class="logo-icon">⚽</span>
             <h1 class="logo-title">ELITE SOCCER</h1>
             <p class="logo-subtitle">Academy</p>
         </div>
 
-        <!-- Mensajes de Error/Success -->
-        <% if (typeof error !== 'undefined' && error) { %>
+        <% if (typeof messages !== 'undefined' && messages.error && messages.error.length > 0) { %>
+            <div class="alert-error">
+                ⚠️ <%= messages.error %>
+            </div>
+        <% } else if (typeof error !== 'undefined' && error) { %>
             <div class="alert-error">
                 ⚠️ <%= error %>
             </div>
         <% } %>
-        <% if (typeof success !== 'undefined' && success) { %>
+
+        <% if (typeof messages !== 'undefined' && messages.success && messages.success.length > 0) { %>
+            <div class="alert-success">
+                ✅ <%= messages.success %>
+            </div>
+        <% } else if (typeof success !== 'undefined' && success) { %>
             <div class="alert-success">
                 ✅ <%= success %>
             </div>
         <% } %>
 
-        <!-- Formulario de Login -->
         <form method="POST" action="/login">
             <div class="form-group">
                 <label class="form-label">📧 Correo Electrónico</label>
@@ -395,7 +382,6 @@
                 <input type="password" name="password" class="form-input" placeholder="Ingresa tu contraseña" required>
             </div>
 
-            <!-- Opciones adicionales -->
             <div class="actions-row">
                 <label class="checkbox-label">
                     <input type="checkbox" name="remember" class="form-checkbox">
@@ -407,14 +393,12 @@
             <button type="submit" class="btn-login">🚀 Iniciar Sesión</button>
         </form>
 
-        <!-- Separador -->
         <div class="divider">
             <span class="divider-line"></span>
             <span class="divider-text">¿Nuevo aquí?</span>
             <span class="divider-line"></span>
         </div>
 
-        <!-- Link a Registro -->
         <p class="register-link">
             <a href="/register">📝 Crear una cuenta nueva</a>
         </p>

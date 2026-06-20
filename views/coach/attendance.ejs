@@ -6,121 +6,87 @@
     <title>Asistencia | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3 { font-family: 'Poppins', sans-serif; }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            align-items: center; justify-content: center;
-            z-index: 1100;
-        }
-        .modal.active { display: flex; }
-        .modal-content { animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes slideIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
+<body class="bg-gray-100">
+    <%- include('../partials/navbar', { user: user }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-[#1E3A8A] flex items-center gap-2">✅ Control de Asistencia</h1>
-            <p class="text-gray-500 mt-1">Gestiona las planificaciones y asistencias reales del plantel</p>
-        </div>
+        <!-- Contenido -->
+        <h1 class="text-3xl font-bold text-[#1E3A8A] mb-2">✅ Control de Asistencia</h1>
+        <p class="text-gray-500 mb-8">Gestiona la asistencia de los jugadores</p>
 
-        <!-- Selector de Evento -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-8">
+        <!-- Selector -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
             <div class="flex flex-col md:flex-row gap-4 items-end">
-                <div class="flex-1 w-full">
-                    <label class="block text-sm font-semibold text-gray-900 mb-2">📌 Seleccionar Evento</label>
-                    <select id="eventSelect" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] focus:ring-3 focus:ring-blue-100 transition duration-150 font-medium text-gray-800">
-                        <option value="">-- Seleccionar un evento vigente --</option>
-                        <optgroup label="🏋️ Entrenamientos" class="font-semibold text-gray-500">
+                <div class="flex-1">
+                    <label class="form-label">Seleccionar Evento</label>
+                    <select id="eventSelect" class="form-select w-full border rounded-lg p-2">
+                        <option value="">-- Seleccionar --</option>
+                        <optgroup label="🏋️ Entrenamientos">
                             <% for (var i = 0; i < trainings.length; i++) { var t = trainings[i]; %>
-                                <option value="training_<%= t.id %>" class="text-gray-800 font-normal"><%= t.title %> — <%= new Date(t.date).toLocaleDateString('es-CO') %></option>
+                                <option value="training_<%= t.id %>"><%= t.title %> - <%= new Date(t.date).toLocaleDateString() %></option>
                             <% } %>
                         </optgroup>
-                        <optgroup label="⚽ Partidos" class="font-semibold text-gray-500">
+                        <optgroup label="⚽ Partidos">
                             <% for (var i = 0; i < matches.length; i++) { var m = matches[i]; %>
-                                <option value="match_<%= m.id %>" class="text-gray-800 font-normal">vs <%= m.opponent %> — <%= new Date(m.date).toLocaleDateString('es-CO') %></option>
+                                <option value="match_<%= m.id %>">vs <%= m.opponent %> - <%= new Date(m.date).toLocaleDateString() %></option>
                             <% } %>
                         </optgroup>
                     </select>
                 </div>
-                <div class="w-full md:w-auto">
-                    <button id="loadEventBtn" class="w-full bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition active:scale-[0.98]">
-                        📂 Cargar Evento
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Layout Balanceado de Dos Columnas para Evento Activo -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Pre-Evento (Convocatoria / Notificaciones previas) -->
-            <div id="preEventSection" class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6" style="display: none;">
-                <h2 class="text-xl font-bold text-[#1E3A8A] mb-4 pb-2 border-b border-gray-100">📋 Planificación / Convocatoria</h2>
-                <div id="preEventList" class="space-y-3"></div>
-            </div>
-
-            <!-- Post-Evento (Asistencia Real de Campo) -->
-            <div id="postEventSection" class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col justify-between" style="display: none;">
                 <div>
-                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 gap-2">
-                        <h2 class="text-xl font-bold text-[#1E3A8A]">📋 Registro en Campo</h2>
-                        <button id="saveAttendanceBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2 rounded-xl shadow-sm transition">
-                            💾 Guardar Planilla
-                        </button>
-                    </div>
-                    <div id="postEventList" class="space-y-3"></div>
+                    <button id="loadEventBtn" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition">Cargar</button>
                 </div>
             </div>
         </div>
 
-        <!-- Botón Volver -->
+        <div id="preEventSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200" style="display: none;">
+            <h2 class="text-xl font-bold mb-4">📋 Confirmación</h2>
+            <div id="preEventList" class="space-y-3"></div>
+        </div>
+
+        <div id="postEventSection" class="bg-white rounded-xl shadow-lg p-6 border border-gray-200" style="display: none;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">✅ Asistencia Real</h2>
+                <button id="saveAttendanceBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">💾 Guardar</button>
+            </div>
+            <div id="postEventList" class="space-y-3"></div>
+        </div>
+
         <div class="mt-8 text-center">
-            <a href="/coach/dashboard" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2.5 rounded-xl transition inline-block shadow-sm">
+            <a href="/coach/dashboard" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg transition inline-block">
                 ← Volver al Dashboard
             </a>
         </div>
     </main>
 
-    <!-- Modal Justificación -->
+    <!-- MODAL JUSTIFICACIÓN -->
     <div id="justificationModal" class="modal">
-        <div class="modal-content bg-white rounded-2xl max-w-md w-11/12 overflow-hidden shadow-2xl">
-            <div class="bg-[#1E3A8A] text-white px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold flex items-center gap-2">📝 Justificar Inasistencia</h3>
-                <button onclick="closeJustificationModal()" class="text-3xl font-light leading-none hover:rotate-90 transition duration-200">&times;</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Justificación</h3>
+                <button onclick="closeJustificationModal()" class="text-2xl hover:text-gray-700">&times;</button>
             </div>
-            <div class="p-6">
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">Motivo Principal</label>
-                    <select id="reasonSelect" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A]">
-                        <option value="">-- Seleccionar --</option>
-                        <option value="Estudio">📚 Estudio / Academia</option>
-                        <option value="Trabajo">💼 Compromiso Laboral</option>
-                        <option value="Enfermedad">🤒 Salud / Lesión</option>
-                        <option value="Viaje">✈️ Viaje / Traslado</option>
-                        <option value="Compromiso familiar">👨‍👩‍👧 Asunto Familiar</option>
-                        <option value="Otro">📝 Otro Motivo</option>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label font-semibold">Motivo</label>
+                    <select id="reasonSelect" class="form-select w-full border rounded-lg p-2 mt-1">
+                        <option value="">Seleccionar</option>
+                        <option value="Estudio">📚 Estudio</option>
+                        <option value="Trabajo">💼 Trabajo</option>
+                        <option value="Enfermedad">🤒 Enfermedad</option>
+                        <option value="Viaje">✈️ Viaje</option>
+                        <option value="Compromiso familiar">👨‍👩‍👧 Compromiso</option>
+                        <option value="Otro">📝 Otro</option>
                     </select>
                 </div>
-                <div class="mb-5">
-                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">Detalles u Observaciones</label>
-                    <textarea id="justificationText" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A]" rows="3" placeholder="Añade contexto sobre la ausencia..."></textarea>
+                <div class="mb-3">
+                    <label class="form-label font-semibold">Explicación</label>
+                    <textarea id="justificationText" class="form-textarea w-full border rounded-lg p-2 mt-1" rows="3" placeholder="Explicación..."></textarea>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="closeJustificationModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
-                    <button onclick="submitJustification()" class="flex-1 bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold py-2.5 rounded-xl transition">Registrar Ausencia</button>
+                <div class="flex gap-3 mt-4">
+                    <button onclick="closeJustificationModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1 transition">Cancelar</button>
+                    <button onclick="submitJustification()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg flex-1 transition">Enviar</button>
                 </div>
             </div>
         </div>
@@ -128,21 +94,163 @@
 
     <%- include('../partials/footer') %>
 
+    <style>
+        /* Estilos para modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        /* Estilos para filas de jugadores */
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .player-row:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+        .attendance-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .attendance-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .attendance-yes {
+            background: #22C55E;
+            color: white;
+        }
+        .attendance-yes:hover {
+            background: #16a34a;
+            transform: scale(1.05);
+        }
+        .attendance-maybe {
+            background: #F59E0B;
+            color: white;
+        }
+        .attendance-maybe:hover {
+            background: #d97706;
+            transform: scale(1.05);
+        }
+        .attendance-no {
+            background: #EF4444;
+            color: white;
+        }
+        .attendance-no:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-confirmed {
+            background: #22C55E;
+            color: white;
+        }
+        .status-maybe {
+            background: #F59E0B;
+            color: white;
+        }
+        .status-absent {
+            background: #EF4444;
+            color: white;
+        }
+    </style>
+
     <script>
         var currentEventType = null;
         var currentEventId = null;
         var currentPlayers = [];
         var pendingJustification = { playerId: null, status: null };
 
-        window.onclick = function(e) {
-            if (e.target === document.getElementById('justificationModal')) closeJustificationModal();
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('justificationModal')) {
+                closeJustificationModal();
+            }
         }
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeJustificationModal();
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (document.getElementById('justificationModal').classList.contains('active')) {
+                    closeJustificationModal();
+                }
+            }
         });
 
-        // Cargar Evento Integral (Convocatorias y Asistencia de Campo)
+        // Cargar evento
         document.getElementById('loadEventBtn').addEventListener('click', function() {
             var select = document.getElementById('eventSelect');
             var value = select.value;
@@ -151,118 +259,93 @@
                 return; 
             }
             var parts = value.split('_');
-            currentEventType = parts[0];
-            currentEventId = parts[1];
+            var type = parts[0];
+            var id = parts[1];
+            currentEventType = type;
+            currentEventId = id;
 
             var preEventDiv = document.getElementById('preEventSection');
-            var postEventDiv = document.getElementById('postEventSection');
             var preEventList = document.getElementById('preEventList');
-            var postEventList = document.getElementById('postEventList');
-
             preEventDiv.style.display = 'block';
-            postEventDiv.style.display = 'block';
-            preEventList.innerHTML = '<p class="text-center text-gray-400 py-4 text-sm animate-pulse">⏳ Cargando convocatoria...</p>';
-            postEventList.innerHTML = '<p class="text-center text-gray-400 py-4 text-sm animate-pulse">⏳ Cargando planilla...</p>';
+            preEventList.innerHTML = '<p class="text-center text-gray-500 py-4">⏳ Cargando...</p>';
 
             fetch('/api/players/list')
-                .then(function(res) { return res.json(); })
+                .then(function(response) { return response.json(); })
                 .then(function(players) {
                     currentPlayers = players;
-                    return fetch('/api/attendance/confirmations?type=' + currentEventType + '&id=' + currentEventId);
+                    return fetch('/api/attendance/confirmations?type=' + type + '&id=' + id);
                 })
-                .then(function(res) { return res.json(); })
+                .then(function(response) { return response.json(); })
                 .then(function(confirmations) {
                     var confirmMap = new Map();
                     confirmations.forEach(function(c) { confirmMap.set(c.player_id, c); });
-                    
-                    var preHtml = '';
-                    var postHtml = '';
-
+                    var html = '';
                     if (currentPlayers.length === 0) {
-                        var emptyState = '<p class="text-center text-gray-400 py-4 text-sm">📭 No hay jugadores inscritos en el plantel.</p>';
-                        preEventList.innerHTML = emptyState;
-                        postEventList.innerHTML = emptyState;
-                        return;
-                    }
-
-                    for (var i = 0; i < currentPlayers.length; i++) {
-                        var player = currentPlayers[i];
-                        var conf = confirmMap.get(player.id);
-
-                        // --- COLUMNA 1: CONVOCATORIA PREVIA ---
-                        preHtml += '<div class="flex justify-between items-center p-3.5 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-all duration-150">';
-                        preHtml += '  <div>';
-                        preHtml += '    <div class="font-bold text-gray-900">' + player.full_name + ' <span class="text-gray-400 font-medium text-sm">#' + player.jersey_number + '</span></div>';
-                        preHtml += '    <div class="text-xs text-[#1E3A8A] font-semibold mt-0.5">' + player.position + '</div>';
-                        preHtml += '  </div>';
-                        preHtml += '  <div>';
-                        if (conf) {
-                            var badgeClass = conf.status === 'yes' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (conf.status === 'maybe' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
-                            var badgeText = conf.status === 'yes' ? '✅ Confirmado' : (conf.status === 'maybe' ? '🟡 Tal vez' : '❌ No asistirá');
-                            preHtml += '    <div class="flex flex-col items-end gap-1">';
-                            preHtml += '      <span class="px-2.5 py-1 border text-xs font-bold rounded-full ' + badgeClass + '">' + badgeText + '</span>';
-                            if (conf.justification) {
-                                preHtml += '  <span class="text-[11px] text-gray-500 max-w-[150px] truncate" title="' + conf.justification + '">📝 ' + conf.justification + '</span>';
+                        html = '<p class="text-center text-gray-500 py-4">📭 No hay jugadores registrados</p>';
+                    } else {
+                        for (var i = 0; i < currentPlayers.length; i++) {
+                            var player = currentPlayers[i];
+                            var conf = confirmMap.get(player.id);
+                            html += '<div class="player-row">';
+                            html += '<div><div class="font-bold">' + player.full_name + ' <span class="text-gray-500">#' + player.jersey_number + '</span></div>';
+                            html += '<div class="text-sm text-gray-500">' + player.position + '</div></div>';
+                            html += '<div>';
+                            if (conf) {
+                                var statusClass = conf.status === 'yes' ? 'status-confirmed' : (conf.status === 'maybe' ? 'status-maybe' : 'status-absent');
+                                var statusText = conf.status === 'yes' ? '✅ Confirmado' : (conf.status === 'maybe' ? '🟡 Tal vez' : '❌ No asistirá');
+                                html += '<div class="flex items-center gap-3 flex-wrap">';
+                                html += '<span class="status-badge ' + statusClass + '">' + statusText + '</span>';
+                                if (conf.justification) {
+                                    html += '<span class="text-xs text-gray-500">📝 ' + conf.justification + '</span>';
+                                }
+                                html += '</div>';
+                            } else {
+                                html += '<div class="attendance-buttons">';
+                                html += '<button onclick="confirmAttendance(' + player.id + ', \'yes\')" class="attendance-yes attendance-btn">✅ Sí</button>';
+                                html += '<button onclick="confirmAttendance(' + player.id + ', \'maybe\')" class="attendance-maybe attendance-btn">🟡 Tal vez</button>';
+                                html += '<button onclick="askJustification(' + player.id + ', \'no\')" class="attendance-no attendance-btn">❌ No</button>';
+                                html += '</div>';
                             }
-                            preHtml += '    </div>';
-                        } else {
-                            preHtml += '    <div class="flex gap-1.5">';
-                            preHtml += '      <button onclick="confirmAttendance(' + player.id + ', \'yes\')" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm">Sí</button>';
-                            preHtml += '      <button onclick="confirmAttendance(' + player.id + ', \'maybe\')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm">Tal vez</button>';
-                            preHtml += '      <button onclick="askJustification(' + player.id + ', \'no\')" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm">No</button>';
-                            preHtml += '    </div>';
+                            html += '</div></div>';
                         }
-                        preHtml += '  </div>';
-                        preHtml += '</div>';
-
-                        // --- COLUMNA 2: ASISTENCIA DE CAMPO (Sincronizada) ---
-                        postHtml += '<div class="flex justify-between items-center p-3.5 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-all duration-150">';
-                        postHtml += '  <div class="font-bold text-gray-900 text-sm truncate max-w-[180px]">' + player.full_name + '</div>';
-                        postHtml += '  <select data-player-id="' + player.id + '" class="real-attendance-select px-3 py-1.5 border-2 border-gray-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-[#1E3A8A] text-gray-700 bg-white shadow-sm">';
-                        
-                        // Lógica predictiva: Si el jugador avisó que no viene, pre-seleccionamos falta. Si confirmó, presente.
-                        var defaultAbsent = (conf && conf.status === 'no') ? 'selected' : '';
-                        var defaultPresent = (conf && conf.status === 'yes') ? 'selected' : '';
-                        
-                        postHtml += '    <option value="Asistió" ' + defaultPresent + '>✅ Presente</option>';
-                        postHtml += '    <option value="Falta Justificada" ' + defaultAbsent + '>🟡 F. Justificada</option>';
-                        postHtml += '    <option value="Falta Injustificada">❌ F. Injustificada</option>';
-                        postHtml += '    <option value="Retraso">⏳ Retraso</option>';
-                        postHtml += '  </select>';
-                        postHtml += '</div>';
                     }
-
-                    preEventList.innerHTML = preHtml;
-                    postEventList.innerHTML = postHtml;
+                    preEventList.innerHTML = html;
                 })
-                .catch(function(err) {
-                    preEventList.innerHTML = '<p class="text-center text-rose-500 py-4 text-sm">❌ Error al mapear la plantilla</p>';
-                    postEventList.innerHTML = '<p class="text-center text-rose-500 py-4 text-sm">❌ Error al mapear la planilla</p>';
-                    console.error(err);
+                .catch(function(error) {
+                    preEventList.innerHTML = '<p class="text-center text-red-500 py-4">❌ Error al cargar los datos</p>';
+                    console.error(error);
                 });
         });
 
         function confirmAttendance(playerId, status) {
             saveConfirmation(playerId, status, '');
-            setTimeout(function() { document.getElementById('loadEventBtn').click(); }, 300);
+            setTimeout(function() {
+                document.getElementById('loadEventBtn').click();
+            }, 300);
         }
 
         function askJustification(playerId, status) {
             pendingJustification = { playerId: playerId, status: status };
             document.getElementById('justificationModal').classList.add('active');
+            document.getElementById('reasonSelect').value = '';
+            document.getElementById('justificationText').value = '';
         }
 
         function submitJustification() {
             var reason = document.getElementById('reasonSelect').value;
             var explanation = document.getElementById('justificationText').value;
+            
             if (!reason) {
                 alert('⚠️ Por favor selecciona un motivo');
                 return;
             }
+            
             var justification = reason + (explanation ? ' - ' + explanation : '');
             saveConfirmation(pendingJustification.playerId, 'no', justification);
             closeJustificationModal();
-            setTimeout(function() { document.getElementById('loadEventBtn').click(); }, 300);
+            setTimeout(function() {
+                document.getElementById('loadEventBtn').click();
+            }, 300);
         }
 
         function saveConfirmation(playerId, status, justification) {
@@ -277,8 +360,20 @@
                     justification: justification
                 })
             })
-            .then(function(res) { if (!res.ok) throw new Error('Error al registrar'); return res.json(); })
-            .catch(function(err) { console.error('Error de red:', err); });
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Error al guardar');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+            });
         }
 
         function closeJustificationModal() {
@@ -288,18 +383,16 @@
             pendingJustification = { playerId: null, status: null };
         }
 
-        // Envío de la Planilla Real de Campo
         document.getElementById('saveAttendanceBtn').addEventListener('click', function() {
             var attendanceData = {};
             var selects = document.querySelectorAll('.real-attendance-select');
-            
             for (var i = 0; i < selects.length; i++) {
                 var select = selects[i];
                 attendanceData[select.dataset.playerId] = select.value;
             }
             
             if (Object.keys(attendanceData).length === 0) {
-                alert('⚠️ No hay asistencias cargadas para procesar');
+                alert('⚠️ No hay asistencias para guardar');
                 return;
             }
             
@@ -312,15 +405,22 @@
                     attendance: attendanceData
                 })
             })
-            .then(function(res) { if (!res.ok) throw new Error('Error de Servidor'); return res.json(); })
+            .then(function(response) { 
+                if (!response.ok) {
+                    throw new Error('Error al guardar');
+                }
+                return response.json(); 
+            })
             .then(function(data) {
                 if (data.success) {
-                    alert('✅ Planilla de asistencia de campo guardada correctamente.');
+                    alert('✅ Asistencia guardada correctamente');
                 } else {
                     alert('❌ Error: ' + (data.message || 'No se pudo guardar'));
                 }
             })
-            .catch(function(err) { alert('❌ Error en el proceso: ' + err.message); });
+            .catch(function(error) {
+                alert('❌ Error: ' + error.message);
+            });
         });
     </script>
 </body>

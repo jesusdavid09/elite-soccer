@@ -1,165 +1,299 @@
-<div class="relative bg-gradient-to-br from-[#1E3A8A] to-[#172554] rounded-2xl p-6 md:p-8 text-white shadow-md overflow-hidden mb-8 transition duration-300 hover:shadow-lg">
-    <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 text-white/5 text-9xl font-black select-none pointer-events-none">
-        FC
-    </div>
-    <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 md:w-16 md:h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-3xl select-none shrink-0 border border-white/20 shadow-inner">
-                ⚽
-            </div>
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold tracking-tight">¡Bienvenido, <%= user.full_name %>!</h1>
-                <p class="text-blue-200/90 text-sm italic mt-0.5">"La excelencia no es un acto, sino un hábito"</p>
-            </div>
-        </div>
-        
-        <div class="flex flex-wrap gap-2 md:self-center">
-            <span class="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl px-4 py-1.5 text-xs font-medium uppercase tracking-wider">
-                📅 <%= new Date().toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' }) %>
-            </span>
-            <% if (player) { %>
-                <span class="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl px-4 py-1.5 text-xs font-bold text-amber-300">
-                    👕 Dor. <%= player.jersey_number %>
-                </span>
-                <span class="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl px-4 py-1.5 text-xs font-semibold">
-                    📌 <%= player.position || 'Sin posición' %>
-                </span>
-            <% } %>
-        </div>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel | Elite Soccer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F3F4F6;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-dashboard {
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        .card-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+        }
+        .btn-action {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-action:hover {
+            background: #172554;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+        .btn-action-full {
+            grid-column: span 2;
+        }
+        .btn-volver {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-volver:hover {
+            background: #172554;
+            transform: scale(1.05);
+        }
+        .text-azul-rey {
+            color: #1E3A8A;
+        }
+        .bg-azul-rey {
+            background: #1E3A8A;
+        }
+        .player-avatar {
+            width: 64px;
+            height: 64px;
+            background: #1E3A8A;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #FFFFFF;
+            flex-shrink: 0;
+        }
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: #F9FAFB;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        .event-item:last-child {
+            margin-bottom: 0;
+        }
+        .event-icon {
+            font-size: 1.5rem;
+        }
+        .event-title {
+            font-weight: 700;
+            color: #111827;
+        }
+        .event-date {
+            font-size: 0.875rem;
+            color: #6B7280;
+        }
+        .empty-message {
+            color: #6B7280;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .banner-gradient {
+            background: linear-gradient(135deg, #1E3A8A 0%, #172554 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .profile-detail {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1E3A8A;
+            margin-bottom: 1rem;
+        }
+        .banner-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .banner-stats span {
+            background: rgba(255,255,255,0.1);
+            border-radius: 9999px;
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+        }
+        @media (max-width: 640px) {
+            .btn-action-full {
+                grid-column: span 1;
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            .player-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    
-    <div class="lg:col-span-1 space-y-6">
-        
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm transition duration-300 hover:shadow-md">
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Banner -->
+        <div class="banner-gradient mb-8">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-gradient-to-tr from-[#1E3A8A] to-blue-600 rounded-full flex items-center justify-center text-2xl text-white font-bold shrink-0 shadow-md overflow-hidden border-2 border-white ring-4 ring-gray-100">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl">⚽</div>
+                <div>
+                    <h1 class="text-2xl font-bold">¡Bienvenido, <%= user.full_name %>!</h1>
+                    <p class="text-white/80 text-sm">"La excelencia no es un acto, sino un hábito"</p>
+                </div>
+            </div>
+            <div class="banner-stats">
+                <span>📅 <%= new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></span>
+                <% if (player) { %>
+                    <span>👕 #<%= player.jersey_number %></span>
+                    <span>📌 <%= player.position || 'Sin posición' %></span>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <a href="/player/attendance" class="btn-action">
+                ✅ Confirmar Asistencia
+            </a>
+            <a href="/player/profile" class="btn-action">
+                👤 Mi Perfil
+            </a>
+            <a href="/player/announcements" class="btn-action btn-action-full">
+                📢 Ver Anuncios
+            </a>
+        </div>
+
+        <!-- Perfil del Jugador -->
+        <div class="card-dashboard p-6 mb-6">
+            <div class="profile-section">
+                <div class="player-avatar">
                     <% if (player && player.photo_url) { %>
-                        <img src="<%= player.photo_url %>" alt="<%= player.full_name %>" class="w-100 h-100 object-cover">
+                        <img src="<%= player.photo_url %>" alt="<%= player.full_name %>">
                     <% } else { %>
                         👤
                     <% } %>
                 </div>
-                <div class="min-w-0">
-                    <h2 class="text-lg font-bold text-gray-900 truncate"><%= player ? player.full_name : user.full_name %></h2>
-                    <p class="text-sm font-medium text-gray-500 flex items-center gap-1.5 mt-0.5">
-                        <span>Camiseta #<%= player ? player.jersey_number : '?' %></span>
-                        <span class="text-gray-300">•</span>
-                        <span class="text-blue-700 font-semibold"><%= player && player.position ? player.position : 'Sin posición' %></span>
+                <div>
+                    <h2 class="profile-name"><%= player ? player.full_name : user.full_name %></h2>
+                    <p class="profile-detail">
+                        Camiseta #<%= player ? player.jersey_number : '?' %> 
+                        <%= player && player.position ? '• ' + player.position : '• Sin posición' %>
                     </p>
-                    <p class="text-xs text-gray-400 truncate mt-1">📧 <%= user.email %></p>
+                    <p class="profile-detail text-sm">
+                        📧 <%= user.email %>
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-2 mb-3">Accesos Directos</h3>
-            <div class="grid grid-cols-1 gap-2">
-                <a href="/player/attendance" class="flex items-center gap-3 bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold p-3.5 rounded-xl transition duration-200 active:scale-98 shadow-sm">
-                    <span class="text-lg">✅</span>
-                    <span class="text-sm">Confirmar Asistencia</span>
-                </a>
-                <a href="/player/profile" class="flex items-center gap-3 bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-900 font-semibold p-3.5 rounded-xl transition duration-200 active:scale-98 border border-gray-100">
-                    <span class="text-lg">👤</span>
-                    <span class="text-sm">Gestionar Mi Perfil</span>
-                </a>
-                <a href="/player/announcements" class="flex items-center gap-3 bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-900 font-semibold p-3.5 rounded-xl transition duration-200 active:scale-98 border border-gray-100">
-                    <span class="text-lg">📢</span>
-                    <span class="text-sm">Tablón de Anuncios</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="lg:col-span-2 space-y-6">
-        
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm transition duration-300 hover:shadow-md">
-            <h2 class="text-lg font-bold text-[#1E3A8A] mb-4 flex items-center gap-2">
-                <span>🏋️</span> Próximos Entrenamientos
-            </h2>
+        <!-- Próximos entrenamientos -->
+        <div class="card-dashboard p-6 mb-6">
+            <h2 class="section-title">🏋️ Próximos Entrenamientos</h2>
             <% if (upcomingTrainings && upcomingTrainings.length > 0) { %>
-                <div class="space-y-3">
-                    <% upcomingTrainings.forEach(t => { %>
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                            <span class="text-xl bg-blue-100 text-blue-800 p-2 rounded-lg shrink-0 select-none">🏋️</span>
-                            <div class="min-w-0">
-                                <div class="font-bold text-gray-900 text-sm md:text-base truncate"><%= t.title %></div>
-                                <div class="text-xs md:text-sm text-gray-500 font-medium mt-0.5">
-                                    <span><%= new Date(t.date).toLocaleDateString('es-CO', { dateStyle: 'medium' }) %></span>
-                                    <span class="text-gray-300 mx-1">•</span>
-                                    <span class="text-gray-600"><%= t.time %></span>
-                                </div>
-                            </div>
+                <% upcomingTrainings.forEach(t => { %>
+                    <div class="event-item">
+                        <span class="event-icon">🏋️</span>
+                        <div>
+                            <div class="event-title"><%= t.title %></div>
+                            <div class="event-date"><%= new Date(t.date).toLocaleDateString() %> - <%= t.time %></div>
                         </div>
-                    <% }); %>
-                </div>
+                    </div>
+                <% }); %>
             <% } else { %>
-                <div class="text-center py-6 text-gray-400 text-sm">
-                    📭 No tienes entrenamientos agendados por ahora.
-                </div>
+                <p class="empty-message">📭 No hay entrenamientos próximos</p>
             <% } %>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm transition duration-300 hover:shadow-md">
-            <h2 class="text-lg font-bold text-[#1E3A8A] mb-4 flex items-center gap-2">
-                <span>⚽</span> Próximos Partidos
-            </h2>
+        <!-- Próximos partidos -->
+        <div class="card-dashboard p-6 mb-6">
+            <h2 class="section-title">⚽ Próximos Partidos</h2>
             <% if (upcomingMatches && upcomingMatches.length > 0) { %>
-                <div class="space-y-3">
-                    <% upcomingMatches.forEach(m => { %>
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                            <span class="text-xl bg-emerald-100 text-emerald-800 p-2 rounded-lg shrink-0 select-none">⚽</span>
-                            <div class="min-w-0">
-                                <div class="font-bold text-gray-900 text-sm md:text-base truncate">vs <%= m.opponent %></div>
-                                <div class="text-xs md:text-sm text-gray-500 font-medium mt-0.5">
-                                    <span class="text-emerald-700 font-semibold"><%= new Date(m.date).toLocaleDateString('es-CO', { dateStyle: 'medium' }) %></span>
-                                    <span class="text-gray-300 mx-1">•</span>
-                                    <span class="text-gray-600"><%= m.time %></span>
-                                </div>
-                            </div>
+                <% upcomingMatches.forEach(m => { %>
+                    <div class="event-item">
+                        <span class="event-icon">⚽</span>
+                        <div>
+                            <div class="event-title">vs <%= m.opponent %></div>
+                            <div class="event-date"><%= new Date(m.date).toLocaleDateString() %> - <%= m.time %></div>
                         </div>
-                    <% }); %>
-                </div>
+                    </div>
+                <% }); %>
             <% } else { %>
-                <div class="text-center py-6 text-gray-400 text-sm">
-                    📭 No hay partidos oficiales programados.
-                </div>
+                <p class="empty-message">📭 No hay partidos próximos</p>
             <% } %>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm transition duration-300 hover:shadow-md">
-            <h2 class="text-lg font-bold text-[#1E3A8A] mb-4 flex items-center gap-2">
-                <span>📢</span> Últimas Novedades
-            </h2>
+        <!-- Últimos anuncios -->
+        <div class="card-dashboard p-6 mb-6">
+            <h2 class="section-title">📢 Últimos Anuncios</h2>
             <% if (latestAnnouncements && latestAnnouncements.length > 0) { %>
-                <div class="space-y-3">
-                    <% latestAnnouncements.slice(0, 3).forEach(a => { %>
-                        <div class="flex items-start gap-4 p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-                            <span class="text-lg bg-amber-100 text-amber-800 p-2 rounded-lg shrink-0 select-none mt-0.5">📢</span>
-                            <div class="min-w-0 flex-1">
-                                <div class="font-bold text-gray-900 text-sm"><%= a.title %></div>
-                                <div class="text-[11px] text-gray-400 font-medium mt-0.5">
-                                    <%= new Date(a.created_at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' }) %>
-                                </div>
-                            </div>
+                <% latestAnnouncements.slice(0, 3).forEach(a => { %>
+                    <div class="event-item">
+                        <span class="event-icon">📢</span>
+                        <div>
+                            <div class="event-title"><%= a.title %></div>
+                            <div class="event-date"><%= new Date(a.created_at).toLocaleString() %></div>
                         </div>
-                    <% }); %>
-                </div>
+                    </div>
+                <% }); %>
                 <% if (latestAnnouncements.length > 3) { %>
-                    <div class="text-right mt-3">
-                        <a href="/player/announcements" class="text-xs font-bold text-[#1E3A8A] hover:text-[#172554] inline-flex items-center gap-1 group transition">
-                            Ver todo el histórico <span class="group-hover:translate-x-0.5 transition duration-150">→</span>
-                        </a>
+                    <div class="text-center mt-2">
+                        <a href="/player/announcements" class="text-sm" style="color: #1E3A8A; font-weight: 600;">Ver todos los anuncios →</a>
                     </div>
                 <% } %>
             <% } else { %>
-                <div class="text-center py-6 text-gray-400 text-sm">
-                    📭 El club no ha publicado comunicados recientes.
-                </div>
+                <p class="empty-message">📭 No hay anuncios recientes</p>
             <% } %>
         </div>
 
-    </div>
-</div>
+        <!-- Volver -->
+        <div class="mt-8 text-center">
+            <a href="/player/dashboard" class="btn-volver shadow-md">← Volver al Dashboard</a>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

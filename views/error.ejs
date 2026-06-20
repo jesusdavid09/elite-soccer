@@ -1,69 +1,54 @@
-<!-- Vista parcial: error.ejs (Diseñada para uso global o inyección en layouts) -->
-
-<div class="fixed inset-0 min-h-screen w-full flex items-center justify-center p-4 bg-[linear-gradient(135deg,#1E3A8A_0%,#172554_50%,#0F172A_100%)] overflow-hidden isolate select-none">
-    
-    <!-- Efecto de Fondo Decorativo (Círculos rotativos con gradientes radiales) -->
-    <div class="absolute -inset-[50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.05)_0%,transparent_50%),radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.05)_0%,transparent_50%)] animate-[spin_30s_linear_infinite] pointer-events-none -z-10"></div>
-
-    <!-- Tarjeta de Error Principal -->
-    <div class="relative bg-white rounded-[24px] border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 xs:p-8 md:p-12 text-center max-w-[450px] w-full animate-[fadeInUp_0.6s_ease] backdrop-blur-sm
-                before:content-['⚽'] before:absolute before:-top-5 before:-right-5 before:text-6xl before:opacity-10 before:rotate-15 before:pointer-events-none
-                after:content-['🏆'] after:absolute after:-bottom-4 after:-left-4 after:text-5xl after:opacity-[0.08] after:rotate-[-10deg] after:pointer-events-none">
-        
-        <!-- Icono y Código del Estado -->
-        <span class="block text-6xl xs:text-7xl mb-2">⚠️</span>
-        <div class="font-['Bebas_Neue',cursive] text-6xl xs:text-7xl md:text-8xl text-[#1E3A8A] leading-none tracking-[4px] mb-1">
-            <%= errorStatus || '404' %>
-        </div>
-        
-        <!-- Títulos y Mensaje descriptivo -->
-        <h2 class="font-['Poppins',sans-serif] text-xl xs:text-2xl font-bold text-gray-900 mb-2">
-            ¡Oops! Algo salió mal
-        </h2>
-        <p class="text-sm xs:text-base text-gray-500 mb-6 leading-relaxed px-2 font-normal">
-            <%= message || 'La página que buscas no existe o ha sido movida temporalmente.' %>
-        </p>
-
-        <!-- Caja de Ayuda o Sugerencias -->
-        <div class="bg-slate-50 border border-gray-200 rounded-xl p-4 mb-6 text-left">
-            <p class="text-xs xs:text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
-                <span>📌</span> ¿Qué puedes hacer?
-            </p>
-            <ul class="space-y-1.5">
-                <li class="text-xs xs:text-sm text-gray-500 flex items-start gap-2 before:content-['•'] before:text-[#1E3A8A] before:font-bold">
-                    Verifica que la dirección URL ingresada sea correcta.
-                </li>
-                <li class="text-xs xs:text-sm text-gray-500 flex items-start gap-2 before:content-['•'] before:text-[#1E3A8A] before:font-bold">
-                    Regresa a la plataforma principal.
-                </li>
-                <li class="text-xs xs:text-sm text-gray-500 flex items-start gap-2 before:content-['•'] before:text-[#1E3A8A] before:font-bold">
-                    Contacta al soporte técnico si el problema persiste.
-                </li>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error | Elite Soccer Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0A2540 0%, #1E40AF 100%);
+        }
+        .error-card {
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1E40AF, #00AEEF);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,174,239,0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="error-card bg-white rounded-2xl shadow-2xl p-8 text-center max-w-md w-full">
+        <div class="text-7xl mb-4">⚽</div>
+        <div class="text-6xl mb-4">⚠️</div>
+        <h2 class="text-2xl font-bold text-dark-blue mb-2">Oops! Algo salió mal</h2>
+        <p class="text-gray-600 mb-6"><%= message || 'La página que buscas no existe o ha sido movida.' %></p>
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <p class="text-sm text-gray-500 font-semibold mb-2">📌 ¿Qué puedes hacer?</p>
+            <ul class="text-sm text-gray-500 space-y-1">
+                <li>• Verifica que la URL sea correcta</li>
+                <li>• Regresa a la página de inicio</li>
+                <li>• Contacta al administrador si el problema persiste</li>
             </ul>
         </div>
-
-        <!-- Acciones Disponibles -->
         <div class="flex flex-col sm:flex-row gap-3">
-            <a href="/" class="w-full sm:flex-1 text-center bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-sm px-6 py-3 rounded-full shadow-sm hover:shadow-[0_8px_25px_rgba(30,58,138,0.4)] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5">
-                <span>🏠</span> Ir al inicio
+            <a href="/" class="btn-primary text-white px-6 py-2 rounded-full font-semibold text-center">
+                🏠 Ir al inicio
             </a>
-            <button onclick="history.back()" class="w-full sm:flex-1 text-center bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200 font-semibold text-sm px-6 py-3 rounded-full transition duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5 cursor-pointer">
-                <span>↩️</span> Volver atrás
+            <button onclick="history.back()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition text-center">
+                ↩️ Volver atrás
             </button>
         </div>
     </div>
-</div>
-
-<!-- Estilos Inyectados para Animación de Entrada (Requerido para la tarjeta) -->
-<style>
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-</style>
+</body>
+</html>

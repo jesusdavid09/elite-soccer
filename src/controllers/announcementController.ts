@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import pool from '../config/database';
 
-// ============== OBTENER ANUNCIOS ==============
+// ========== OBTENER ANUNCIOS ==========
 export const getAnnouncements = async (req: Request, res: Response) => {
     try {
-        console.log('📋 Obteniendo lista de anuncios...');
+        console.log('📋 Obteniendo anuncios...');
         
         const result = await pool.query(`
             SELECT 
@@ -33,29 +33,25 @@ export const getAnnouncements = async (req: Request, res: Response) => {
             title: 'Anuncios', 
             announcements: [], 
             user: (req as any).user,
-            pendingCount: res.locals?.pendingCount || 0
+            pendingCount: 0
         });
     }
 };
 
-// ============== CREAR ANUNCIO ==============
+// ========== CREAR ANUNCIO ==========
 export const createAnnouncement = async (req: Request, res: Response) => {
     const { title, content } = req.body;
     const userId = (req as any).user?.id;
     
     console.log('📝 Creando nuevo anuncio...');
-    console.log('📝 Título:', title);
-    console.log('📝 Autor ID:', userId);
     
-    if (!title || !content || !title.trim() || !content.trim()) {
-        console.log('❌ Error: Título o contenido vacío');
-        (req as any).flash('error', '⚠️ El título y el contenido son obligatorios');
+    if (!title || !content) {
+        console.log('❌ Título o contenido vacío');
         return res.redirect('/coach/announcements');
     }
     
     if (!userId) {
-        console.log('❌ Error: Usuario no autenticado');
-        (req as any).flash('error', '❌ Debes iniciar sesión para crear anuncios');
+        console.log('❌ Usuario no autenticado');
         return res.redirect('/coach/announcements');
     }
     
@@ -68,33 +64,26 @@ export const createAnnouncement = async (req: Request, res: Response) => {
         );
         
         console.log(`✅ Anuncio creado con ID: ${result.rows[0].id}`);
-        (req as any).flash('success', '✅ Anuncio creado correctamente');
         res.redirect('/coach/announcements');
     } catch (error) {
         console.error('❌ Error al crear anuncio:', error);
-        (req as any).flash('error', '❌ Error al crear el anuncio');
         res.redirect('/coach/announcements');
     }
 };
 
-// ============== ELIMINAR ANUNCIO ==============
+// ========== ELIMINAR ANUNCIO ==========
 export const deleteAnnouncement = async (req: Request, res: Response) => {
-    // Convertir ID a número para evitar conflictos de tipos con la DB
-    const id = Number(req.params.id); 
+    const id = String(req.params.id);
     const userId = (req as any).user?.id;
     
     console.log(`🗑️ Eliminando anuncio ID: ${id}`);
-    console.log(`👤 Usuario ID: ${userId}`);
     
-    // Validar ID numérico
-    if (isNaN(id) || id <= 0) {
-        console.log('❌ Error: ID inválido');
-        (req as any).flash('error', '❌ ID de anuncio inválido');
+    if (!id || id === 'undefined' || id === 'null') {
+        console.log('❌ ID inválido');
         return res.redirect('/coach/announcements');
     }
     
     try {
-        // Verificar que el anuncio existe
         const checkResult = await pool.query(
             'SELECT id, author_id FROM announcements WHERE id = $1',
             [id]
@@ -102,40 +91,30 @@ export const deleteAnnouncement = async (req: Request, res: Response) => {
         
         if (checkResult.rows.length === 0) {
             console.log(`❌ Anuncio ${id} no encontrado`);
-            (req as any).flash('error', '❌ El anuncio no existe');
             return res.redirect('/coach/announcements');
         }
         
-        // Verificar permisos (mismo autor o rol administrador)
         const announcement = checkResult.rows[0];
         if (announcement.author_id !== userId && (req as any).user?.role !== 'admin') {
-            console.log(`❌ Usuario ${userId} no es autor del anuncio ${id}`);
-            (req as any).flash('error', '❌ No tienes permiso para eliminar este anuncio');
+            console.log(`❌ Usuario ${userId} no tiene permiso`);
             return res.redirect('/coach/announcements');
         }
         
-        // Eliminar el anuncio
         await pool.query('DELETE FROM announcements WHERE id = $1', [id]);
         
         console.log(`✅ Anuncio ${id} eliminado correctamente`);
-        (req as any).flash('success', '✅ Anuncio eliminado correctamente');
         res.redirect('/coach/announcements');
     } catch (error) {
         console.error(`❌ Error al eliminar anuncio ${id}:`, error);
-        (req as any).flash('error', '❌ Error al eliminar el anuncio');
         res.redirect('/coach/announcements');
     }
 };
 
-// ============== OBTENER ANUNCIO POR ID (API) ==============
+// ========== OBTENER ANUNCIO POR ID (API) ==========
 export const getAnnouncementById = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = String(req.params.id);
     
     console.log(`📋 Obteniendo anuncio ID: ${id}`);
-    
-    if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID de anuncio inválido' });
-    }
     
     try {
         const result = await pool.query(`
@@ -164,21 +143,15 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
     }
 };
 
-// ============== ACTUALIZAR ANUNCIO ==============
+// ========== ACTUALIZAR ANUNCIO ==========
 export const updateAnnouncement = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = String(req.params.id);
     const { title, content } = req.body;
     const userId = (req as any).user?.id;
     
     console.log(`✏️ Actualizando anuncio ID: ${id}`);
     
-    if (isNaN(id)) {
-        (req as any).flash('error', '❌ ID de anuncio inválido');
-        return res.redirect('/coach/announcements');
-    }
-
-    if (!title || !content || !title.trim() || !content.trim()) {
-        (req as any).flash('error', '⚠️ El título y el contenido son obligatorios');
+    if (!title || !content) {
         return res.redirect('/coach/announcements');
     }
     
@@ -189,13 +162,11 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
         );
         
         if (checkResult.rows.length === 0) {
-            (req as any).flash('error', '❌ El anuncio no existe');
             return res.redirect('/coach/announcements');
         }
         
         const announcement = checkResult.rows[0];
         if (announcement.author_id !== userId && (req as any).user?.role !== 'admin') {
-            (req as any).flash('error', '⚠️ No tienes permiso para editar este anuncio');
             return res.redirect('/coach/announcements');
         }
         
@@ -207,111 +178,9 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
         );
         
         console.log(`✅ Anuncio ${id} actualizado`);
-        (req as any).flash('success', '✅ Anuncio actualizado correctamente');
         res.redirect('/coach/announcements');
     } catch (error) {
         console.error(`❌ Error al actualizar anuncio ${id}:`, error);
-        (req as any).flash('error', '❌ Error al actualizar el anuncio');
         res.redirect('/coach/announcements');
-    }
-};
-
-// ============== PUBLICAR/DESPUBLICAR ANUNCIO ==============
-export const togglePublish = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    // Forzar conversión limpia a booleano
-    const published = req.body.published === true || req.body.published === 'true';
-    const userId = (req as any).user?.id;
-    
-    console.log(`📝 Cambiando estado de publicación del anuncio ${id} a: ${published}`);
-    
-    if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID inválido' });
-    }
-
-    try {
-        const checkResult = await pool.query(
-            'SELECT id, author_id FROM announcements WHERE id = $1',
-            [id]
-        );
-        
-        if (checkResult.rows.length === 0) {
-            return res.status(404).json({ error: 'Anuncio no encontrado' });
-        }
-        
-        const announcement = checkResult.rows[0];
-        if (announcement.author_id !== userId && (req as any).user?.role !== 'admin') {
-            return res.status(403).json({ error: 'No tienes permiso' });
-        }
-        
-        await pool.query(
-            `UPDATE announcements SET published = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
-            [published, id]
-        );
-        
-        console.log(`✅ Estado del anuncio ${id} actualizado a: ${published}`);
-        res.json({ success: true, published });
-    } catch (error) {
-        console.error(`❌ Error al cambiar estado del anuncio ${id}:`, error);
-        res.status(500).json({ error: 'Error al cambiar estado' });
-    }
-};
-
-// ============== OBTENER ANUNCIOS DESTACADOS ==============
-export const getFeaturedAnnouncements = async (req: Request, res: Response) => {
-    console.log('📋 Obteniendo anuncios destacados...');
-    
-    try {
-        const result = await pool.query(`
-            SELECT a.*, u.full_name as author_name 
-            FROM announcements a
-            JOIN users u ON a.author_id = u.id 
-            WHERE a.featured = true 
-            ORDER BY a.created_at DESC 
-            LIMIT 5
-        `);
-        
-        res.json(result.rows);
-    } catch (error) {
-        console.error('❌ Error al obtener anuncios destacados:', error);
-        res.status(500).json({ error: 'Error al obtener anuncios destacados' });
-    }
-};
-
-// ============== OBTENER ANUNCIOS PARA JUGADORES ==============
-export const getPlayerAnnouncements = async (req: Request, res: Response) => {
-    try {
-        console.log('📋 Obteniendo anuncios para jugador...');
-        
-        const result = await pool.query(`
-            SELECT 
-                a.id,
-                a.title,
-                a.content,
-                a.created_at,
-                u.full_name as author_name
-            FROM announcements a
-            JOIN users u ON a.author_id = u.id 
-            WHERE a.published = true OR a.published IS NULL
-            ORDER BY a.created_at DESC
-            LIMIT 20
-        `);
-        
-        console.log(`✅ ${result.rows.length} anuncios encontrados para jugador`);
-        
-        res.render('player/announcements', { 
-            title: 'Anuncios', 
-            announcements: result.rows, 
-            user: (req as any).user,
-            pendingCount: res.locals?.pendingCount || 0
-        });
-    } catch (error) {
-        console.error('❌ Error al obtener anuncios para jugador:', error);
-        res.render('player/announcements', { 
-            title: 'Anuncios', 
-            announcements: [], 
-            user: (req as any).user,
-            pendingCount: 0
-        });
     }
 };

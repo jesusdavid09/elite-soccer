@@ -5,434 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro | Elite Soccer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, #1E3A8A, #172554);
             padding: 1rem;
-            background: linear-gradient(135deg, #1E3A8A 0%, #172554 50%, #0F172A 100%);
-            position: relative;
-            overflow: hidden;
         }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
-            animation: rotateBg 30s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes rotateBg {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .register-card {
-            background: #FFFFFF;
+            background: white;
             border-radius: 20px;
-            padding: 1.5rem 1.25rem;
+            padding: 2rem;
+            max-width: 450px;
             width: 100%;
-            max-width: 440px;
             max-height: 98vh;
             overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            animation: fadeInUp 0.6s ease;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
-
-        .register-card::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .register-card::-webkit-scrollbar-track {
-            background: #F3F4F6;
-            border-radius: 4px;
-        }
-
-        .register-card::-webkit-scrollbar-thumb {
-            background: #1E3A8A;
-            border-radius: 4px;
-        }
-
-        .register-card::before {
-            content: '⚽';
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            font-size: 2.5rem;
-            opacity: 0.08;
-            transform: rotate(15deg);
-        }
-
-        .register-card::after {
-            content: '🏆';
-            position: absolute;
-            bottom: -10px;
-            left: -10px;
-            font-size: 2rem;
-            opacity: 0.06;
-            transform: rotate(-10deg);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .logo-icon {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 0.15rem;
-        }
-
-        .logo-title {
-            font-family: 'Bebas Neue', cursive;
-            font-size: 1.5rem;
-            color: #1E3A8A;
-            letter-spacing: 2px;
-            line-height: 1.2;
-        }
-
-        .logo-subtitle {
-            font-size: 0.65rem;
-            color: #6B7280;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
+        .register-card::-webkit-scrollbar { width: 4px; }
+        .register-card::-webkit-scrollbar-thumb { background: #1E3A8A; border-radius: 4px; }
         .form-input, .form-select {
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.8rem;
             border: 2px solid #E5E7EB;
             border-radius: 10px;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            color: #111827;
-            background: #FFFFFF;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            transition: border-color 0.3s;
         }
-
         .form-input:focus, .form-select:focus {
             outline: none;
             border-color: #1E3A8A;
             box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
-
-        .form-input::placeholder {
-            color: #9CA3AF;
-        }
-
-        .form-input:disabled, .form-select:disabled {
-            background: #F3F4F6;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #111827;
-            font-size: 0.75rem;
-            margin-bottom: 0.2rem;
-        }
-
         .btn-register {
             width: 100%;
-            padding: 0.6rem;
+            padding: 0.7rem;
             background: #1E3A8A;
-            color: #FFFFFF;
+            color: white;
             border: none;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            margin-top: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
-
         .btn-register:hover {
             background: #172554;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
         }
-
-        .btn-register:active {
-            transform: translateY(0);
-        }
-
         .alert-error {
             background: #FEE2E2;
             color: #991B1B;
-            padding: 0.4rem 0.6rem;
+            padding: 0.5rem;
             border-radius: 10px;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             text-align: center;
-            font-size: 0.8rem;
             border: 1px solid #FECACA;
         }
-
-        .alert-success {
-            background: #D1FAE5;
-            color: #065F46;
-            padding: 0.4rem 0.6rem;
-            border-radius: 10px;
-            margin-bottom: 0.75rem;
-            text-align: center;
-            font-size: 0.8rem;
-            border: 1px solid #A7F3D0;
-        }
-
-        .login-link {
-            display: block;
-            text-align: center;
-            margin-top: 0.75rem;
-            font-size: 0.8rem;
-            color: #6B7280;
-        }
-
-        .login-link a {
-            color: #1E3A8A;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .login-link a:hover {
-            color: #172554;
-            text-decoration: underline;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin: 0.75rem 0;
-        }
-
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: #E5E7EB;
-        }
-
-        .divider-text {
-            font-size: 0.65rem;
-            color: #9CA3AF;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
+        .logo-icon { font-size: 3rem; display: block; }
+        .logo-title { font-size: 1.8rem; color: #1E3A8A; font-weight: 800; }
+        .logo-subtitle { font-size: 0.8rem; color: #6B7280; letter-spacing: 2px; }
+        .login-link { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
+        .login-link a { color: #1E3A8A; text-decoration: none; font-weight: 600; }
+        .login-link a:hover { text-decoration: underline; }
         .section-box {
             background: #F8FAFC;
             border-radius: 12px;
-            padding: 0.75rem 0.85rem;
-            margin-bottom: 0.75rem;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
             border: 1px solid #E5E7EB;
         }
-
-        .section-title {
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: #1E3A8A;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-        }
-
-        .form-checkbox {
-            width: 14px;
-            height: 14px;
-            accent-color: #1E3A8A;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.4rem;
-            font-size: 0.75rem;
-            color: #6B7280;
-            cursor: pointer;
-            margin-top: 0.3rem;
-        }
-
-        .checkbox-label a {
-            color: #1E3A8A;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .checkbox-label a:hover {
-            text-decoration: underline;
-        }
-
-        .form-group {
-            margin-bottom: 0.5rem;
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 0.75rem;
-        }
-
-        /* ========== RESPONSIVE ========== */
+        .section-title { font-weight: 600; color: #1E3A8A; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #6B7280; cursor: pointer; }
+        .checkbox-label input { accent-color: #1E3A8A; width: 16px; height: 16px; }
+        .divider { display: flex; align-items: center; gap: 0.8rem; margin: 1rem 0; }
+        .divider-line { flex: 1; height: 1px; background: #E5E7EB; }
+        .divider-text { font-size: 0.8rem; color: #9CA3AF; white-space: nowrap; }
         @media (max-width: 480px) {
-            .register-card {
-                padding: 1rem 0.85rem;
-                max-height: 98vh;
-            }
-            .logo-icon { font-size: 2rem; }
-            .logo-title { font-size: 1.25rem; }
-            .form-input, .form-select {
-                font-size: 0.8rem;
-                padding: 0.4rem 0.6rem;
-            }
-            .btn-register {
-                font-size: 0.8rem;
-                padding: 0.5rem;
-            }
-            .register-card::before {
-                font-size: 1.8rem;
-                top: -8px;
-                right: -8px;
-            }
-            .register-card::after {
-                font-size: 1.3rem;
-                bottom: -6px;
-                left: -6px;
-            }
-            .section-box { padding: 0.5rem 0.6rem; }
+            .register-card { padding: 1.5rem; }
             .grid-2 { grid-template-columns: 1fr; }
-            .form-label, .checkbox-label { font-size: 0.7rem; }
-            .alert-error, .alert-success {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.5rem;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .register-card { padding: 0.75rem 0.6rem; }
-            .logo-icon { font-size: 1.75rem; }
-            .logo-title { font-size: 1rem; }
-            .form-input, .form-select {
-                font-size: 0.75rem;
-                padding: 0.35rem 0.5rem;
-            }
-            .btn-register {
-                font-size: 0.75rem;
-                padding: 0.4rem;
-            }
         }
     </style>
 </head>
 <body>
     <div class="register-card">
-        <div class="logo-section">
+        <div class="text-center mb-4">
             <span class="logo-icon">⚽</span>
             <h1 class="logo-title">ELITE SOCCER</h1>
             <p class="logo-subtitle">Academy</p>
         </div>
 
-        <% if (typeof messages !== 'undefined' && messages.error && messages.error.length > 0) { %>
-            <div class="alert-error">
-                ⚠️ <%= messages.error %>
-            </div>
-        <% } else if (typeof error !== 'undefined' && error) { %>
-            <div class="alert-error">
-                ⚠️ <%= error %>
-            </div>
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert-error">⚠️ <%= error %></div>
         <% } %>
 
-        <% if (typeof messages !== 'undefined' && messages.success && messages.success.length > 0) { %>
-            <div class="alert-success">
-                ✅ <%= messages.success %>
-            </div>
-        <% } else if (typeof success !== 'undefined' && success) { %>
-            <div class="alert-success">
-                ✅ <%= success %>
-            </div>
-        <% } %>
-
-        <form method="POST" action="/register" id="registerForm">
+        <form method="POST" action="/register">
+            <!-- Datos de acceso -->
             <div class="section-box">
                 <div class="section-title">📝 Datos de acceso</div>
-                <div class="form-group">
-                    <label class="form-label">Nombre completo *</label>
-                    <input type="text" name="full_name" class="form-input" placeholder="Ej: Juan Pérez" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Correo electrónico *</label>
-                    <input type="email" name="email" class="form-input" placeholder="ejemplo@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Contraseña *</label>
-                    <input type="password" name="password" class="form-input" placeholder="Mínimo 6 caracteres" minlength="6" required>
-                </div>
+                <input type="text" name="full_name" class="form-input" placeholder="Nombre completo *" required>
+                <input type="email" name="email" class="form-input" placeholder="Correo electrónico *" required>
+                <input type="password" name="password" class="form-input" placeholder="Contraseña (mínimo 6 caracteres) *" minlength="6" required>
             </div>
 
+            <!-- Datos deportivos -->
             <div id="playerFields" class="section-box">
                 <div class="section-title">⚽ Datos deportivos</div>
                 <div class="grid-2">
-                    <div class="form-group">
-                        <label class="form-label">Número de camiseta</label>
-                        <input type="number" name="jersey_number" id="jersey_number" class="form-input" placeholder="Ej: 10" min="1" max="99">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Edad</label>
-                        <input type="number" name="age" id="age" class="form-input" placeholder="Ej: 25" min="1" max="99">
-                    </div>
+                    <input type="number" name="jersey_number" id="jersey_number" class="form-input" placeholder="Número *" min="1" max="99">
+                    <input type="number" name="age" id="age" class="form-input" placeholder="Edad" min="1" max="99">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Posición</label>
-                    <select name="position" id="position" class="form-select">
-                        <option value="">Seleccionar posición</option>
-                        <option value="Portero">🧤 Portero</option>
-                        <option value="Defensa Central">🛡️ Defensa Central</option>
-                        <option value="Lateral Derecho">➡️ Lateral Derecho</option>
-                        <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
-                        <option value="Mediocampista">🎯 Mediocampista</option>
-                        <option value="Delantero">⚽ Delantero</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Teléfono (opcional)</label>
-                    <input type="text" name="phone" id="phone" class="form-input" placeholder="Ej: 555-1234">
-                </div>
+                <select name="position" id="position" class="form-select">
+                    <option value="">Seleccionar posición *</option>
+                    <option value="Portero">🧤 Portero</option>
+                    <option value="Defensa Central">🛡️ Defensa Central</option>
+                    <option value="Lateral Derecho">➡️ Lateral Derecho</option>
+                    <option value="Lateral Izquierdo">⬅️ Lateral Izquierdo</option>
+                    <option value="Mediocampista">🎯 Mediocampista</option>
+                    <option value="Delantero">⚽ Delantero</option>
+                </select>
+                <input type="text" name="phone" id="phone" class="form-input" placeholder="Teléfono (opcional)">
             </div>
 
+            <!-- Tipo de cuenta -->
             <div class="section-box">
                 <div class="section-title">👥 Tipo de cuenta</div>
                 <select name="role" id="roleSelect" class="form-select">
@@ -440,15 +140,15 @@
                     <option value="coach">👨‍🏫 Entrenador</option>
                 </select>
                 <div id="coachKeyDiv" style="display: none; margin-top: 0.5rem;">
-                    <label class="form-label">🔑 Clave de entrenador</label>
-                    <input type="password" name="coach_key" id="coach_key" class="form-input" placeholder="Ingresa la clave de entrenador">
+                    <input type="password" name="coach_key" class="form-input" placeholder="Clave de entrenador *">
                 </div>
             </div>
 
-            <div class="form-group">
+            <!-- Términos -->
+            <div class="mb-3">
                 <label class="checkbox-label">
-                    <input type="checkbox" name="terms" class="form-checkbox" required>
-                    <span>Acepto los <a href="#" target="_blank">términos y condiciones</a></span>
+                    <input type="checkbox" name="terms" required>
+                    Acepto los <a href="#" style="color: #1E3A8A; text-decoration: none; font-weight: 600;">términos y condiciones</a>
                 </label>
             </div>
 
@@ -461,146 +161,32 @@
             <span class="divider-line"></span>
         </div>
 
-        <p class="login-link">
+        <div class="login-link">
             <a href="/login">🔑 Iniciar Sesión</a>
-        </p>
+        </div>
     </div>
 
     <script>
-        // ========== MOSTRAR/OCULTAR CAMPOS SEGÚN ROL ==========
+        // Mostrar/ocultar campos según rol
         const roleSelect = document.getElementById('roleSelect');
         const playerFields = document.getElementById('playerFields');
         const coachKeyDiv = document.getElementById('coachKeyDiv');
-        const coachKeyInput = document.getElementById('coach_key');
-        const jerseyInput = document.getElementById('jersey_number');
-        const positionSelect = document.getElementById('position');
-        const ageInput = document.getElementById('age');
-        const phoneInput = document.getElementById('phone');
-
-        function updateForm() {
-            if (roleSelect.value === 'coach') {
-                playerFields.style.display = 'none';
-                coachKeyDiv.style.display = 'block';
-                
-                jerseyInput.disabled = true;
-                positionSelect.disabled = true;
-                ageInput.disabled = true;
-                phoneInput.disabled = true;
-                coachKeyInput.disabled = false;
-
-                jerseyInput.removeAttribute('required');
-                positionSelect.removeAttribute('required');
-                ageInput.removeAttribute('required');
-                coachKeyInput.setAttribute('required', 'required');
-            } else {
-                playerFields.style.display = 'block';
-                coachKeyDiv.style.display = 'none';
-                
-                jerseyInput.disabled = false;
-                positionSelect.disabled = false;
-                ageInput.disabled = false;
-                phoneInput.disabled = false;
-                coachKeyInput.disabled = true;
-
-                jerseyInput.setAttribute('required', 'required');
-                positionSelect.setAttribute('required', 'required');
-                ageInput.setAttribute('required', 'required');
-                coachKeyInput.removeAttribute('required');
-            }
-        }
-
-        roleSelect.addEventListener('change', updateForm);
-        updateForm(); // Carga inicial
-
-        // ========== VALIDACIÓN EN TIEMPO REAL ==========
-        const passwordInput = document.querySelector('input[name="password"]');
-        if (passwordInput) {
-            passwordInput.addEventListener('input', function() {
-                if (this.value.length > 0 && this.value.length < 6) {
-                    this.style.borderColor = '#EF4444';
-                } else if (this.value.length >= 6) {
-                    this.style.borderColor = '#22C55E';
-                } else {
-                    this.style.borderColor = '#E5E7EB';
-                }
-            });
-        }
-
-        const emailInput = document.querySelector('input[name="email"]');
-        if (emailInput) {
-            emailInput.addEventListener('blur', function() {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (this.value && !emailRegex.test(this.value)) {
-                    this.style.borderColor = '#EF4444';
-                } else if (this.value) {
-                    this.style.borderColor = '#22C55E';
-                }
-            });
-        }
-
-        // ========== VALIDACIÓN ANTES DE ENVIAR ==========
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            const password = document.querySelector('input[name="password"]').value;
-            const email = document.querySelector('input[name="email"]').value;
-            const fullName = document.querySelector('input[name="full_name"]').value;
-            const terms = document.querySelector('input[name="terms"]').checked;
-            const role = roleSelect.value;
-
-            if (fullName.trim().length < 2) {
-                e.preventDefault();
-                alert('⚠️ Ingresa un nombre completo válido.');
-                return false;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                e.preventDefault();
-                alert('⚠️ Ingresa un correo electrónico válido.');
-                return false;
-            }
-
-            if (password.length < 6) {
-                e.preventDefault();
-                alert('⚠️ La contraseña debe tener al menos 6 caracteres.');
-                return false;
-            }
-
-            if (role === 'player') {
-                const jersey = jerseyInput.value;
-                const position = positionSelect.value;
-                const age = ageInput.value;
-
-                if (!jersey || jersey < 1 || jersey > 99) {
-                    e.preventDefault();
-                    alert('⚠️ Ingresa un número de camiseta válido (1-99).');
-                    return false;
-                }
-                if (!position) {
-                    e.preventDefault();
-                    alert('⚠️ Selecciona tu posición en el campo.');
-                    return false;
-                }
-                if (!age || age < 1 || age > 99) {
-                    e.preventDefault();
-                    alert('⚠️ Ingresa una edad válida.');
-                    return false;
-                }
-            }
-
-            if (role === 'coach' && !coachKeyInput.value.trim()) {
-                e.preventDefault();
-                alert('⚠️ Ingresa la clave de verificación de entrenador.');
-                return false;
-            }
-
-            if (!terms) {
-                e.preventDefault();
-                alert('⚠️ Debes aceptar los términos y condiciones.');
-                return false;
-            }
-
-            return true;
+        
+        roleSelect.addEventListener('change', function() {
+            const isCoach = this.value === 'coach';
+            playerFields.style.display = isCoach ? 'none' : 'block';
+            coachKeyDiv.style.display = isCoach ? 'block' : 'none';
+            
+            // Habilitar/deshabilitar campos de jugador
+            const inputs = playerFields.querySelectorAll('input, select');
+            inputs.forEach(input => input.disabled = isCoach);
         });
+        
+        // Ejecutar al cargar
+        if (roleSelect.value === 'coach') {
+            playerFields.style.display = 'none';
+            coachKeyDiv.style.display = 'block';
+        }
     </script>
 </body>
 </html>

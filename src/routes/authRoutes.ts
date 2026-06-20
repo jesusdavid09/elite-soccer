@@ -1,31 +1,32 @@
 import { Router } from 'express';
-// IMPORTANTE: Importación nombrada exacta de tus controladores
-import { 
-    showLogin, 
-    showRegister, 
-    login, 
-    register, 
-    logout, 
-    checkAuth, 
-    getProfile 
-} from '../controllers/authController'; // Ajusta la ruta a tu carpeta de controladores
+import * as authController from '../controllers/authController';
+import { authenticate } from '../middlewares/auth';
 
 const router = Router();
 
-// Rutas de Renderizado de Vistas (GET)
-router.get('/login', showLogin);
-router.get('/register', showRegister);
+// ========== RUTAS PÚBLICAS ==========
 
-// Rutas de Procesamiento de Formularios (POST)
-router.post('/login', login);
-router.post('/register', register);
+// Mostrar login
+router.get('/login', authController.showLogin);
 
-// Ruta de Cierre de Sesión (GET o POST, según manejes tu app)
-router.get('/logout', logout);
+// Mostrar registro
+router.get('/register', authController.showRegister);
 
-// Rutas de API / Estado
-router.get('/check', checkAuth);
-router.get('/profile', getProfile);
+// Procesar login
+router.post('/login', authController.login);
 
-// EXPORTACIÓN OBLIGATORIA DEL ENRUTADOR
+// Procesar registro
+router.post('/register', authController.register);
+
+// Cerrar sesión
+router.get('/logout', authController.logout);
+
+// ========== RUTAS DE API ==========
+
+// Verificar autenticación
+router.get('/api/auth/check', authenticate, authController.checkAuth);
+
+// Obtener perfil
+router.get('/api/auth/profile', authenticate, authController.getProfile);
+
 export default router;

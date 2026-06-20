@@ -26,6 +26,41 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
         }
+        .btn-primary-custom {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary-custom:hover {
+            background: #172554;
+            transform: scale(1.05);
+        }
+        .btn-gray-custom {
+            background: #4B5563;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-gray-custom:hover {
+            background: #374151;
+        }
+        .btn-volver {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+        .btn-volver:hover {
+            background: #172554;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -55,8 +90,99 @@
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        .modal-header {
+            background: #1E3A8A;
+            color: #FFFFFF;
+            padding: 1.25rem 1.5rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header button {
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
         .modal-header button:hover {
             transform: rotate(90deg);
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.9rem;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        .alert-success {
+            background: #D1FAE5;
+            color: #065F46;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #A7F3D0;
+            text-align: center;
+        }
+        .alert-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #FECACA;
+            text-align: center;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            background: #1E3A8A;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        .text-azul-rey {
+            color: #1E3A8A;
+        }
+        .bg-azul-rey {
+            background: #1E3A8A;
+        }
+        .bg-azul-rey:hover {
+            background: #172554;
         }
     </style>
 </head>
@@ -64,116 +190,116 @@
     <%- include('../partials/navbar', { user: user, pendingCount: pendingCount }) %>
 
     <main class="container mx-auto px-4 py-8 max-w-7xl">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-[#1E3A8A]">📢 Anuncios</h1>
+                <h1 class="text-3xl font-bold" style="color: #1E3A8A;">📢 Anuncios</h1>
                 <p class="text-gray-500 mt-1">Mantén informado a todo el equipo</p>
             </div>
-            <% if (user && user.role === 'coach') { %>
-                <button onclick="openAnnouncementModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold">
-                    <span class="text-lg">➕</span> Crear Anuncio
-                </button>
-            <% } %>
+            <button onclick="openAnnouncementModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md mt-4 md:mt-0">
+                <span class="text-lg">➕</span> Crear Anuncio
+            </button>
         </div>
 
+        <!-- Mensajes Flash -->
+        <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert-success">✅ <%= success %></div>
+        <% } %>
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert-error">⚠️ <%= error %></div>
+        <% } %>
+
+        <!-- Lista de Anuncios -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
+            <% if (announcements && announcements.length > 0) { %>
                 <% announcements.forEach(a => { %>
-                    <div class="card-announcement p-6 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start gap-4">
-                                <h3 class="text-xl font-bold text-gray-900 break-words flex-1"><%= a.title %></h3>
-                                <% if (user && user.role === 'coach') { %>
-                                    <a href="/coach/announcements/<%= a.id %>/delete" class="text-red-500 hover:text-red-700 text-sm font-semibold transition-colors shrink-0" onclick="return confirm('¿Estás seguro de que deseas eliminar este anuncio?')">🗑️ Eliminar</a>
-                                <% } %>
-                            </div>
-                            <p class="text-gray-600 mt-3 whitespace-pre-line"><%= a.content %></p>
-                        </div>
-                        
-                        <div class="mt-6 flex justify-between items-center pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 bg-[#1E3A8A] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
+                    <div class="card-announcement p-6">
+                        <h3 class="text-xl font-bold" style="color: #111827;"><%= a.title %></h3>
+                        <p class="text-gray-600 mt-2"><%= a.content %></p>
+                        <div class="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="author-avatar">
                                     <%= a.author_name ? a.author_name.charAt(0).toUpperCase() : 'A' %>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-800"><%= a.author_name || 'Administrador' %></p>
-                                    <p class="text-xs text-gray-400"><%= new Date(a.created_at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                                    <p class="text-sm font-semibold" style="color: #111827;"><%= a.author_name || 'Administrador' %></p>
+                                    <p class="text-xs text-gray-400"><%= new Date(a.created_at).toLocaleString() %></p>
                                 </div>
                             </div>
+                            <a href="/coach/announcements/<%= a.id %>/delete" class="text-red-500 hover:text-red-700 text-sm font-semibold transition" onclick="return confirm('¿Eliminar este anuncio?')">🗑️ Eliminar</a>
                         </div>
                     </div>
                 <% }); %>
             <% } else { %>
                 <div class="col-span-full">
-                    <div class="card-announcement p-12 text-center">
-                        <div class="text-5xl mb-4">📢</div>
+                    <div class="card-announcement p-12 empty-state">
+                        <div class="icon">📢</div>
                         <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay anuncios</h3>
-                        <p class="text-gray-400 max-w-sm mx-auto">No se han publicado comunicados recientes en la academia.</p>
-                        <% if (user && user.role === 'coach') { %>
-                            <button onclick="openAnnouncementModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-xl mt-4 transition shadow-md font-semibold">
-                                ➕ Crear Anuncio
-                            </button>
-                        <% } %>
+                        <p class="text-gray-400">Comienza creando tu primer anuncio</p>
+                        <button onclick="openAnnouncementModal()" class="bg-[#1E3A8A] hover:bg-[#172554] text-white px-6 py-2 rounded-lg mt-4 transition shadow-md">
+                            ➕ Crear Anuncio
+                        </button>
                     </div>
                 </div>
             <% } %>
         </div>
 
+        <!-- Volver -->
         <div class="mt-8 text-center">
-            <a href="<%= user && user.role === 'coach' ? '/coach/dashboard' : '/player/dashboard' %>" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2.5 rounded-xl transition inline-block shadow-md font-semibold">
+            <a href="/coach/dashboard" class="btn-volver px-6 py-2 rounded-lg transition inline-block shadow-md">
                 ← Volver al Dashboard
             </a>
         </div>
     </main>
 
-    <% if (user && user.role === 'coach') { %>
-        <div id="announcementModal" class="modal">
-            <div class="modal-content shadow-2xl">
-                <div class="bg-[#1E3A8A] text-white padding p-5 rounded-t-[20px] flex justify-between items-center">
-                    <h3 class="text-xl font-bold flex items-center gap-2">✏️ Crear Anuncio</h3>
-                    <button onclick="closeAnnouncementModal()" class="text-3xl font-light leading-none transition-transform duration-200">&times;</button>
-                </div>
-                <form method="POST" action="/coach/announcements" class="p-6">
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-800 mb-1.5">📌 Título</label>
-                        <input type="text" name="title" class="w-full padding p-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-blue-100 transition text-sm text-gray-900" placeholder="Ej: Ajuste de horario entrenamiento" required>
-                    </div>
-                    <div class="mb-5">
-                        <label class="block text-sm font-semibold text-gray-800 mb-1.5">📝 Contenido</label>
-                        <textarea name="content" class="w-full padding p-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-blue-100 transition text-sm text-gray-900" rows="5" placeholder="Escribe las novedades aquí..." required></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-[#1E3A8A] hover:bg-[#172554] text-white py-3 rounded-xl font-semibold transition shadow-md hover:shadow-lg">📤 Publicar Anuncio</button>
-                    <button type="button" onclick="closeAnnouncementModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold mt-2 transition">❌ Cancelar</button>
-                </form>
+    <!-- ===== MODAL ANUNCIOS ===== -->
+    <div id="announcementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">✏️ Crear Anuncio</h3>
+                <button onclick="closeAnnouncementModal()">&times;</button>
             </div>
+            <form method="POST" action="/coach/announcements" class="modal-body">
+                <div class="mb-4">
+                    <label class="form-label">📌 Título</label>
+                    <input type="text" name="title" class="form-input" placeholder="Ej: Entrenamiento especial" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">📝 Contenido</label>
+                    <textarea name="content" class="form-textarea" rows="5" placeholder="Escribe el contenido del anuncio..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary-custom w-full">📤 Publicar Anuncio</button>
+                <button type="button" onclick="closeAnnouncementModal()" class="btn-gray-custom w-full mt-2">❌ Cancelar</button>
+            </form>
         </div>
-    <% } %>
+    </div>
 
     <%- include('../partials/footer') %>
 
     <script>
-        const modal = document.getElementById('announcementModal');
-
         function openAnnouncementModal() {
-            if (modal) modal.classList.add('active');
+            document.getElementById('announcementModal').classList.add('active');
         }
         
         function closeAnnouncementModal() {
-            if (modal) {
-                modal.classList.remove('active');
-                modal.querySelector('form')?.reset();
-            }
+            document.getElementById('announcementModal').classList.remove('active');
         }
         
+        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
+            var modal = document.getElementById('announcementModal');
             if (event.target === modal) {
                 closeAnnouncementModal();
             }
         }
         
+        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && modal && modal.classList.contains('active')) {
-                closeAnnouncementModal();
+            if (event.key === 'Escape') {
+                var modal = document.getElementById('announcementModal');
+                if (modal.classList.contains('active')) {
+                    closeAnnouncementModal();
+                }
             }
         });
     </script>

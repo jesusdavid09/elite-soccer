@@ -34,93 +34,11 @@ export const showRegister = (req: Request, res: Response) => {
     });
 };
 
-// ========== LOGIN ==========
-export const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    
-    console.log(`🔐 Intento de login: ${email}`);
-    
-    if (!email || !password) {
-        return res.render('auth/login', { 
-            title: 'Iniciar Sesión', 
-            error: '⚠️ Todos los campos son obligatorios', 
-            success: null 
-        });
-    }
-    
-    try {
-        const result = await pool.query(
-            `SELECT id, email, password_hash, full_name, role, approved 
-             FROM users WHERE email = $1`,
-            [email.toLowerCase().trim()]
-        );
-        
-        if (result.rows.length === 0) {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: '❌ Credenciales incorrectas', 
-                success: null 
-            });
-        }
-        
-        const user = result.rows[0];
-        const isValid = await comparePassword(password, user.password_hash);
-        
-        if (!isValid) {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: '❌ Credenciales incorrectas', 
-                success: null 
-            });
-        }
-        
-        if (user.role === 'player' && !user.approved) {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: '⏳ Cuenta pendiente de aprobación por el entrenador', 
-                success: null 
-            });
-        }
-        
-        const token = generateToken({ 
-            id: user.id, 
-            email: user.email, 
-            role: user.role, 
-            full_name: user.full_name 
-        });
-        
-        res.cookie('token', token, { 
-            httpOnly: true, 
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
-        });
-        
-        console.log(`✅ Login exitoso: ${user.full_name} (${user.role})`);
-        
-        if (user.role === 'coach') {
-            return res.redirect('/coach/dashboard');
-        } else {
-            return res.redirect('/player/dashboard');
-        }
-    } catch (error) {
-        console.error('❌ Error en login:', error);
-        return res.render('auth/login', { 
-            title: 'Iniciar Sesión', 
-            error: '❌ Error en el servidor. Intenta nuevamente.', 
-            success: null 
-        });
-    }
-};
-
 // ========== REGISTRO ==========
 export const register = async (req: Request, res: Response) => {
     console.log('📝 Iniciando registro...');
-    console.log('📝 Datos recibidos:', {
-        email: req.body.email,
-        full_name: req.body.full_name,
-        role: req.body.role
-    });
+    console.log('📝 Email:', req.body.email);
+    console.log('📝 Rol:', req.body.role);
     
     const { 
         email, 
@@ -139,7 +57,7 @@ export const register = async (req: Request, res: Response) => {
         if (!email || !password || !full_name) {
             return res.render('auth/register', { 
                 title: 'Registro', 
-                error: '⚠️ Todos los campos obligatorios deben ser completados' 
+                error: '⚠️ Todos los campos son obligatorios' 
             });
         }
         
@@ -154,14 +72,14 @@ export const register = async (req: Request, res: Response) => {
         if (!emailRegex.test(email)) {
             return res.render('auth/register', { 
                 title: 'Registro', 
-                error: '⚠️ El correo electrónico no es válido' 
+                error: '⚠️ Email inválido' 
             });
         }
         
         // Verificar email existente
         const existingUser = await pool.query(
             'SELECT id FROM users WHERE email = $1',
-            [email.toLowerCase().trim()]
+            [email.toLowerCase()]
         );
         
         if (existingUser.rows.length > 0) {
@@ -187,7 +105,7 @@ export const register = async (req: Request, res: Response) => {
             if (!jersey_number || !position) {
                 return res.render('auth/register', { 
                     title: 'Registro', 
-                    error: '⚠️ Número y posición son obligatorios para jugadores' 
+                    error: '⚠️ Número y posición son obligatorios' 
                 });
             }
             
@@ -195,7 +113,7 @@ export const register = async (req: Request, res: Response) => {
             if (isNaN(jerseyNum) || jerseyNum < 1 || jerseyNum > 99) {
                 return res.render('auth/register', { 
                     title: 'Registro', 
-                    error: '⚠️ El número de camiseta debe estar entre 1 y 99' 
+                    error: '⚠️ Número de camiseta inválido (1-99)' 
                 });
             }
         }
@@ -207,7 +125,7 @@ export const register = async (req: Request, res: Response) => {
             `INSERT INTO users (email, password_hash, full_name, role, approved) 
              VALUES ($1, $2, $3, $4, $5) 
              RETURNING id`,
-            [email.toLowerCase().trim(), hashedPassword, full_name.trim(), role, role === 'coach']
+            [email.toLowerCase(), hashedPassword, full_name, role, role === 'coach']
         );
         
         const userId = userResult.rows[0].id;
@@ -215,38 +133,26 @@ export const register = async (req: Request, res: Response) => {
         
         // Crear jugador
         if (role === 'player') {
-            const playerResult = await pool.query(
-                `INSERT INTO players (user_id, jersey_number, position, age, phone, status) 
-                 VALUES ($1, $2, $3, $4, $5, $6) 
-                 RETURNING id`,
-                [userId, parseInt(jersey_number), position, age ? parseInt(age) : null, phone || null, 'pending']
-            );
-            
-            const playerId = playerResult.rows[0].id;
-            console.log(`✅ Jugador creado con ID: ${playerId}`);
-            
             await pool.query(
-                `INSERT INTO statistics (player_id, season) VALUES ($1, $2)`,
-                [playerId, new Date().getFullYear().toString()]
+                `INSERT INTO players (user_id, jersey_number, position, age, phone, status) 
+                 VALUES ($1, $2, $3, $4, $5, $6)`,
+                [userId, parseInt(jersey_number), position, age || null, phone || null, 'pending']
             );
-            console.log(`✅ Estadísticas creadas`);
+            console.log('✅ Perfil de jugador creado');
         }
         
         console.log(`✅ Registro exitoso: ${full_name} (${role})`);
         
-        if (role === 'coach') {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: null, 
-                success: '✅ Cuenta de entrenador creada exitosamente. ¡Ya puedes iniciar sesión!' 
-            });
-        } else {
-            return res.render('auth/login', { 
-                title: 'Iniciar Sesión', 
-                error: null, 
-                success: '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el entrenador.' 
-            });
-        }
+        const successMessage = role === 'coach' 
+            ? '✅ Cuenta de entrenador creada. ¡Ya puedes iniciar sesión!' 
+            : '✅ Registro exitoso. Tu cuenta está pendiente de aprobación.';
+        
+        return res.render('auth/login', { 
+            title: 'Iniciar Sesión', 
+            error: null, 
+            success: successMessage 
+        });
+        
     } catch (error: any) {
         console.error('❌ Error en registro:', error.message);
         
@@ -259,7 +165,85 @@ export const register = async (req: Request, res: Response) => {
         
         return res.render('auth/register', { 
             title: 'Registro', 
-            error: '❌ Error en el servidor. Por favor, intenta nuevamente.' 
+            error: `❌ Error: ${error.message}` 
+        });
+    }
+};
+
+// ========== LOGIN ==========
+export const login = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    
+    console.log(`🔐 Login: ${email}`);
+    
+    if (!email || !password) {
+        return res.render('auth/login', { 
+            title: 'Iniciar Sesión', 
+            error: '⚠️ Todos los campos son obligatorios', 
+            success: null 
+        });
+    }
+    
+    try {
+        const result = await pool.query(
+            `SELECT id, email, password_hash, full_name, role, approved 
+             FROM users WHERE email = $1`,
+            [email.toLowerCase()]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.render('auth/login', { 
+                title: 'Iniciar Sesión', 
+                error: '❌ Credenciales incorrectas', 
+                success: null 
+            });
+        }
+        
+        const user = result.rows[0];
+        const isValid = await comparePassword(password, user.password_hash);
+        
+        if (!isValid) {
+            return res.render('auth/login', { 
+                title: 'Iniciar Sesión', 
+                error: '❌ Credenciales incorrectas', 
+                success: null 
+            });
+        }
+        
+        if (user.role === 'player' && !user.approved) {
+            return res.render('auth/login', { 
+                title: 'Iniciar Sesión', 
+                error: '⏳ Cuenta pendiente de aprobación', 
+                success: null 
+            });
+        }
+        
+        const token = generateToken({ 
+            id: user.id, 
+            email: user.email, 
+            role: user.role, 
+            full_name: user.full_name 
+        });
+        
+        res.cookie('token', token, { 
+            httpOnly: true, 
+            maxAge: 7 * 24 * 60 * 60 * 1000 
+        });
+        
+        console.log(`✅ Login exitoso: ${user.full_name} (${user.role})`);
+        
+        if (user.role === 'coach') {
+            return res.redirect('/coach/dashboard');
+        } else {
+            return res.redirect('/player/dashboard');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error en login:', error);
+        return res.render('auth/login', { 
+            title: 'Iniciar Sesión', 
+            error: '❌ Error en el servidor', 
+            success: null 
         });
     }
 };
